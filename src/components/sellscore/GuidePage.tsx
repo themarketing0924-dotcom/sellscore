@@ -213,14 +213,14 @@ export function GuidePage() {
             무료 진단 가이드
           </p>
           <h1
-            className="text-white font-bold leading-[1.15] tracking-[-0.03em] mb-6"
-            style={{ fontSize: 'clamp(28px, 6vw, 58px)' }}
+            className="text-white font-black leading-[1.1] tracking-[-0.04em] mb-6"
+            style={{ fontSize: 'clamp(32px, 6.8vw, 66px)' }}
           >
             변하지 않는 판매 전환 원리를
             <br />
             <span className="gradient-text-animated">내 사이트 기준</span>으로 확인하세요
           </h1>
-          <p className="text-white/55 text-[15px] sm:text-[18px] font-medium mb-11 max-w-xl mx-auto leading-relaxed">
+          <p className="text-white/60 text-[18px] sm:text-[21px] font-medium mb-11 max-w-xl mx-auto leading-[1.7]">
             <Em>10명의 마케팅 대가</Em>가 검증해온 설득 원리를 한국 소상공인·1인 창업가 기준으로
             재구성해, <Em>당신 사이트에 직접 대입한 점수와 실행 지시문</Em>으로 드립니다.
           </p>
@@ -249,7 +249,7 @@ export function GuidePage() {
           </>
         }
       >
-        <p className="text-white/55 text-[14px] sm:text-[16px] leading-relaxed max-w-2xl mx-auto text-center">
+        <p className="text-white/60 text-[17px] sm:text-[19px] leading-[1.7] max-w-2xl mx-auto text-center">
           <span className="block">랜딩페이지도 만들고, 상세페이지도 채워봤지만</span>
           <span className="block">실제 문의와 결제로는 잘 이어지지 않는 경우가 많습니다.</span>
           <span className="block">
@@ -267,7 +267,12 @@ export function GuidePage() {
             <span className="gradient-text-static">팔리는 구조</span>를 진단합니다
           </>
         }
-        sub="이미 만든 사이트를 새로 만들라고 하지 않습니다. 무엇이 새고 있는지부터 찾습니다."
+        sub={
+          <>
+            이미 만든 사이트를 새로 만들라고 하지 않습니다. <Em>무엇이 새고 있는지</Em>부터
+            찾습니다.
+          </>
+        }
       >
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto text-left">
           {[
@@ -302,7 +307,11 @@ export function GuidePage() {
             프레임워크로 채점합니다
           </>
         }
-        sub="감이 아니라, 반복적으로 검증된 설득 프레임워크 위에서 점수를 매깁니다."
+        sub={
+          <>
+            감이 아니라, <Em>반복적으로 검증된 설득 프레임워크</Em> 위에서 점수를 매깁니다.
+          </>
+        }
       >
         <div className="flex flex-wrap justify-center gap-2.5 max-w-3xl mx-auto">
           {LOADING_FRAMEWORK_NAMES.map((name) => (
@@ -327,7 +336,11 @@ export function GuidePage() {
             </HeadlineLine>
           </>
         }
-        sub="추상적인 조언이 아니라, 랜딩페이지에 바로 적용하는 형태로 드립니다."
+        sub={
+          <>
+            추상적인 조언이 아니라, <Em>랜딩페이지에 바로 적용하는 형태</Em>로 드립니다.
+          </>
+        }
       >
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-3xl mx-auto">
           {REPORT_CONTENTS.map((item, i) => (
@@ -389,7 +402,11 @@ export function GuidePage() {
             이어집니다
           </>
         }
-        sub="먼저 무료로 점수를 보고, 필요하면 확장하는 구조입니다."
+        sub={
+          <>
+            먼저 <Em>무료로 점수를 보고</Em>, 필요하면 확장하는 구조입니다.
+          </>
+        }
       >
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto text-left">
           {FUNNEL_STEPS.map((step, i) => (
@@ -415,7 +432,7 @@ export function GuidePage() {
       </Section>
 
       {/* ══════════ 최종 CTA ══════════ */}
-      <section className="relative px-6 py-20 text-center overflow-hidden">
+      <section className="relative px-6 py-20 sm:py-24 md:py-28 text-center overflow-hidden">
         <div
           className="absolute inset-0 pointer-events-none"
           style={{ background: 'radial-gradient(ellipse 50% 60% at 50% 50%, rgba(0,100,255,0.14), transparent 70%)' }}

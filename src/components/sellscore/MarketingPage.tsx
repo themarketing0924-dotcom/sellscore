@@ -1,9 +1,11 @@
 import { motion } from 'framer-motion';
-import { BRAND, TRUST_BADGES, PRICING_TIERS } from '../../config/sellscore';
+import { Link } from 'react-router-dom';
+import { TRUST_BADGES } from '../../config/sellscore';
 import { Icon, IconBadge } from './Icon';
 import { VideoBackground } from './VideoBackground';
 import { Section, HeadlineLine, Em, FaqAccordion } from './Section';
 import { HeroScoreCard } from './HeroScoreCard';
+import { SiteFooter } from './SiteFooter';
 import type { ComponentProps, ReactNode } from 'react';
 
 type IconName = ComponentProps<typeof Icon>['name'];
@@ -231,15 +233,15 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
           </motion.span>
 
           <h1
-            className="text-white font-bold leading-[1.15] tracking-[-0.03em] mb-6"
-            style={{ fontSize: 'clamp(28px, 6vw, 60px)' }}
+            className="text-white font-black leading-[1.1] tracking-[-0.04em] mb-6"
+            style={{ fontSize: 'clamp(32px, 6.8vw, 66px)' }}
           >
             10초 만에 이 사이트가
             <br />
             <span className="gradient-text-animated">안 팔리는 이유</span>를 보여드립니다
           </h1>
 
-          <p className="text-white/55 text-[15px] sm:text-[18px] font-medium mb-11 max-w-xl mx-auto leading-relaxed">
+          <p className="text-white/60 text-[18px] sm:text-[21px] font-medium mb-11 max-w-xl mx-auto leading-[1.7]">
             소상공인, 1인 창업가, 홈페이지 제작 대행 서비스를 운영하신다면 —{' '}
             <Em>어디서 고객이 이탈하는지</Em>, 무엇부터 고쳐야 하는지 10초 안에 확인하세요.
           </p>
@@ -317,6 +319,25 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
         </div>
       </Section>
 
+      {/* ══════════ 리스크 리버설 ══════════ (FAQ에 묻혀있던 정책을 전면에 배치) */}
+      <section className="px-6 pb-20 sm:pb-24">
+        <div className="max-w-3xl mx-auto flex flex-wrap items-center justify-center gap-3">
+          {[
+            { icon: 'unlock' as const, text: '카드 등록 없이 무료로 시작' },
+            { icon: 'refresh' as const, text: '개선 후 30일 내 재진단 무료' },
+            { icon: 'shield' as const, text: '동일 URL, 언제 진단해도 같은 점수' },
+          ].map((item) => (
+            <span
+              key={item.text}
+              className="flex items-center gap-2 text-white/70 text-[13px] sm:text-[14px] font-semibold bg-white/[0.04] border border-white/10 rounded-full px-4 py-2"
+            >
+              <Icon name={item.icon} size={14} className="text-emerald-300" />
+              {item.text}
+            </span>
+          ))}
+        </div>
+      </section>
+
       {/* ══════════ WHAT YOU GET ══════════ */}
       <Section
         eyebrow="무엇을 받게 되나요"
@@ -329,7 +350,11 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
             <span className="block mx-auto max-w-[7em]">답해드립니다</span>
           </>
         }
-        sub="추상적인 조언이 아니라, 지금 바로 복사해서 쓸 수 있는 결과물입니다."
+        sub={
+          <>
+            추상적인 조언이 아니라, <Em>지금 바로 복사해서 쓸 수 있는 결과물</Em>입니다.
+          </>
+        }
       >
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-3xl mx-auto">
           {DELIVERABLES.map((d, i) => (
@@ -383,76 +408,27 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
         </div>
       </Section>
 
-      {/* ══════════ PRICING ══════════ */}
-      {/* 가격은 보여주되, 결제 버튼은 여기서 바로 받지 않는다 — 방문자가 아직 아무 가치도
-          경험하지 못한 상태라 결제 CTA를 만나면 이탈 확률이 높다. 실제 결제는 무료 진단
-          결과(자기 사이트 점수)를 본 뒤 리포트 잠금 해제 화면에서만 받는다. */}
-      <Section
-        eyebrow="가격"
-        heading="얼마에 시작할 수 있나요"
-        sub="먼저 무료로 내 사이트 점수를 확인한 뒤, 결과 화면에서 결제를 결정하시면 됩니다."
-      >
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-          {PRICING_TIERS.map((tier, i) => {
-            return (
-              <motion.div
-                key={tier.id}
-                className={`relative rounded-3xl p-8 flex flex-col text-left ${
-                  tier.popular
-                    ? 'border border-[#5b9bff]/40 bg-[#0064ff]/[0.06]'
-                    : 'border border-white/10 bg-white/[0.02]'
-                }`}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.08 }}
-              >
-                {tier.popular && (
-                  <span className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#0064ff] text-white text-[11px] font-bold tracking-[0.05em] px-4 py-1.5 rounded-full">
-                    가장 많이 선택
-                  </span>
-                )}
-                <p className="text-white/45 text-[12px] tracking-[0.1em] uppercase mb-3 font-semibold">
-                  {tier.label}
-                </p>
-                <div className="flex items-baseline gap-1 mb-3">
-                  <span className="text-white text-[36px] font-extrabold tracking-tight">
-                    {tier.price.toLocaleString()}원
-                  </span>
-                  <span className="text-white/35 text-[13px]">/{tier.unit}</span>
-                </div>
-                <p className="text-white/50 text-[13px] leading-relaxed mb-6">{tier.description}</p>
-                <ul className="flex flex-col gap-2.5 mb-8 flex-1">
-                  {tier.features.map((f) => (
-                    <li key={f} className="flex items-start gap-2 text-white/65 text-[13px]">
-                      <Icon name="check" size={14} className="text-[#5b9bff] mt-0.5 shrink-0" />
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-
-                <button
-                  onClick={onStart}
-                  className={
-                    tier.cta === 'free-start'
-                      ? 'h-12 rounded-xl font-semibold text-[14px] text-white border-none cursor-pointer hover:brightness-110 transition'
-                      : 'h-12 rounded-xl font-semibold text-[14px] text-white/85 border border-white/15 bg-white/5 hover:bg-white/10 cursor-pointer transition'
-                  }
-                  style={
-                    tier.cta === 'free-start'
-                      ? { background: 'linear-gradient(135deg, #0064ff, #4f8bff)' }
-                      : undefined
-                  }
-                >
-                  {tier.cta === 'free-start' ? '무료로 시작하기' : '먼저 무료로 진단받기'}
-                </button>
-              </motion.div>
-            );
-          })}
-        </div>
-        <p className="text-white/30 text-[12px] text-center mt-8">
-          구독 플랜의 재진단은 월 30회까지 제공됩니다. 초과분 정책은 추후 별도 안내드립니다.
-        </p>
+      {/* ══════════ 채점 원리로 신뢰 연결 ══════════ (FAQ 직전, "이 점수 믿을 수 있나" 시점에 배치) */}
+      <Section eyebrow="이 점수를 믿을 수 있나요" heading="감이 아니라 공개된 기준으로 채점합니다">
+        <motion.div
+          className="max-w-2xl mx-auto rounded-3xl border border-white/10 bg-white/[0.02] p-7 sm:p-9 text-center"
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+        >
+          <IconBadge name="shield" tint="blue" />
+          <p className="text-white/70 text-[14px] sm:text-[15px] leading-relaxed mt-4 mb-6 max-w-md mx-auto">
+            10개 프레임워크가 각각 무엇을 보는지, 어떤 4단계를 거쳐 100점 만점으로 환산되는지{' '}
+            <Em>전부 공개</Em>합니다. 같은 사이트는 언제 재진단해도 같은 점수가 나옵니다.
+          </p>
+          <Link
+            to="/methodology"
+            className="inline-flex items-center gap-1.5 h-11 px-6 rounded-full font-semibold text-[13px] text-white/90 border border-white/15 bg-white/5 hover:bg-white/10 no-underline transition-colors"
+          >
+            채점 원리 보러가기 →
+          </Link>
+        </motion.div>
       </Section>
 
       {/* ══════════ FAQ ══════════ */}
@@ -497,12 +473,7 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
         </motion.div>
       </section>
 
-      <footer className="px-6 py-10 border-t border-white/[0.06] text-center">
-        <p className="text-white/30 text-[12px] mb-2 font-semibold">{BRAND.name}</p>
-        <p className="text-white/20 text-[11px] max-w-md mx-auto leading-relaxed">
-          {BRAND.footerNote}
-        </p>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

@@ -5,6 +5,7 @@ import { BLOG_AUTHOR, BLOG_CATEGORIES, BLOG_POSTS, isNewPost } from '../../confi
 import { useSeo } from '../../hooks/useSeo';
 import { Icon } from './Icon';
 import { BlogBanner } from './BlogBanner';
+import { SiteFooter } from './SiteFooter';
 
 export function BlogPage() {
   const [active, setActive] = useState('all');
@@ -18,6 +19,7 @@ export function BlogPage() {
   const posts = active === 'all' ? BLOG_POSTS : BLOG_POSTS.filter((p) => p.category === active);
 
   return (
+    <>
     <div className="px-6 pt-28 pb-24 max-w-5xl mx-auto">
       {/* 브레드크럼 */}
       <nav aria-label="breadcrumb" className="text-white/35 text-[12px] mb-8 flex items-center gap-2">
@@ -128,5 +130,7 @@ export function BlogPage() {
         })}
       </div>
     </div>
+    <SiteFooter />
+    </>
   );
 }

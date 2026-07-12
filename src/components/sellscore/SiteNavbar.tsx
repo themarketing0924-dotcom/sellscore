@@ -28,14 +28,14 @@ export function SiteNavbar() {
   return (
     <>
       <nav
-        className="fixed top-0 left-0 right-0 z-50 h-11 flex items-center bg-black/75 backdrop-blur-xl border-b border-white/10"
-        style={{ fontSize: 12, fontWeight: 400, letterSpacing: '-0.01em' }}
+        className="fixed top-0 left-0 right-0 z-50 h-14 flex items-center bg-black/75 backdrop-blur-xl border-b border-white/10"
+        style={{ fontSize: 15, fontWeight: 500, letterSpacing: '-0.01em' }}
       >
         <div className="w-full px-4 sm:px-6 flex items-center">
           {/* 로고 */}
-          <Link to="/" onClick={closeMenu} className="flex items-center gap-1.5 shrink-0 no-underline">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-            <span className="text-white/90 font-medium" style={{ fontSize: 13 }}>
+          <Link to="/" onClick={closeMenu} className="flex items-center gap-2 shrink-0 no-underline">
+            <span className="w-2 h-2 rounded-full bg-emerald-400" />
+            <span className="text-white font-bold" style={{ fontSize: 17 }}>
               {BRAND.name}
             </span>
           </Link>
@@ -48,7 +48,7 @@ export function SiteNavbar() {
                 <Link
                   key={link.to}
                   to={link.to}
-                  className="relative py-3 no-underline transition-colors"
+                  className="relative py-3 no-underline transition-colors font-semibold"
                   style={{ color: active ? '#fff' : 'rgba(255,255,255,0.8)' }}
                 >
                   {link.label}
@@ -63,7 +63,7 @@ export function SiteNavbar() {
               <div className="flex items-center gap-3">
                 <Link
                   to="/diagnose/history"
-                  className="text-white/60 hover:text-white/90 transition-colors no-underline"
+                  className="text-white/60 hover:text-white/90 transition-colors no-underline font-semibold"
                 >
                   내 진단 내역
                 </Link>
@@ -72,8 +72,8 @@ export function SiteNavbar() {
                 </span>
                 <button
                   onClick={signOut}
-                  className="text-white/80 hover:text-white transition-colors bg-transparent border-none cursor-pointer"
-                  style={{ fontSize: 12 }}
+                  className="text-white/80 hover:text-white transition-colors bg-transparent border-none cursor-pointer font-semibold"
+                  style={{ fontSize: 15 }}
                 >
                   로그아웃
                 </button>
@@ -81,8 +81,8 @@ export function SiteNavbar() {
             ) : (
               <button
                 onClick={() => setAuthOpen(true)}
-                className="text-white/80 hover:text-white transition-colors bg-transparent border-none cursor-pointer"
-                style={{ fontSize: 12 }}
+                className="text-white/80 hover:text-white transition-colors bg-transparent border-none cursor-pointer font-semibold"
+                style={{ fontSize: 15 }}
               >
                 로그인
               </button>
@@ -104,7 +104,7 @@ export function SiteNavbar() {
       <AnimatePresence>
         {menuOpen && (
           <motion.div
-            className="md:hidden fixed top-11 left-0 right-0 z-40 bg-black/95 backdrop-blur-xl border-b border-white/10"
+            className="md:hidden fixed top-14 left-0 right-0 z-40 bg-black/95 backdrop-blur-xl border-b border-white/10"
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}

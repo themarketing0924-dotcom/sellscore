@@ -108,7 +108,7 @@ export function ResultScreen({ report, answers, onRestart }: ResultScreenProps) 
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         >
-          <p className="text-white/40 text-[12px] tracking-[0.2em] uppercase mb-5 font-semibold">
+          <p className="text-white/55 text-[14px] tracking-[0.2em] uppercase mb-5 font-bold">
             {report.domain}
           </p>
           <div className="flex items-end justify-center gap-3 mb-3">
@@ -131,10 +131,10 @@ export function ResultScreen({ report, answers, onRestart }: ResultScreenProps) 
               {report.grade}
             </span>
           </div>
-          <p className="text-white/45 text-[13px] tracking-[0.15em] uppercase mb-7 font-semibold">
+          <p className="text-white/55 text-[15px] tracking-[0.15em] uppercase mb-7 font-bold">
             설득 전환 지수
           </p>
-          <p className="text-white/70 text-[15px] sm:text-[17px] max-w-lg mx-auto leading-relaxed font-medium">
+          <p className="text-white/85 text-[17px] sm:text-[19px] max-w-lg mx-auto leading-relaxed font-bold">
             {report.oneLiner}
           </p>
         </motion.div>
@@ -147,7 +147,7 @@ export function ResultScreen({ report, answers, onRestart }: ResultScreenProps) 
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <p className="text-white/45 text-[11px] tracking-[0.18em] uppercase mb-6 font-semibold text-center sm:text-left">
+          <p className="text-white/55 text-[13px] tracking-[0.18em] uppercase mb-6 font-bold text-center sm:text-left">
             트래픽 스냅샷 {report.traffic.isEstimate && '(추정치)'}
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-6">
@@ -155,7 +155,7 @@ export function ResultScreen({ report, answers, onRestart }: ResultScreenProps) 
             <SnapshotStat icon="chart" label="이탈률" value={report.traffic.bounceRate} />
             <SnapshotStat icon="clock" label="평균 체류시간" value={report.traffic.avgSessionTime} />
           </div>
-          <p className="text-white/55 text-[13px] leading-relaxed border-t border-white/10 pt-5">
+          <p className="text-white/65 text-[15px] leading-relaxed border-t border-white/10 pt-5 font-medium">
             {report.traffic.insight}
           </p>
         </motion.div>
@@ -168,7 +168,7 @@ export function ResultScreen({ report, answers, onRestart }: ResultScreenProps) 
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <p className="text-white/45 text-[11px] tracking-[0.18em] uppercase mb-6 font-semibold text-center">
+          <p className="text-white/55 text-[13px] tracking-[0.18em] uppercase mb-6 font-bold text-center">
             10개 프레임워크 진단
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center border border-white/10 rounded-3xl p-6 sm:p-8 bg-white/[0.02]">
@@ -195,15 +195,15 @@ export function ResultScreen({ report, answers, onRestart }: ResultScreenProps) 
                 <div className="flex items-start gap-3">
                   <IconBadge name={FRAMEWORK_ICON[f.id] ?? 'check'} tint="emerald" size="sm" />
                   <div className="flex-1">
-                    <p className="text-white font-bold text-[14px] mb-1">
+                    <p className="text-white font-bold text-[16px] mb-1">
                       {f.koreanName}{' '}
-                      <span className="text-emerald-300/80 text-[12px] font-medium">
+                      <span className="text-emerald-300/90 text-[14px] font-bold">
                         {f.score.toFixed(1)}/10
                       </span>
                     </p>
-                    <p className="text-white/60 text-[13px] leading-relaxed mb-1.5">{f.narrative}</p>
-                    <p className="text-emerald-300/60 text-[11px] font-mono">
-                      → {f.technique} 기법이 적용되어 있습니다
+                    <p className="text-white/70 text-[15px] leading-relaxed mb-1.5 font-medium">{f.narrative}</p>
+                    <p className="text-emerald-300/70 text-[13px] font-mono font-semibold">
+                      → <strong className="font-bold">{f.technique}</strong> 기법이 적용되어 있습니다
                     </p>
                   </div>
                 </div>
@@ -236,14 +236,14 @@ export function ResultScreen({ report, answers, onRestart }: ResultScreenProps) 
               <div className="flex items-start gap-3">
                 <IconBadge name={FRAMEWORK_ICON[f.id] ?? 'clock'} tint="rose" size="sm" />
                 <div className="flex-1">
-                  <p className="text-white font-bold text-[14px] mb-1">
+                  <p className="text-white font-bold text-[16px] mb-1">
                     {f.koreanName}{' '}
-                    <span className="text-rose-300/80 text-[12px] font-medium">
+                    <span className="text-rose-300/90 text-[14px] font-bold">
                       {f.score.toFixed(1)}/10
                     </span>
                   </p>
-                  <p className="text-white/60 text-[13px] leading-relaxed mb-1.5">{f.flaw}</p>
-                  <p className="text-rose-300/70 text-[11px] leading-relaxed">⚠ {f.narrative}</p>
+                  <p className="text-white/70 text-[15px] leading-relaxed mb-1.5 font-semibold">{f.flaw}</p>
+                  <p className="text-rose-300/80 text-[13px] leading-relaxed font-medium">⚠ {f.narrative}</p>
                 </div>
               </div>
             </motion.div>
@@ -258,7 +258,7 @@ export function ResultScreen({ report, answers, onRestart }: ResultScreenProps) 
         />
 
         {/* 단계 1 — 즉시 무료 (상호성 원칙: 먼저 가치를 준다) */}
-        <p className="text-white/45 text-[11px] tracking-[0.1em] uppercase mb-4 font-semibold">
+        <p className="text-white/60 text-[13px] tracking-[0.1em] uppercase mb-4 font-bold">
           가장 시급한 문제 {FREE_COUNT}개 · 지금 바로 무료 공개
         </p>
         <div className="flex flex-col gap-4 mb-9">
@@ -269,7 +269,7 @@ export function ResultScreen({ report, answers, onRestart }: ResultScreenProps) 
 
         {/* 단계 2 — 회원가입 시 오픈 (리드 수집) */}
         <div className="flex items-center justify-between mb-4 gap-3">
-          <p className="text-white/45 text-[11px] tracking-[0.1em] uppercase font-semibold">
+          <p className="text-white/60 text-[13px] tracking-[0.1em] uppercase font-bold">
             무료 회원가입하면 {SIGNUP_UNLOCK_COUNT}개 더 열립니다
           </p>
           {!signedUp && (
@@ -295,7 +295,7 @@ export function ResultScreen({ report, answers, onRestart }: ResultScreenProps) 
 
         {/* 단계 3 — 친구 초대 시 오픈 (바이럴 루프) */}
         <div className="flex items-center justify-between mb-4 gap-3">
-          <p className="text-white/45 text-[11px] tracking-[0.1em] uppercase font-semibold">
+          <p className="text-white/60 text-[13px] tracking-[0.1em] uppercase font-bold">
             친구에게 진단을 추천하면 {REFERRAL_UNLOCK_COUNT}개 더 열립니다
           </p>
           {!referred && (
@@ -320,7 +320,7 @@ export function ResultScreen({ report, answers, onRestart }: ResultScreenProps) 
         </div>
 
         {/* 단계 4 — 결제 전용 (핵심 프롬프트) */}
-        <p className="text-white/45 text-[11px] tracking-[0.1em] uppercase mb-4 font-semibold">
+        <p className="text-white/60 text-[13px] tracking-[0.1em] uppercase mb-4 font-bold">
           정식 리포트 결제 시 나머지 {tierPaid.length}개 오픈
         </p>
         <div className="flex flex-col gap-4 mb-6">
@@ -349,13 +349,15 @@ export function ResultScreen({ report, answers, onRestart }: ResultScreenProps) 
           >
             <div className="rounded-3xl bg-[#050507] px-6 sm:px-8 py-8 sm:py-10 text-center">
               <IconBadge name="unlock" tint="blue" />
-              <p className="text-white text-[17px] sm:text-[19px] font-bold mt-4 mb-2 leading-snug">
+              <p className="text-white text-[19px] sm:text-[21px] font-black mt-4 mb-2 leading-snug">
                 핵심 프롬프트 {tierPaid.length}개는
                 <br className="hidden sm:block" /> 정식 리포트에서 바로 열립니다
               </p>
-              <p className="text-white/45 text-[13px] mb-7 font-medium">
-                {reportProduct.price.toLocaleString()}원 결제 시 전체 즉시 오픈 · 개선 후 30일 내
-                재진단 무료
+              <p className="text-white/60 text-[15px] mb-7 font-semibold">
+                <strong className="text-white font-bold">
+                  {reportProduct.price.toLocaleString()}원
+                </strong>{' '}
+                결제 시 전체 즉시 오픈 · 개선 후 30일 내 재진단 무료
               </p>
               <div className="max-w-sm mx-auto flex flex-col gap-3">
                 <TossCheckoutButton
@@ -430,8 +432,8 @@ function SectionHeading({
   const color = tint === 'emerald' ? 'text-emerald-300' : tint === 'rose' ? 'text-rose-300' : 'text-[#7bd6ff]';
   return (
     <div className="text-center mb-6">
-      <p className={`${color} text-[12px] tracking-[0.18em] uppercase mb-2 font-bold`}>{title}</p>
-      <p className="text-white/40 text-[12px]">{sub}</p>
+      <p className={`${color} text-[14px] tracking-[0.18em] uppercase mb-2 font-black`}>{title}</p>
+      <p className="text-white/55 text-[14px] font-medium">{sub}</p>
     </div>
   );
 }
@@ -449,8 +451,8 @@ function SnapshotStat({
     <div className="flex items-center gap-3">
       <IconBadge name={icon} tint="blue" size="sm" />
       <div>
-        <p className="text-white text-[15px] sm:text-[16px] font-bold leading-tight">{value}</p>
-        <p className="text-white/40 text-[11px] font-medium">{label}</p>
+        <p className="text-white text-[17px] sm:text-[18px] font-black leading-tight">{value}</p>
+        <p className="text-white/55 text-[13px] font-semibold">{label}</p>
       </div>
     </div>
   );
@@ -479,39 +481,41 @@ function PromptCard({
         <div className="flex items-center gap-3.5">
           <IconBadge name={FRAMEWORK_ICON[framework.id] ?? 'spark'} tint="blue" />
           <div>
-            <p className="text-white/35 text-[10px] tracking-[0.1em] uppercase mb-0.5 font-semibold">
+            <p className="text-white/45 text-[12px] tracking-[0.1em] uppercase mb-0.5 font-bold">
               {framework.promptCategory === 'seo' ? 'SEO / GEO' : '세일즈 구조'} ·{' '}
               {String(index + 1).padStart(2, '0')}
             </p>
-            <p className="text-white text-[15px] sm:text-[16px] font-bold">{framework.koreanName}</p>
+            <p className="text-white text-[17px] sm:text-[18px] font-black">{framework.koreanName}</p>
           </div>
         </div>
-        <span className="text-white text-[19px] font-extrabold shrink-0 ml-4 tabular-nums">
+        <span className="text-white text-[21px] font-black shrink-0 ml-4 tabular-nums">
           {framework.score.toFixed(1)}
-          <span className="text-white/30 text-[12px] font-medium">/10</span>
+          <span className="text-white/40 text-[14px] font-semibold">/10</span>
         </span>
       </div>
 
       <div className={open ? '' : 'blur-sm select-none pointer-events-none'}>
-        <p className="text-white/60 text-[13px] leading-relaxed mb-2">{framework.currentState}</p>
-        <p className="text-white/40 text-[12px] mb-4">근거: {framework.evidence}</p>
+        <p className="text-white/75 text-[15px] leading-relaxed mb-2 font-medium">{framework.currentState}</p>
+        <p className="text-white/50 text-[14px] mb-4">
+          근거: <strong className="text-white/70 font-semibold">{framework.evidence}</strong>
+        </p>
         <div className="bg-white/[0.04] rounded-2xl p-4">
-          <p className="text-rose-300/80 text-[12px] mb-3 font-medium">결함: {framework.flaw}</p>
-          <p className="text-white/50 text-[12px] mb-1">
-            현재 → <span className="text-white/80">{framework.fixPrompt.current}</span>
+          <p className="text-rose-300/90 text-[14px] mb-3 font-bold">결함: {framework.flaw}</p>
+          <p className="text-white/60 text-[14px] mb-1 font-medium">
+            현재 → <span className="text-white/90 font-bold">{framework.fixPrompt.current}</span>
           </p>
-          <p className="text-white/50 text-[12px] mb-3">
-            목표 → <span className="text-emerald-300/90">{framework.fixPrompt.target}</span>
+          <p className="text-white/60 text-[14px] mb-3 font-medium">
+            목표 → <span className="text-emerald-300 font-bold">{framework.fixPrompt.target}</span>
           </p>
           <ul className="flex flex-col gap-1.5 mb-3">
             {framework.fixPrompt.alternatives.map((alt) => (
-              <li key={alt} className="text-white/45 text-[12px] pl-3 relative">
+              <li key={alt} className="text-white/55 text-[13px] font-medium pl-3 relative">
                 <span className="absolute left-0">·</span>
                 {alt}
               </li>
             ))}
           </ul>
-          <p className="text-white/30 text-[11px] font-mono bg-black/40 rounded-lg p-3 leading-relaxed">
+          <p className="text-white/40 text-[13px] font-mono bg-black/40 rounded-lg p-3 leading-relaxed">
             {framework.fixPrompt.copyPasteInstruction}
           </p>
         </div>

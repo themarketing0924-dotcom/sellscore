@@ -47,9 +47,9 @@ export function Section({
 }) {
   const isCenter = align === 'center';
   return (
-    <section className="relative px-6 py-14 sm:py-20">
+    <section className="relative px-6 py-20 sm:py-24 md:py-28">
       <motion.div
-        className={`mb-10 sm:mb-12 max-w-2xl ${isCenter ? 'text-center mx-auto' : 'text-left'}`}
+        className={`mb-12 sm:mb-14 max-w-2xl ${isCenter ? 'text-center mx-auto' : 'text-left'}`}
         initial={{ opacity: 0, y: 16 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
@@ -60,17 +60,17 @@ export function Section({
             <Icon name={icon} size={26} className="text-[#7bd6ff]" />
           </div>
         )}
-        <p className="text-[#7bd6ff]/70 text-[12px] tracking-[0.2em] uppercase mb-4 font-semibold">
+        <p className="text-[#7bd6ff]/70 text-[13px] tracking-[0.25em] uppercase mb-4 font-extrabold">
           {eyebrow}
         </p>
         <h2
-          className="text-white font-bold tracking-[-0.03em] leading-[1.15] mb-3"
-          style={{ fontSize: 'clamp(28px, 5.6vw, 52px)' }}
+          className="text-white font-black tracking-[-0.035em] leading-[1.12] mb-4"
+          style={{ fontSize: 'clamp(30px, 6.2vw, 58px)' }}
         >
           {heading}
         </h2>
         {sub && (
-          <p className="text-white/45 text-[14px] sm:text-[16px] leading-relaxed max-w-lg mx-auto">
+          <p className="text-white/60 text-[17px] sm:text-[19px] leading-[1.7] max-w-lg mx-auto font-medium">
             {sub}
           </p>
         )}

@@ -67,7 +67,7 @@ export function MethodologyPage() {
   return (
     <div>
       {/* ══════════ HERO ══════════ */}
-      <section className="relative min-h-[70dvh] flex flex-col items-center justify-center px-6 pt-20 pb-16 text-center overflow-hidden">
+      <section className="relative min-h-[56dvh] sm:min-h-[62dvh] flex flex-col items-center justify-center px-6 pt-28 pb-16 sm:pb-20 text-center overflow-hidden">
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
@@ -84,13 +84,13 @@ export function MethodologyPage() {
             채점 원리
           </p>
           <h1
-            className="text-white font-bold leading-[1.15] tracking-[-0.03em] mb-6"
-            style={{ fontSize: 'clamp(32px, 6.6vw, 58px)' }}
+            className="text-white font-black leading-[1.1] tracking-[-0.04em] mb-6"
+            style={{ fontSize: 'clamp(32px, 6.8vw, 66px)' }}
           >
             <span className="block mx-auto max-w-[8em]">설득 전환 지수는</span>
             <span className="block gradient-text-static">어떻게 계산되나요?</span>
           </h1>
-          <p className="text-white/55 text-[14px] sm:text-[16px] leading-relaxed max-w-lg mx-auto mb-8">
+          <p className="text-white/60 text-[18px] sm:text-[21px] leading-[1.7] max-w-lg mx-auto mb-8">
             핵심 채점 로직은 공개하지 않지만, <Em>어떤 기준으로 어떤 단계를 거쳐</Em> 점수가
             나오는지는 전부 투명하게 보여드립니다.
           </p>

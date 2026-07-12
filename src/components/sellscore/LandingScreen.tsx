@@ -66,7 +66,7 @@ export function LandingScreen({ onSubmit }: LandingScreenProps) {
           <span className="gradient-text-animated">팔리는 구조</span>입니까?
         </h1>
 
-        <p className="text-white/55 text-[16px] sm:text-[19px] font-medium mb-12">
+        <p className="text-white/70 text-[18px] sm:text-[21px] font-bold mb-12">
           {BRAND.subTagline}
         </p>
 
@@ -86,12 +86,12 @@ export function LandingScreen({ onSubmit }: LandingScreenProps) {
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               placeholder="진단받을 사이트 URL을 입력하세요 (예: mysite.com)"
-              className="w-full h-14 pl-11 pr-5 rounded-full bg-white/[0.07] border border-white/10 text-white text-[14px] sm:text-[15px] placeholder:text-white/30 focus:outline-none focus:border-[#5b9bff]/60 focus:bg-white/[0.09] transition-all"
+              className="w-full h-14 pl-11 pr-5 rounded-full bg-white/[0.07] border border-white/10 text-white text-[16px] sm:text-[17px] font-medium placeholder:text-white/30 focus:outline-none focus:border-[#5b9bff]/60 focus:bg-white/[0.09] transition-all"
             />
           </div>
           <button
             type="submit"
-            className="h-14 px-8 rounded-full font-semibold text-[14px] sm:text-[15px] text-white border-none cursor-pointer whitespace-nowrap transition-transform active:scale-[0.97] hover:brightness-110"
+            className="h-14 px-8 rounded-full font-bold text-[16px] sm:text-[17px] text-white border-none cursor-pointer whitespace-nowrap transition-transform active:scale-[0.97] hover:brightness-110"
             style={{
               background: 'linear-gradient(135deg, #0064ff, #4f8bff)',
               boxShadow: '0 8px 24px -8px rgba(0,100,255,0.55)',
@@ -105,7 +105,7 @@ export function LandingScreen({ onSubmit }: LandingScreenProps) {
           <p className="text-rose-400 text-[13px] mb-4">URL을 입력해주세요.</p>
         )}
 
-        <p className="text-white/30 text-[12px] mb-16">GA4 연결 시 실측 데이터 우선 반영</p>
+        <p className="text-white/40 text-[14px] font-medium mb-16">GA4 연결 시 실측 데이터 우선 반영</p>
 
         <motion.div
           className="flex flex-wrap items-center justify-center gap-3 sm:gap-4"
@@ -116,7 +116,7 @@ export function LandingScreen({ onSubmit }: LandingScreenProps) {
           {TRUST_BADGES.map((badge, i) => (
             <span
               key={badge}
-              className="text-white/45 text-[11px] sm:text-[12px] font-medium flex items-center gap-1.5 bg-white/[0.04] border border-white/[0.06] rounded-full pl-2 pr-3.5 py-1.5"
+              className="text-white/55 text-[13px] sm:text-[14px] font-semibold flex items-center gap-1.5 bg-white/[0.04] border border-white/[0.06] rounded-full pl-2 pr-3.5 py-1.5"
             >
               <Icon name={BADGE_ICONS[i % BADGE_ICONS.length]} size={13} className="text-[#5b9bff]" />
               {badge}

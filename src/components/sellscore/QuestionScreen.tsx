@@ -47,19 +47,22 @@ export function QuestionScreen({ onComplete, onBackToLanding }: QuestionScreenPr
         <div className="flex items-center gap-3 mb-12">
           <button
             onClick={handleBack}
-            className="text-white/40 hover:text-white/70 transition-colors bg-transparent border-none cursor-pointer text-[13px] font-medium"
+            className="text-white/50 hover:text-white/80 transition-colors bg-transparent border-none cursor-pointer text-[15px] font-semibold"
           >
             ← 이전
           </button>
-          <div className="flex-1 h-1.5 bg-white/[0.08] rounded-full overflow-hidden">
+          <div className="flex-1 h-3 bg-white/[0.15] rounded-full overflow-hidden">
             <motion.div
               className="h-full rounded-full"
-              style={{ background: 'linear-gradient(90deg, #0064ff, #7bd6ff)' }}
+              style={{
+                background: 'linear-gradient(90deg, #0064ff, #7bd6ff)',
+                boxShadow: '0 0 12px rgba(123,214,255,0.75)',
+              }}
               animate={{ width: `${progress}%` }}
               transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             />
           </div>
-          <span className="text-white/40 text-[12px] tabular-nums font-medium">
+          <span className="text-white/60 text-[14px] tabular-nums font-bold">
             {step + 1} / {QUESTIONS.length}
           </span>
         </div>
@@ -91,8 +94,8 @@ export function QuestionScreen({ onComplete, onBackToLanding }: QuestionScreenPr
             </div>
 
             <h2
-              className="text-white font-bold leading-[1.2] tracking-[-0.02em] mb-9 text-center sm:text-left"
-              style={{ fontSize: 'clamp(24px, 4.2vw, 34px)' }}
+              className="text-white font-black leading-[1.15] tracking-[-0.025em] mb-9 text-center sm:text-left"
+              style={{ fontSize: 'clamp(26px, 4.6vw, 38px)' }}
             >
               {question.title}
             </h2>
@@ -107,7 +110,7 @@ export function QuestionScreen({ onComplete, onBackToLanding }: QuestionScreenPr
                   transition={{ delay: 0.08 + i * 0.05, duration: 0.4 }}
                   whileHover={{ scale: 1.015 }}
                   whileTap={{ scale: 0.98 }}
-                  className="text-left h-16 px-5 rounded-2xl bg-white/[0.045] border border-white/10 text-white/85 font-medium text-[14px] sm:text-[15px] hover:bg-white/[0.09] hover:border-[#5b9bff]/40 transition-colors cursor-pointer"
+                  className="text-left h-16 px-5 rounded-2xl bg-white/[0.045] border border-white/10 text-white font-bold text-[16px] sm:text-[17px] hover:bg-white/[0.09] hover:border-[#5b9bff]/40 transition-colors cursor-pointer"
                 >
                   {option.label}
                 </motion.button>
