@@ -1,0 +1,161 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* 시스템 폰트 스택 — macOS/iOS에서는 실제 SF Pro가 렌더링된다 */
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text',
+    'Pretendard Variable', Pretendard, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Pretendard Variable',
+    Pretendard, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --accent: #0064ff;
+  --accent-soft: rgba(0, 100, 255, 0.12);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+html,
+body {
+  background: #000;
+  color: #fff;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: 'ss01' 1, 'cv01' 1;
+  /* 한글은 기본적으로 글자 사이 아무 곳에서나 줄바꿈된다 ("할지" → "할/지").
+     단어(어절) 단위로만 끊기게 강제한다. */
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+::selection {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* 애플식 가운데 정렬 헤드라인: 여러 줄일 때 줄 길이를 균등하게 잘라준다.
+   (safari 17.4+/chrome 114+, 미지원 브라우저는 기존 줄바꿈으로 자연 저하) */
+h1,
+h2 {
+  text-wrap: balance;
+}
+
+/* ── 움직이는 그라데이션 강조 텍스트 ──
+   background-position 애니메이션은 GPU 가속이 안 되고 매 프레임 텍스트를 다시 그린다.
+   히어로처럼 페이지당 1곳, 정말 시선을 끌어야 할 곳에만 쓴다. */
+.gradient-text-animated {
+  background-image: linear-gradient(90deg, #5b9bff, #7bd6ff 35%, #a389ff 65%, #5b9bff);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gradient-shift 6s ease-in-out infinite;
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gradient-text-animated {
+    animation: none;
+    background-position: 30% 50%;
+  }
+}
+
+/* ── 정적 그라데이션 강조 텍스트 ──
+   애니메이션 없이 색만 입힌다. 히어로 밖의 나머지 강조는 전부 이걸 쓴다 —
+   똑같이 눈에 띄지만 리페인트 비용이 없다. */
+.gradient-text-static {
+  background-image: linear-gradient(90deg, #5b9bff, #7bd6ff 55%, #a389ff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ── 영상 없이 CSS만으로 만드는 "오로라" 배경 (VideoBackground의 aurora variant) ── */
+.sellscore-aurora {
+  background: #000;
+}
+
+.aurora-blob {
+  position: absolute;
+  width: 60vw;
+  height: 60vw;
+  max-width: 900px;
+  max-height: 900px;
+  border-radius: 9999px;
+  filter: blur(90px);
+  opacity: 0.55;
+  will-change: transform;
+}
+
+.aurora-blob-1 {
+  top: -10%;
+  left: 10%;
+  background: radial-gradient(circle, #0064ff, transparent 70%);
+  animation: aurora-drift-1 18s ease-in-out infinite;
+}
+
+.aurora-blob-2 {
+  top: 20%;
+  right: 5%;
+  background: radial-gradient(circle, #7bd6ff, transparent 70%);
+  animation: aurora-drift-2 22s ease-in-out infinite;
+}
+
+.aurora-blob-3 {
+  bottom: -15%;
+  left: 30%;
+  background: radial-gradient(circle, #a389ff, transparent 70%);
+  animation: aurora-drift-3 26s ease-in-out infinite;
+}
+
+@keyframes aurora-drift-1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(8%, 6%) scale(1.15); }
+}
+
+@keyframes aurora-drift-2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-10%, 8%) scale(0.9); }
+}
+
+@keyframes aurora-drift-3 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(6%, -10%) scale(1.1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aurora-blob {
+    animation: none;
+  }
+}
+
+/* Lenis smooth scroll */
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
