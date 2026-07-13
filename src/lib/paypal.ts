@@ -38,21 +38,14 @@ export interface PayPalSubscriptionPlan {
   interval: 'MONTH' | 'YEAR';
 }
 
-// ── 예시 상품 목록 — 여기를 수정하세요 ──
+// ── 세일즈스코어 상품 (토스는 KRW, 페이팔은 해외 결제용 USD) ──
 
 export const PRODUCTS: PayPalProduct[] = [
   {
-    id: 'connect-ai-basic',
-    name: 'Connect AI Basic',
-    description: 'Neural interface basic access — single user license',
-    price: '29.99',
-    currency: 'USD',
-  },
-  {
-    id: 'connect-ai-pro',
-    name: 'Connect AI Pro',
-    description: 'Full neural-AI interface access with real-time cognitive mapping',
-    price: '99.99',
+    id: 'sellscore-report',
+    name: 'SellScore Full Report',
+    description: '설득 전환 지수 전체 리포트 — 10개 프레임워크 상세 진단 + 수정 프롬프트',
+    price: '6.90',
     currency: 'USD',
   },
 ];

@@ -1,12 +1,14 @@
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Section, Em } from './Section';
 import { Icon, IconBadge } from './Icon';
 import { BarChart } from '../charts/BarChart';
 import { RadarChart } from '../charts/RadarChart';
 import { AlgorithmFlow } from './AlgorithmFlow';
 import { FloatingFormulaOrb } from './FloatingFormulaOrb';
+import { VideoBackground } from './VideoBackground';
 import { LOADING_FRAMEWORK_NAMES } from '../../config/sellscore';
+import { useSeo } from '../../hooks/useSeo';
 import type { ComponentProps } from 'react';
 
 type IconName = ComponentProps<typeof Icon>['name'];
@@ -26,10 +28,25 @@ const GRADE_TABLE: { grade: string; range: string; pct: number; color: string; b
   { grade: 'D', range: '45점 미만', pct: 45, color: 'text-rose-300', bar: 'bg-rose-400' },
 ];
 
-const STANDARDS: { icon: IconName; name: string; desc: string }[] = [
-  { icon: 'shield', name: 'WCAG 2.2', desc: '색상 대비, 최소 폰트 크기 등 접근성 기준' },
-  { icon: 'search', name: 'Google Search Essentials', desc: '검색 크롤링·색인 공식 가이드' },
-  { icon: 'check', name: '네이버 서치어드바이저', desc: '한국 검색 환경 최적화 가이드' },
+const STANDARDS: { icon: IconName; name: string; desc: string; url: string }[] = [
+  {
+    icon: 'shield',
+    name: 'WCAG 2.2',
+    desc: '색상 대비, 최소 폰트 크기 등 접근성 기준',
+    url: 'https://www.w3.org/TR/WCAG22/',
+  },
+  {
+    icon: 'search',
+    name: 'Google Search Essentials',
+    desc: '검색 크롤링·색인 공식 가이드',
+    url: 'https://developers.google.com/search/docs/essentials',
+  },
+  {
+    icon: 'check',
+    name: '네이버 서치어드바이저',
+    desc: '한국 검색 환경 최적화 가이드',
+    url: 'https://searchadvisor.naver.com/',
+  },
 ];
 
 const SAMPLE_FRAMEWORK_SCORES = [6.7, 3.7, 7.8, 8.6, 4.1, 3.8, 6.0, 7.8, 6.7, 5.4];
@@ -50,8 +67,20 @@ const FRAMEWORK_DETAILS: { focus: string; weight: number }[] = [
 const SEGMENT_COLORS = ['#0064ff', '#5b9bff', '#7bd6ff', '#a389ff', '#00c2a8'];
 
 export function MethodologyPage() {
-  const navigate = useNavigate();
-  const goDiagnose = () => navigate('/diagnose');
+  useSeo({
+    title: '채점 방법론 — 설득 전환 지수는 어떻게 계산되나요? | 세일즈스코어',
+    description:
+      '10개 설득 프레임워크 교차 채점, 4단계 처리 과정, S~D 등급 기준까지 — 세일즈스코어 점수 산출 방식을 투명하게 공개합니다.',
+    path: '/methodology',
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      headline: '설득 전환 지수는 어떻게 계산되나요?',
+      description:
+        '10개 설득 프레임워크 교차 채점, 4단계 처리 과정, S~D 등급 기준까지 — 세일즈스코어 점수 산출 방식을 투명하게 공개합니다.',
+      author: { '@type': 'Organization', name: '세일즈스코어' },
+    },
+  });
 
   const barItems = LOADING_FRAMEWORK_NAMES.map((name, i) => ({
     label: name,
@@ -67,7 +96,8 @@ export function MethodologyPage() {
   return (
     <div>
       {/* ══════════ HERO ══════════ */}
-      <section className="relative min-h-[56dvh] sm:min-h-[62dvh] flex flex-col items-center justify-center px-6 pt-28 pb-16 sm:pb-20 text-center overflow-hidden">
+      <section className="relative min-h-[100dvh] flex flex-col items-center justify-center px-6 text-center overflow-hidden">
+        <VideoBackground videoUrl="/methodology-bg.mp4" overlay="strong" speed={0.5} />
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
@@ -105,6 +135,16 @@ export function MethodologyPage() {
               </span>
             ))}
           </div>
+          <Link
+            to="/diagnose"
+            className="inline-block h-12 px-8 mt-9 rounded-full font-semibold text-[14px] text-white no-underline transition-transform active:scale-[0.97] hover:brightness-110"
+            style={{
+              background: 'linear-gradient(135deg, #0064ff, #4f8bff)',
+              boxShadow: '0 8px 24px -8px rgba(0,100,255,0.55)',
+            }}
+          >
+            내 사이트 점수 확인하기 →
+          </Link>
         </motion.div>
       </section>
 
@@ -124,7 +164,7 @@ export function MethodologyPage() {
           </>
         }
       >
-        <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] gap-8 md:gap-12 items-center max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] gap-8 md:gap-12 items-center max-w-5xl mx-auto">
           <div className="flex justify-center shrink-0">
             <FloatingFormulaOrb size={220} />
           </div>
@@ -184,30 +224,32 @@ export function MethodologyPage() {
           </>
         }
       >
-        <div className="max-w-4xl mx-auto rounded-3xl border border-white/10 overflow-hidden">
-          <div className="hidden sm:grid grid-cols-[1fr_1.3fr_auto] gap-4 px-6 py-3 bg-white/[0.04] text-white/40 text-[11px] font-semibold tracking-[0.08em] uppercase">
+        <div className="max-w-5xl mx-auto rounded-3xl border border-white/15 overflow-hidden">
+          <div className="hidden sm:grid grid-cols-[1fr_1.3fr_auto] gap-4 px-6 py-3 bg-white/[0.06] text-white/50 text-[11px] font-semibold tracking-[0.08em] uppercase divide-x divide-white/10">
             <span>프레임워크</span>
-            <span>측정 초점</span>
-            <span className="text-right">상대 비중</span>
+            <span className="pl-4">측정 초점</span>
+            <span className="text-right pl-4">상대 비중</span>
           </div>
           {weightedItems.map((w, i) => (
             <motion.div
               key={w.name}
-              className="grid grid-cols-1 sm:grid-cols-[1fr_1.3fr_auto] gap-1.5 sm:gap-4 px-6 py-4 border-t border-white/[0.06] items-center"
+              className="grid grid-cols-1 sm:grid-cols-[1fr_1.3fr_auto] gap-1.5 sm:gap-0 px-0 py-0 border-t border-white/15 sm:divide-x sm:divide-white/10 items-stretch"
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: i * 0.03 }}
             >
-              <span className="text-white text-[13px] font-bold flex items-center gap-2">
+              <span className="text-white text-[13px] font-bold flex items-center gap-2 px-6 py-4">
                 <span
                   className="w-2 h-2 rounded-full shrink-0"
                   style={{ background: SEGMENT_COLORS[i % SEGMENT_COLORS.length] }}
                 />
                 {w.name}
               </span>
-              <span className="text-white/50 text-[12px] leading-relaxed">{w.focus}</span>
-              <span className="flex sm:justify-end">
+              <span className="text-white/50 text-[12px] leading-relaxed flex items-center px-6 py-4">
+                {w.focus}
+              </span>
+              <span className="flex items-center sm:justify-end px-6 py-4">
                 <span className="w-20 h-1.5 rounded-full bg-white/[0.06] overflow-hidden">
                   <span
                     className="block h-full rounded-full"
@@ -238,7 +280,7 @@ export function MethodologyPage() {
           </>
         }
       >
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center border border-white/10 rounded-3xl p-6 sm:p-8 bg-white/[0.02] max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center border border-white/10 rounded-3xl p-6 sm:p-8 bg-white/[0.02] max-w-5xl mx-auto">
           <BarChart items={barItems} />
           <RadarChart items={barItems} />
         </div>
@@ -253,7 +295,7 @@ export function MethodologyPage() {
           </>
         }
       >
-        <div className="max-w-md mx-auto">
+        <div className="max-w-lg mx-auto">
           <div className="h-4 rounded-full overflow-hidden flex w-full mb-3">
             {[...GRADE_TABLE].reverse().map((row) => (
               <motion.div
@@ -304,20 +346,26 @@ export function MethodologyPage() {
           </>
         }
       >
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-4xl mx-auto">
           {STANDARDS.map((s, i) => (
-            <motion.div
+            <motion.a
               key={s.name}
-              className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-left"
+              href={s.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-left no-underline block hover:border-white/20 hover:bg-white/[0.04] transition-colors"
               initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.08 }}
             >
               <IconBadge name={s.icon} tint={(['blue', 'emerald', 'amber'] as const)[i % 3]} size="sm" />
-              <p className="text-white font-bold text-[14px] mt-3 mb-1">{s.name}</p>
+              <p className="text-white font-bold text-[14px] mt-3 mb-1 flex items-center gap-1.5">
+                {s.name}
+                <span className="text-white/25 text-[12px]" aria-hidden="true">↗</span>
+              </p>
               <p className="text-white/45 text-[12px] leading-relaxed">{s.desc}</p>
-            </motion.div>
+            </motion.a>
           ))}
         </div>
       </Section>
@@ -339,23 +387,27 @@ export function MethodologyPage() {
         }
       >
         <div className="text-center">
-          <button
-            onClick={goDiagnose}
-            className="h-14 px-9 rounded-full font-semibold text-[15px] text-white border-none cursor-pointer whitespace-nowrap transition-transform active:scale-[0.97] hover:brightness-110"
+          <Link
+            to="/diagnose"
+            className="inline-block h-14 px-9 rounded-full font-semibold text-[15px] text-white no-underline whitespace-nowrap transition-transform active:scale-[0.97] hover:brightness-110"
             style={{
               background: 'linear-gradient(135deg, #0064ff, #4f8bff)',
               boxShadow: '0 8px 24px -8px rgba(0,100,255,0.55)',
             }}
           >
             내 사이트 점수 확인하기 →
-          </button>
+          </Link>
         </div>
       </Section>
 
       <footer className="px-6 py-10 border-t border-white/[0.06] text-center">
+        <p className="text-white/25 text-[11px] max-w-md mx-auto leading-relaxed mb-3">
+          채점의 세부 가중치와 알고리즘 로직은 비공개로 유지됩니다. 정확한 공식을 공개하면 그
+          기준에 맞춰 문구만 흉내 내는 사이트가 생기기 때문입니다.
+        </p>
         <p className="text-white/25 text-[11px] max-w-md mx-auto leading-relaxed">
-          채점의 세부 가중치와 알고리즘 로직은 공정성을 위해 비공개로 유지됩니다. 이 페이지는
-          진단 과정과 근거 기준을 설명하기 위한 자료입니다.
+          이 진단은 사이트의 구조·카피·검색 최적화 요소를 봅니다. 실제 매출이나 방문자 전환
+          데이터를 직접 측정하지는 않습니다.
         </p>
       </footer>
     </div>

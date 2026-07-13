@@ -8,6 +8,7 @@ import { BlogPage } from './components/sellscore/BlogPage';
 import { BlogPostPage } from './components/sellscore/BlogPostPage';
 import { HistoryPage } from './components/sellscore/HistoryPage';
 import { SavedReportPage } from './components/sellscore/SavedReportPage';
+import { NotFoundPage } from './components/sellscore/NotFoundPage';
 
 export default function App() {
   return (
@@ -23,6 +24,7 @@ export default function App() {
           <Route path="/methodology" element={<MethodologyPage />} />
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/blog/:slug" element={<BlogPostPage />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </div>
     </BrowserRouter>

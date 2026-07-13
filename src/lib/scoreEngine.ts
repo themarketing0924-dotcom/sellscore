@@ -471,15 +471,26 @@ const FRAMEWORK_NARRATIVES: Record<string, FrameworkNarrative> = {
 
 function buildFixPrompt(
   tpl: FrameworkTemplate['low'] | FrameworkTemplate['high'],
-  domain: string
+  domain: string,
+  koreanName: string
 ): FixPrompt {
+  const current = tpl.fixCurrent.replace(/{domain}/g, domain);
+  const target = tpl.fixTarget.replace(/{domain}/g, domain);
   return {
-    current: tpl.fixCurrent.replace(/{domain}/g, domain),
-    target: tpl.fixTarget.replace(/{domain}/g, domain),
+    current,
+    target,
     alternatives: tpl.alternatives,
-    copyPasteInstruction: `[${domain} 수정 지시문] 현재: "${tpl.fixCurrent}" → 목표: "${tpl.fixTarget}". 아래 대안 중 하나를 선택해 실제 카피로 작성해줘: ${tpl.alternatives.join(
-      ' / '
-    )}`,
+    // Claude Code · Cursor · Codex에 그대로 붙여넣는 실행 프롬프트.
+    // 범위를 명시해 다른 부분을 건드리지 않도록 하는 게 핵심이다.
+    copyPasteInstruction: [
+      `내 홈페이지(${domain})에서 "${koreanName}"에 해당하는 부분만 찾아서 수정해줘. 다른 섹션·레이아웃·스타일은 절대 건드리지 마.`,
+      '',
+      `- 현재: "${current}"`,
+      `- 목표: "${target}"`,
+      `- 참고 대안(택1 또는 참고해 재작성): ${tpl.alternatives.join(' / ')}`,
+      '',
+      '작업 범위: 위 문구가 들어있는 요소의 텍스트(그리고 필요하면 강조 스타일)만 바꾼다. 그 외 파일·컴포넌트는 수정하지 않는다.',
+    ].join('\n'),
   };
 }
 
@@ -542,7 +553,7 @@ export function generateReport(
       currentState: tier.currentState.replace(/{domain}/g, domain),
       evidence: tpl.evidence,
       flaw: tier.flaw.replace(/{domain}/g, domain),
-      fixPrompt: buildFixPrompt(tier, domain),
+      fixPrompt: buildFixPrompt(tier, domain, tpl.koreanName),
       technique: narrative.technique,
       narrative: isStrength ? narrative.praise : narrative.risk,
       isStrength,

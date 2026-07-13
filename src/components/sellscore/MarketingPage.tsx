@@ -6,6 +6,7 @@ import { VideoBackground } from './VideoBackground';
 import { Section, HeadlineLine, Em, FaqAccordion } from './Section';
 import { HeroScoreCard } from './HeroScoreCard';
 import { SiteFooter } from './SiteFooter';
+import { useSeo } from '../../hooks/useSeo';
 import type { ComponentProps, ReactNode } from 'react';
 
 type IconName = ComponentProps<typeof Icon>['name'];
@@ -202,6 +203,13 @@ const FAQ: { q: string; a: ReactNode }[] = [
 ];
 
 export function MarketingPage({ onStart }: MarketingPageProps) {
+  useSeo({
+    title: '세일즈스코어 — 당신 사이트, 팔리는 구조입니까?',
+    description:
+      '10초 만에 우리 사이트의 설득 전환 지수를 무료로 진단하고, Claude Code·Cursor·GPT에 바로 붙여넣는 실행 프롬프트를 받아보세요.',
+    path: '/',
+  });
+
   return (
     <div className="relative">
       {/* ══════════ HERO ══════════ */}

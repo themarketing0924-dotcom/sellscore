@@ -4,6 +4,7 @@ import { BRAND, LOADING_FRAMEWORK_NAMES } from '../../config/sellscore';
 import { Icon, IconBadge } from './Icon';
 import { Section, HeadlineLine, Em, FaqAccordion } from './Section';
 import { VideoBackground } from './VideoBackground';
+import { useSeo } from '../../hooks/useSeo';
 import type { ComponentProps, ReactNode } from 'react';
 
 type IconName = ComponentProps<typeof Icon>['name'];
@@ -190,6 +191,13 @@ const FAQ_ITEMS: { q: string; a: ReactNode }[] = [
 export function GuidePage() {
   const navigate = useNavigate();
   const goDiagnose = () => navigate('/diagnose');
+
+  useSeo({
+    title: '무료 진단 가이드 — 세일즈스코어가 보는 것들 | 세일즈스코어',
+    description:
+      '사이트는 만들었는데 주문이 안 온다면 이유가 있습니다. 세일즈스코어 무료 진단이 무엇을 보고, 무엇을 알려주는지 확인하세요.',
+    path: '/guide',
+  });
 
   return (
     <div>

@@ -7,8 +7,11 @@ import { Icon } from './Icon';
 import { BlogBanner } from './BlogBanner';
 import { SiteFooter } from './SiteFooter';
 
+const PAGE_SIZE = 9;
+
 export function BlogPage() {
   const [active, setActive] = useState('all');
+  const [page, setPage] = useState(1);
 
   useSeo({
     title: '블로그 | 세일즈스코어 — 전환율, 카피, SEO 실전 가이드',
@@ -16,7 +19,21 @@ export function BlogPage() {
       '랜딩페이지 진단, 카피라이팅, 전환율 개선, SEO/AEO, 온라인 부업·재테크까지 — 사이트를 파는 구조로 만드는 실전 가이드.',
   });
 
-  const posts = active === 'all' ? BLOG_POSTS : BLOG_POSTS.filter((p) => p.category === active);
+  const allPosts = active === 'all' ? BLOG_POSTS : BLOG_POSTS.filter((p) => p.category === active);
+  const totalPages = Math.max(1, Math.ceil(allPosts.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const posts = allPosts.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
+  const changeCategory = (id: string) => {
+    setActive(id);
+    setPage(1);
+  };
+
+  const goToPage = (p: number) => {
+    if (p < 1 || p > totalPages) return;
+    setPage(p);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
     <>
@@ -56,7 +73,7 @@ export function BlogPage() {
         {BLOG_CATEGORIES.map((c) => (
           <button
             key={c.id}
-            onClick={() => setActive(c.id)}
+            onClick={() => changeCategory(c.id)}
             className={`h-9 px-4 rounded-full text-[13px] font-medium border cursor-pointer transition-colors ${
               active === c.id
                 ? 'bg-[#0064ff] border-[#0064ff] text-white'
@@ -129,6 +146,45 @@ export function BlogPage() {
           );
         })}
       </div>
+
+      {/* 페이지네이션 */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-2 mt-14">
+          <button
+            onClick={() => goToPage(currentPage - 1)}
+            disabled={currentPage === 1}
+            aria-label="이전 페이지"
+            className="w-10 h-10 rounded-full border border-white/10 bg-white/[0.04] text-white/60 flex items-center justify-center cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed hover:bg-white/[0.08] transition-colors"
+          >
+            ←
+          </button>
+          {Array.from({ length: totalPages }).map((_, i) => {
+            const p = i + 1;
+            return (
+              <button
+                key={p}
+                onClick={() => goToPage(p)}
+                aria-current={p === currentPage ? 'page' : undefined}
+                className={`w-10 h-10 rounded-full text-[14px] font-bold cursor-pointer transition-colors ${
+                  p === currentPage
+                    ? 'bg-[#0064ff] text-white'
+                    : 'bg-white/[0.04] border border-white/10 text-white/60 hover:bg-white/[0.08]'
+                }`}
+              >
+                {p}
+              </button>
+            );
+          })}
+          <button
+            onClick={() => goToPage(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            aria-label="다음 페이지"
+            className="w-10 h-10 rounded-full border border-white/10 bg-white/[0.04] text-white/60 flex items-center justify-center cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed hover:bg-white/[0.08] transition-colors"
+          >
+            →
+          </button>
+        </div>
+      )}
     </div>
     <SiteFooter />
     </>

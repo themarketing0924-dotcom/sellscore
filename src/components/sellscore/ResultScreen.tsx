@@ -4,12 +4,14 @@ import type { DiagnosisReport, FrameworkResult } from '../../lib/scoreEngine';
 import { BarChart } from '../charts/BarChart';
 import { RadarChart } from '../charts/RadarChart';
 import TossCheckoutButton from '../payment/TossCheckoutButton';
+import PayPalCheckoutButton from '../payment/PayPalCheckoutButton';
 import { AuthModal } from '../AuthModal';
 import { ShareBannerModal } from './ShareBannerModal';
 import { useAuth } from '../../contexts/AuthContext';
 import { saveReport } from '../../lib/firestore';
 import { BRAND, PRICING } from '../../config/sellscore';
 import { TOSS_PRODUCTS } from '../../lib/toss';
+import { PRODUCTS as PAYPAL_PRODUCTS } from '../../lib/paypal';
 import { Icon, IconBadge } from './Icon';
 import { useCountUp } from '../../hooks/useCountUp';
 
@@ -55,6 +57,7 @@ export function ResultScreen({ report, answers, onRestart }: ResultScreenProps) 
   const [paidUnlocked, setPaidUnlocked] = useState(false);
   const [referred, setReferred] = useState(false);
   const reportProduct = TOSS_PRODUCTS.find((p) => p.id === PRICING.report.id)!;
+  const paypalProduct = PAYPAL_PRODUCTS.find((p) => p.id === PRICING.report.id)!;
   const animatedScore = useCountUp(report.overallScore, 1100);
   const grade = GRADE_STYLE[report.grade];
   const signedUp = !!user;
@@ -364,6 +367,21 @@ export function ResultScreen({ report, answers, onRestart }: ResultScreenProps) 
                   product={reportProduct}
                   onError={(err) => console.error('[Toss] 결제 오류:', err)}
                 />
+
+                <div className="flex items-center gap-3 my-1">
+                  <span className="flex-1 h-px bg-white/10" />
+                  <span className="text-white/30 text-[11px] font-medium">또는</span>
+                  <span className="flex-1 h-px bg-white/10" />
+                </div>
+
+                <PayPalCheckoutButton
+                  product={paypalProduct}
+                  onSuccess={() => setPaidUnlocked(true)}
+                  onError={(err) => console.error('[PayPal] 결제 오류:', err)}
+                />
+                <p className="text-white/25 text-[11px]">
+                  해외 카드는 페이팔로 ${paypalProduct.price} 결제하실 수 있습니다.
+                </p>
               </div>
               <button
                 onClick={() => setPaidUnlocked(true)}
@@ -469,9 +487,20 @@ function PromptCard({
   open: boolean;
   onLockedClick?: () => void;
 }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigator.clipboard.writeText(framework.fixPrompt.copyPasteInstruction);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1800);
+  };
+
   return (
     <motion.div
-      className="relative border border-white/10 rounded-3xl p-6 overflow-hidden bg-white/[0.02]"
+      className={`relative rounded-3xl p-6 overflow-hidden bg-white/[0.02] border-2 ${
+        open ? 'border-white/10' : 'border-white/20'
+      }`}
       initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
@@ -515,7 +544,23 @@ function PromptCard({
               </li>
             ))}
           </ul>
-          <p className="text-white/40 text-[13px] font-mono bg-black/40 rounded-lg p-3 leading-relaxed">
+          <div className="flex items-center justify-between mb-2 mt-1">
+            <span className="text-white/40 text-[11px] font-bold tracking-[0.08em] uppercase">
+              Claude · Cursor · Codex에 붙여넣기
+            </span>
+            <button
+              onClick={handleCopy}
+              className={`flex items-center gap-1.5 text-[12px] font-bold rounded-full px-3 py-1.5 border cursor-pointer transition-colors ${
+                copied
+                  ? 'text-emerald-300 bg-emerald-400/10 border-emerald-400/25'
+                  : 'text-[#7bd6ff] bg-[#0064ff]/10 border-[#0064ff]/25 hover:bg-[#0064ff]/20'
+              }`}
+            >
+              {copied && <Icon name="check" size={12} />}
+              {copied ? '복사됨' : '복사하기'}
+            </button>
+          </div>
+          <p className="text-white/60 text-[13px] font-mono bg-black/40 border border-white/[0.06] rounded-lg p-3.5 leading-relaxed whitespace-pre-line">
             {framework.fixPrompt.copyPasteInstruction}
           </p>
         </div>
@@ -525,10 +570,16 @@ function PromptCard({
         <button
           onClick={onLockedClick}
           disabled={!onLockedClick}
-          className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-[2px] border-none cursor-pointer disabled:cursor-default p-0"
+          className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black/60 backdrop-blur-[3px] border-none cursor-pointer disabled:cursor-default p-0"
           aria-label="잠긴 프롬프트"
         >
-          <IconBadge name="lock" tint="neutral" size="lg" />
+          <div
+            className="w-20 h-20 rounded-3xl bg-white/[0.08] border-2 border-white/30 flex items-center justify-center"
+            style={{ boxShadow: '0 0 32px rgba(255,255,255,0.12)' }}
+          >
+            <Icon name="lock" size={36} className="text-white" />
+          </div>
+          <span className="text-white text-[14px] font-bold">잠김 · 결제 후 열람</span>
         </button>
       )}
     </motion.div>

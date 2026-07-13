@@ -1,0 +1,57 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isOwner(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+
+    match /users/{uid} {
+      allow read, write: if isOwner(uid);
+    }
+
+    match /orders/{orderId} {
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      allow get, list, update: if request.auth != null && resource.data.userId == request.auth.uid;
+      allow delete: if false;
+    }
+
+    match /subscriptions/{subId} {
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      allow get, list, update: if request.auth != null && resource.data.userId == request.auth.uid;
+      allow delete: if false;
+    }
+
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // 공유 링크(/diagnose/report/:id)로 누구나 단건 조회 가능, 목록 열람("내 리포트")은 본인 것만.
+    match /reports/{reportId} {
+      allow get: if true;
+      allow list: if request.auth != null && resource.data.userId == request.auth.uid;
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if false;
+    }
+
+    // 코드→소유자 매핑은 초대 링크 진입 시 비로그인 상태에서도 조회 가능해야 한다.
+    match /referralCodes/{code} {
+      allow get: if true;
+      allow list: if false;
+      allow create: if request.auth != null && request.resource.data.ownerUid == request.auth.uid;
+      allow update, delete: if false;
+    }
+
+    // 문서 ID = 초대받은 사람의 uid. 본인 또는 초대 코드 소유자만 열람 가능.
+    match /referrals/{referredUid} {
+      allow get: if request.auth != null &&
+        (request.auth.uid == referredUid || resource.data.ownerUid == request.auth.uid);
+      allow list: if request.auth != null && resource.data.ownerUid == request.auth.uid;
+      allow create: if request.auth != null &&
+        request.auth.uid == referredUid && request.resource.data.referredUid == referredUid;
+      allow update, delete: if false;
+    }
+  }
+}

@@ -9,8 +9,12 @@ import { useEffect } from 'react';
 interface SeoOptions {
   title: string;
   description: string;
+  /** 절대경로 없이 예: "/methodology" — 자동으로 https://sellscore-app.web.app 붙인다 */
+  path?: string;
   jsonLd?: Record<string, unknown>;
 }
+
+const SITE_ORIGIN = 'https://sellscore-app.web.app';
 
 function setMetaTag(name: string, content: string, attr: 'name' | 'property' = 'name') {
   let tag = document.querySelector(`meta[${attr}="${name}"]`);
@@ -22,7 +26,17 @@ function setMetaTag(name: string, content: string, attr: 'name' | 'property' = '
   tag.setAttribute('content', content);
 }
 
-export function useSeo({ title, description, jsonLd }: SeoOptions) {
+function setCanonical(href: string) {
+  let link = document.querySelector('link[rel="canonical"]');
+  if (!link) {
+    link = document.createElement('link');
+    link.setAttribute('rel', 'canonical');
+    document.head.appendChild(link);
+  }
+  link.setAttribute('href', href);
+}
+
+export function useSeo({ title, description, path, jsonLd }: SeoOptions) {
   useEffect(() => {
     const prevTitle = document.title;
     document.title = title;
@@ -30,6 +44,11 @@ export function useSeo({ title, description, jsonLd }: SeoOptions) {
     setMetaTag('description', description);
     setMetaTag('og:title', title, 'property');
     setMetaTag('og:description', description, 'property');
+
+    const prevCanonical = document.querySelector('link[rel="canonical"]')?.getAttribute('href') ?? null;
+    if (path) {
+      setCanonical(`${SITE_ORIGIN}${path}`);
+    }
 
     let script: HTMLScriptElement | null = null;
     if (jsonLd) {
@@ -42,6 +61,7 @@ export function useSeo({ title, description, jsonLd }: SeoOptions) {
     return () => {
       document.title = prevTitle;
       if (script) document.head.removeChild(script);
+      if (path && prevCanonical) setCanonical(prevCanonical);
     };
-  }, [title, description, jsonLd]);
+  }, [title, description, path, jsonLd]);
 }

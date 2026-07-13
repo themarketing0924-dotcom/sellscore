@@ -5,7 +5,11 @@
 // videoUrl이 없으면 그라데이션만 남아 자연스럽게 저하된다.
 //
 // iOS에서 자동재생이 되려면 muted + playsInline + autoPlay가 전부 있어야 한다.
+// 영상 로드/재생이 실패하면(네트워크, 코덱, 자동재생 차단 등) 조용히
+// 오로라 그라데이션으로 대체해서 "빈 화면"이 뜨는 상황 자체를 없앤다.
 // ============================================================
+
+import { useState } from 'react';
 
 interface VideoBackgroundProps {
   videoUrl?: string;
@@ -14,6 +18,8 @@ interface VideoBackgroundProps {
   /** 텍스트 가독성을 위한 오버레이 강도 */
   overlay?: 'none' | 'soft' | 'strong';
   poster?: string;
+  /** 재생 속도 배율 (1 = 원본 속도, 0.5 = 절반 속도로 슬로우) */
+  speed?: number;
 }
 
 const OVERLAY_STYLE: Record<NonNullable<VideoBackgroundProps['overlay']>, string> = {
@@ -22,8 +28,15 @@ const OVERLAY_STYLE: Record<NonNullable<VideoBackgroundProps['overlay']>, string
   strong: 'linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.75) 55%, #000 100%)',
 };
 
-export function VideoBackground({ videoUrl, variant, overlay = 'soft', poster }: VideoBackgroundProps) {
-  const useAurora = variant === 'aurora' || !videoUrl;
+export function VideoBackground({
+  videoUrl,
+  variant,
+  overlay = 'soft',
+  poster,
+  speed = 1,
+}: VideoBackgroundProps) {
+  const [errored, setErrored] = useState(false);
+  const useAurora = variant === 'aurora' || !videoUrl || errored;
 
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -35,6 +48,7 @@ export function VideoBackground({ videoUrl, variant, overlay = 'soft', poster }:
         </div>
       ) : (
         <video
+          key={videoUrl}
           src={videoUrl}
           poster={poster}
           className="absolute inset-0 w-full h-full object-cover"
@@ -42,7 +56,18 @@ export function VideoBackground({ videoUrl, variant, overlay = 'soft', poster }:
           muted
           loop
           playsInline
-          preload="metadata"
+          preload="auto"
+          onError={() => setErrored(true)}
+          ref={(el) => {
+            if (!el) return;
+            el.playbackRate = speed;
+            // 자동재생이 브라우저 정책으로 막히면(promise reject) 조용히 아로라로 대체한다.
+            const playPromise = el.play();
+            if (playPromise) playPromise.catch(() => setErrored(true));
+          }}
+          onLoadedMetadata={(e) => {
+            e.currentTarget.playbackRate = speed;
+          }}
         />
       )}
       {overlay !== 'none' && (
