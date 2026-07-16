@@ -47,13 +47,13 @@ export function Section({
 }) {
   const isCenter = align === 'center';
   return (
-    <section className="relative px-6 py-20 sm:py-24 md:py-28">
+    <section className="relative px-6 py-28 sm:py-36 md:py-48">
       <motion.div
-        className={`mb-12 sm:mb-14 max-w-2xl ${isCenter ? 'text-center mx-auto' : 'text-left'}`}
-        initial={{ opacity: 0, y: 16 }}
+        className={`mb-16 sm:mb-20 max-w-2xl ${isCenter ? 'text-center mx-auto' : 'text-left'}`}
+        initial={{ opacity: 0, y: 60 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
+        transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
       >
         {icon && (
           <div className="w-14 h-14 rounded-2xl bg-[#0064ff]/10 border border-[#0064ff]/20 flex items-center justify-center mx-auto mb-6">
@@ -64,13 +64,13 @@ export function Section({
           {eyebrow}
         </p>
         <h2
-          className="text-white font-black tracking-[-0.035em] leading-[1.12] mb-4"
+          className="text-white font-bold tracking-tight leading-[1.12] mb-5"
           style={{ fontSize: 'clamp(30px, 6.2vw, 58px)' }}
         >
           {heading}
         </h2>
         {sub && (
-          <p className="text-white/60 text-[17px] sm:text-[19px] leading-[1.7] max-w-lg mx-auto font-medium">
+          <p className="text-[#86868b] text-[17px] sm:text-[19px] leading-[1.7] max-w-lg mx-auto font-medium">
             {sub}
           </p>
         )}

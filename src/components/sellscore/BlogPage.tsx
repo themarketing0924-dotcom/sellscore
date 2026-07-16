@@ -48,24 +48,32 @@ export function BlogPage() {
       </nav>
 
       <motion.div
-        className="text-center mb-12"
+        className="relative text-center mb-12 py-32 px-6 rounded-3xl overflow-hidden border border-white/10"
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <p className="text-white/45 text-[12px] tracking-[0.3em] uppercase mb-5 font-semibold">
-          BLOG
-        </p>
-        <h1
-          className="text-white font-bold leading-[1.2] tracking-[-0.03em] mb-4"
-          style={{ fontSize: 'clamp(26px, 5vw, 44px)' }}
-        >
-          <span className="block mx-auto max-w-[9em]">사이트를 파는 구조로</span>
-          <span className="block gradient-text-static">바꾸는 실전 가이드</span>
-        </h1>
-        <p className="text-white/50 text-[14px] sm:text-[15px] max-w-lg mx-auto">
-          진단 리포트에서 자주 나오는 질문을 글로 정리했습니다.
-        </p>
+        <div 
+          className="absolute inset-0 z-0 opacity-30 bg-cover bg-center"
+          style={{ backgroundImage: "url('/guide-bg.jpg')" }}
+        />
+        <div className="absolute inset-0 z-0 bg-gradient-to-t from-black/90 via-black/40 to-black/20" />
+        
+        <div className="relative z-10">
+          <p className="text-[#86868b] text-[12px] tracking-[0.3em] uppercase mb-5 font-bold">
+            BLOG
+          </p>
+          <h1
+            className="text-white font-bold leading-[1.2] tracking-tight mb-4"
+            style={{ fontSize: 'clamp(26px, 5vw, 44px)' }}
+          >
+            <span className="block mx-auto max-w-[9em]">사이트를 파는 구조로</span>
+            <span className="block gradient-text-static">바꾸는 실전 가이드</span>
+          </h1>
+          <p className="text-[#86868b] text-[14px] sm:text-[15px] max-w-lg mx-auto font-medium">
+            진단 리포트에서 자주 나오는 질문을 글로 정리했습니다.
+          </p>
+        </div>
       </motion.div>
 
       {/* 카테고리 필터 */}

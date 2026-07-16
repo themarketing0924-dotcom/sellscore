@@ -94,6 +94,42 @@ export function ResultScreen({ report, answers, onRestart }: ResultScreenProps) 
 
   const openShare = () => setShareOpen(true);
 
+  // 리포트 CSV 다운로드 — 무료지만 회원가입이 필요한 리드 마그넷.
+  // 잠긴 티어의 프롬프트는 화면과 동일하게 잠김 표시로 내보낸다(언락 사다리 유지).
+  const handleDownloadCsv = () => {
+    if (!user) {
+      setAuthOpen(true);
+      return;
+    }
+    const isOpen = (f: FrameworkResult) =>
+      tierFree.includes(f) ||
+      tierSignup.includes(f) ||
+      (referred && tierReferral.includes(f)) ||
+      (paidUnlocked && tierPaid.includes(f));
+    const esc = (v: unknown) => '"' + String(v).replace(/"/g, '""') + '"';
+    const rows: unknown[][] = [
+      ['도메인', report.domain, '종합점수', `${report.overallScore}/100`, '등급', report.grade],
+      ['한줄 진단', report.oneLiner],
+      [],
+      ['프레임워크', '점수(0~10)', '현재 상태', '핵심 결함', '수정 프롬프트'],
+      ...allPrompts.map((f) => [
+        f.koreanName,
+        f.score,
+        f.currentState,
+        f.flaw,
+        isOpen(f) ? f.fixPrompt.copyPasteInstruction : '(잠김 — 정식 리포트에서 공개)',
+      ]),
+    ];
+    const csv = rows.map((r) => r.map(esc).join(',')).join('\r\n');
+    // BOM을 붙여야 한국어가 엑셀에서 깨지지 않는다
+    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `세일즈스코어_${report.domain}_${report.overallScore}점.csv`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  };
+
   return (
     <section className="relative min-h-[100dvh] px-4 sm:px-6 pt-28 pb-24 overflow-hidden">
       <div
@@ -141,6 +177,56 @@ export function ResultScreen({ report, answers, onRestart }: ResultScreenProps) 
             {report.oneLiner}
           </p>
         </motion.div>
+
+        {/* ── 실측 성능 (Google PageSpeed) ── */}
+        {report.performance && report.performance.score != null && (
+          <motion.div
+            className="border border-white/10 rounded-3xl p-6 sm:p-8 mb-10 bg-white/[0.02]"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <p className="text-white/55 text-[13px] tracking-[0.18em] uppercase mb-1.5 font-bold text-center sm:text-left">
+              실측 성능 · Google PageSpeed
+            </p>
+            <p className="text-white/35 text-[12px] mb-6 text-center sm:text-left">
+              추정치가 아니라 구글이 직접 측정한 모바일 기준 실측값입니다
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <PerfStat
+                label="성능 점수"
+                value={`${report.performance.score}`}
+                unit="/100"
+                level={report.performance.score >= 90 ? 'good' : report.performance.score >= 50 ? 'warn' : 'bad'}
+              />
+              {report.performance.lcpMs != null && (
+                <PerfStat
+                  label="최대 콘텐츠 표시(LCP)"
+                  value={(report.performance.lcpMs / 1000).toFixed(1)}
+                  unit="초"
+                  level={report.performance.lcpMs <= 2500 ? 'good' : report.performance.lcpMs <= 4000 ? 'warn' : 'bad'}
+                />
+              )}
+              {report.performance.cls != null && (
+                <PerfStat
+                  label="화면 흔들림(CLS)"
+                  value={report.performance.cls.toFixed(2)}
+                  unit=""
+                  level={report.performance.cls <= 0.1 ? 'good' : report.performance.cls <= 0.25 ? 'warn' : 'bad'}
+                />
+              )}
+              {report.performance.fcpMs != null && (
+                <PerfStat
+                  label="첫 콘텐츠 표시(FCP)"
+                  value={(report.performance.fcpMs / 1000).toFixed(1)}
+                  unit="초"
+                  level={report.performance.fcpMs <= 1800 ? 'good' : report.performance.fcpMs <= 3000 ? 'warn' : 'bad'}
+                />
+              )}
+            </div>
+          </motion.div>
+        )}
 
         {/* ── 트래픽 스냅샷 ── */}
         <motion.div
@@ -251,6 +337,22 @@ export function ResultScreen({ report, answers, onRestart }: ResultScreenProps) 
               </div>
             </motion.div>
           ))}
+        </div>
+
+        {/* ── 리포트 다운로드 (무료 · 회원가입 리드 마그넷) ── */}
+        <div className="flex flex-col items-center gap-2 mb-14">
+          <button
+            onClick={handleDownloadCsv}
+            className="inline-flex items-center justify-center gap-2 h-12 px-7 rounded-full font-semibold text-[14px] text-white/90 bg-white/[0.06] border border-white/20 cursor-pointer transition-colors hover:bg-white/[0.1]"
+          >
+            <Icon name="chart" size={15} className="text-[#7bd6ff]" />
+            리포트 엑셀(CSV)로 다운로드
+          </button>
+          {!signedUp && (
+            <p className="text-white/35 text-[11px]">
+              무료 회원가입만 하면 바로 저장됩니다 · 결제 필요 없음
+            </p>
+          )}
         </div>
 
         {/* ══════════ 3. 수정할 것 — 실행 프롬프트 ══════════ */}
@@ -383,12 +485,37 @@ export function ResultScreen({ report, answers, onRestart }: ResultScreenProps) 
                   해외 카드는 페이팔로 ${paypalProduct.price} 결제하실 수 있습니다.
                 </p>
               </div>
-              <button
-                onClick={() => setPaidUnlocked(true)}
-                className="mt-5 text-white/25 text-[11px] underline bg-transparent border-none cursor-pointer"
-              >
-                (개발 미리보기) 전체 잠금 해제된 화면 보기
-              </button>
+
+              {/* 결제 전이라도 다음 행동이 계속 이어지도록 무료 사다리를 함께 보여준다 */}
+              {(!signedUp || !referred) && (
+                <div className="mt-7 pt-6 border-t border-white/[0.08] max-w-sm mx-auto flex flex-col gap-2.5">
+                  {!signedUp && (
+                    <button
+                      onClick={() => setAuthOpen(true)}
+                      className="w-full h-11 rounded-full bg-white/[0.05] border border-white/15 text-white/85 text-[13px] font-semibold cursor-pointer transition-colors hover:bg-white/[0.09]"
+                    >
+                      무료 회원가입 시 추가 분석 {SIGNUP_UNLOCK_COUNT}개가 열립니다 →
+                    </button>
+                  )}
+                  {!referred && (
+                    <button
+                      onClick={openShare}
+                      className="w-full h-11 rounded-full bg-white/[0.05] border border-white/15 text-white/85 text-[13px] font-semibold cursor-pointer transition-colors hover:bg-white/[0.09]"
+                    >
+                      친구를 초대하면 더 많은 혜택을 받을 수 있습니다 →
+                    </button>
+                  )}
+                </div>
+              )}
+
+              {import.meta.env.DEV && (
+                <button
+                  onClick={() => setPaidUnlocked(true)}
+                  className="mt-5 text-white/25 text-[11px] underline bg-transparent border-none cursor-pointer"
+                >
+                  (개발 미리보기) 전체 잠금 해제된 화면 보기
+                </button>
+              )}
             </div>
           </motion.div>
         )}
@@ -472,6 +599,34 @@ function SnapshotStat({
         <p className="text-white text-[17px] sm:text-[18px] font-black leading-tight">{value}</p>
         <p className="text-white/55 text-[13px] font-semibold">{label}</p>
       </div>
+    </div>
+  );
+}
+
+const PERF_LEVEL_STYLE = {
+  good: 'text-emerald-300',
+  warn: 'text-amber-300',
+  bad: 'text-rose-300',
+} as const;
+
+function PerfStat({
+  label,
+  value,
+  unit,
+  level,
+}: {
+  label: string;
+  value: string;
+  unit: string;
+  level: keyof typeof PERF_LEVEL_STYLE;
+}) {
+  return (
+    <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-4 text-center">
+      <p className={`text-[22px] font-black leading-tight tabular-nums ${PERF_LEVEL_STYLE[level]}`}>
+        {value}
+        <span className="text-[13px] font-semibold text-white/40 ml-0.5">{unit}</span>
+      </p>
+      <p className="text-white/50 text-[11px] font-semibold mt-1.5">{label}</p>
     </div>
   );
 }

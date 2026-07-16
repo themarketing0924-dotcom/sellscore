@@ -14,7 +14,6 @@ const NAV_LINKS = [
   { to: '/guide', label: '가이드' },
   { to: '/blog', label: '블로그' },
   { to: '/methodology', label: '채점 원리' },
-  { to: '/diagnose', label: '무료 진단' },
 ];
 
 export function SiteNavbar() {
@@ -57,8 +56,8 @@ export function SiteNavbar() {
             })}
           </div>
 
-          {/* 데스크톱 로그인 (md 이상) */}
-          <div className="hidden md:block shrink-0">
+          {/* 데스크톱 로그인 + 무료 진단 CTA (md 이상) */}
+          <div className="hidden md:flex items-center gap-5 shrink-0">
             {user ? (
               <div className="flex items-center gap-3">
                 <Link
@@ -87,6 +86,17 @@ export function SiteNavbar() {
                 로그인
               </button>
             )}
+            <Link
+              to="/diagnose"
+              className="h-9 px-4 rounded-full text-white no-underline flex items-center font-semibold whitespace-nowrap transition-transform active:scale-[0.97] hover:brightness-110"
+              style={{
+                fontSize: 14,
+                background: 'linear-gradient(135deg, #0064ff, #4f8bff)',
+                boxShadow: '0 4px 14px -4px rgba(0,100,255,0.55)',
+              }}
+            >
+              무료 진단
+            </Link>
           </div>
 
           {/* 모바일/아이패드: 햄버거 아이콘만 (md 미만) */}
@@ -127,6 +137,17 @@ export function SiteNavbar() {
               })}
 
               <div className="pt-4 flex flex-col gap-2.5">
+                <Link
+                  to="/diagnose"
+                  onClick={closeMenu}
+                  className="w-full h-11 rounded-full text-white text-[14px] font-semibold no-underline flex items-center justify-center"
+                  style={{
+                    background: 'linear-gradient(135deg, #0064ff, #4f8bff)',
+                    boxShadow: '0 4px 14px -4px rgba(0,100,255,0.55)',
+                  }}
+                >
+                  무료 진단
+                </Link>
                 {user ? (
                   <>
                     <Link

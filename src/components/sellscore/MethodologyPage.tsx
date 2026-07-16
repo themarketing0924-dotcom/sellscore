@@ -137,7 +137,7 @@ export function MethodologyPage() {
           </div>
           <Link
             to="/diagnose"
-            className="inline-block h-12 px-8 mt-9 rounded-full font-semibold text-[14px] text-white no-underline transition-transform active:scale-[0.97] hover:brightness-110"
+            className="inline-flex items-center justify-center h-12 px-8 mt-9 rounded-full font-semibold text-[14px] text-white no-underline transition-transform active:scale-[0.97] hover:brightness-110"
             style={{
               background: 'linear-gradient(135deg, #0064ff, #4f8bff)',
               boxShadow: '0 8px 24px -8px rgba(0,100,255,0.55)',
@@ -280,10 +280,17 @@ export function MethodologyPage() {
           </>
         }
       >
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center border border-white/10 rounded-3xl p-6 sm:p-8 bg-white/[0.02] max-w-5xl mx-auto">
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center border border-white/[0.16] rounded-3xl p-6 sm:p-8 bg-white/[0.03] max-w-5xl mx-auto"
+          initial={{ opacity: 0, y: 72, scale: 0.94, rotateX: 10 }}
+          whileInView={{ opacity: 1, y: 0, scale: 1, rotateX: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+          style={{ transformPerspective: 1200 }}
+        >
           <BarChart items={barItems} />
           <RadarChart items={barItems} />
-        </div>
+        </motion.div>
       </Section>
 
       {/* ══════════ 등급 표 ══════════ */}
@@ -308,7 +315,7 @@ export function MethodologyPage() {
               />
             ))}
           </div>
-          <div className="flex justify-between text-white/25 text-[10px] mb-8 px-0.5">
+          <div className="flex justify-between text-white/50 text-[12px] font-medium mb-8 px-0.5">
             <span>0</span>
             <span>45</span>
             <span>60</span>
@@ -316,19 +323,21 @@ export function MethodologyPage() {
             <span>90</span>
             <span>100</span>
           </div>
-          <div className="border border-white/10 rounded-3xl overflow-hidden">
+          <div className="border border-white/[0.16] rounded-3xl overflow-hidden">
             {GRADE_TABLE.map((row, i) => (
               <div
                 key={row.grade}
                 className={`flex items-center justify-between px-6 py-4 ${
-                  i !== GRADE_TABLE.length - 1 ? 'border-b border-white/[0.06]' : ''
+                  i !== GRADE_TABLE.length - 1 ? 'border-b border-white/10' : ''
                 }`}
               >
                 <span className="flex items-center gap-3">
                   <span className={`w-2.5 h-2.5 rounded-sm ${row.bar}`} />
-                  <span className={`text-[20px] font-extrabold ${row.color}`}>{row.grade}</span>
+                  <span className={`text-[22px] font-extrabold ${row.color}`}>{row.grade}</span>
                 </span>
-                <span className="text-white/50 text-[13px] tabular-nums">{row.range}</span>
+                <span className="text-white/80 text-[15px] sm:text-[16px] font-semibold tabular-nums">
+                  {row.range}
+                </span>
               </div>
             ))}
           </div>
@@ -389,7 +398,7 @@ export function MethodologyPage() {
         <div className="text-center">
           <Link
             to="/diagnose"
-            className="inline-block h-14 px-9 rounded-full font-semibold text-[15px] text-white no-underline whitespace-nowrap transition-transform active:scale-[0.97] hover:brightness-110"
+            className="inline-flex items-center justify-center h-14 px-9 rounded-full font-semibold text-[15px] text-white no-underline whitespace-nowrap transition-transform active:scale-[0.97] hover:brightness-110"
             style={{
               background: 'linear-gradient(135deg, #0064ff, #4f8bff)',
               boxShadow: '0 8px 24px -8px rgba(0,100,255,0.55)',

@@ -1,21 +1,21 @@
 // ============================================================
 // 실제 Claude API 기반 진단 엔진 — Firebase Cloud Function(analyzeSite)을 호출한다.
 // ============================================================
-// functions/src/index.ts의 analyzeSite가 배포되어 있지 않거나, 호출이
-// 실패/타임아웃되면 자동으로 scoreEngine.ts의 목업 엔진으로 폴백한다.
-// 그래서 백엔드가 아직 없는 개발 환경에서도 제품이 항상 동작한다.
+// 분석이 실패하면 가짜 데이터로 대체하지 않고 에러를 그대로 올린다.
+// 사용자에게는 "왜 실패했는지"를 정직하게 보여주는 것이 지어낸 리포트보다 낫다.
 // ============================================================
 
 import { httpsCallable } from 'firebase/functions';
 import { functions } from './firebase';
 import {
-  generateReport as generateMockReport,
   buildTrafficSnapshot,
   type DiagnosisReport,
   type FrameworkResult,
+  type PerformanceSnapshot,
 } from './scoreEngine';
 
-const CALL_TIMEOUT_MS = 45000;
+// Cloud Function 자체 제한이 120초이므로 그보다 약간 짧게 잡는다.
+const CALL_TIMEOUT_MS = 110000;
 
 interface AnalyzeSiteResponse {
   domain: string;
@@ -23,6 +23,7 @@ interface AnalyzeSiteResponse {
   grade: DiagnosisReport['grade'];
   oneLiner: string;
   frameworks: FrameworkResult[];
+  performance?: PerformanceSnapshot | null;
 }
 
 function extractDomainForTraffic(url: string): string {
@@ -50,9 +51,29 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
   });
 }
 
+/** 분석 실패를 사용자에게 그대로 전달하기 위한 에러 타입 */
+export class DiagnosisError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'DiagnosisError';
+  }
+}
+
+function toUserMessage(err: unknown): string {
+  if (err instanceof Error) {
+    if (err.message === 'timeout') {
+      return '분석 시간이 너무 오래 걸려 중단됐습니다. 잠시 후 다시 시도해주세요.';
+    }
+    // Firebase HttpsError는 서버에서 보낸 한국어 메시지를 그대로 담고 있다.
+    if (err.message) return err.message;
+  }
+  return '알 수 없는 오류로 분석에 실패했습니다. 잠시 후 다시 시도해주세요.';
+}
+
 /**
  * 실제 URL을 크롤링 + Claude로 분석한 진단 리포트를 반환한다.
- * Cloud Function이 없거나 실패하면 조용히 목업 엔진으로 폴백한다.
+ * 실패하면 가짜 데이터로 대체하지 않고 DiagnosisError를 던진다 —
+ * 지어낸 리포트를 보여주는 것보다 실패 이유를 정직하게 알리는 쪽을 택한다.
  */
 export async function getDiagnosisReport(
   url: string,
@@ -79,10 +100,11 @@ export async function getDiagnosisReport(
       oneLiner: data.oneLiner,
       traffic,
       frameworks: data.frameworks,
+      performance: data.performance ?? null,
     };
   } catch (err) {
-    console.warn('[aiScoreEngine] analyzeSite 호출 실패, 목업 엔진으로 폴백합니다:', err);
-    return generateMockReport(url, answers);
+    console.error('[aiScoreEngine] analyzeSite 호출 실패:', err);
+    throw new DiagnosisError(toUserMessage(err));
   }
 }
 

@@ -117,11 +117,11 @@ export function Icon({ name, size = 18, className = '' }: IconProps) {
 }
 
 const TINTS: Record<string, string> = {
-  blue: 'bg-[#0064FF]/12 text-[#5b9bff]',
-  emerald: 'bg-emerald-400/12 text-emerald-300',
-  amber: 'bg-amber-400/12 text-amber-300',
-  rose: 'bg-rose-400/12 text-rose-300',
-  neutral: 'bg-white/8 text-white/70',
+  blue: 'bg-[#0064FF] text-white shadow-[0_4px_14px_-4px_rgba(0,100,255,0.6)]',
+  emerald: 'bg-emerald-500 text-white shadow-[0_4px_14px_-4px_rgba(16,185,129,0.6)]',
+  amber: 'bg-amber-500 text-white shadow-[0_4px_14px_-4px_rgba(245,158,11,0.6)]',
+  rose: 'bg-rose-500 text-white shadow-[0_4px_14px_-4px_rgba(244,63,94,0.6)]',
+  neutral: 'bg-white/15 text-white',
 };
 
 interface IconBadgeProps {

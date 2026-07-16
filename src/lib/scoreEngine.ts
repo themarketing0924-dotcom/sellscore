@@ -43,6 +43,15 @@ export interface TrafficSnapshot {
   insight: string;
 }
 
+/** Google PageSpeed Insights 실측값 — 측정 실패 시 리포트에서 카드 자체를 숨긴다 */
+export interface PerformanceSnapshot {
+  score: number | null;
+  lcpMs: number | null;
+  cls: number | null;
+  tbtMs: number | null;
+  fcpMs: number | null;
+}
+
 export interface DiagnosisReport {
   domain: string;
   overallScore: number;
@@ -50,6 +59,8 @@ export interface DiagnosisReport {
   oneLiner: string;
   traffic: TrafficSnapshot;
   frameworks: FrameworkResult[];
+  /** Google PageSpeed 실측 — 실제 진단 엔진에서만 채워진다 */
+  performance?: PerformanceSnapshot | null;
 }
 
 // ── 시드 기반 PRNG (같은 URL이면 항상 같은 결과) ──
@@ -540,10 +551,40 @@ export function generateReport(
   const rand = mulberry32(seed);
 
   const frameworks: FrameworkResult[] = FRAMEWORK_TEMPLATES.map((tpl, idx) => {
-    const score = Math.round((3 + rand() * 6.5) * 10) / 10; // 3.0 ~ 9.5
-    const tier = score >= 6 ? tpl.high : tpl.low;
+    // 1. 기본 점수는 랜덤(3.0 ~ 9.5)이되, 사용자의 설문 답변에 따라 강력하게 보정한다.
+    let baseScore = 3.0 + rand() * 6.5; 
+    
+    // 답변 기반 알고리즘 보정 (신뢰도 향상)
+    const pain = answers.biggestPain;
+    const visitors = answers.monthlyVisitors;
+
+    if (tpl.id === 'seo_infra') {
+      if (pain === 'no_visits') baseScore = 2.0 + rand() * 2.5; // 유입이 없으면 SEO 무조건 낮음 (2.0~4.5)
+      else if (visitors === 'over_10000' || visitors === '1000_10000') baseScore = 7.0 + rand() * 2.5;
+    }
+    
+    if (tpl.id === 'pricing_ltv') {
+      if (pain === 'no_repurchase') baseScore = 2.0 + rand() * 2.5; // 재구매 없으면 LTV 설계 결함
+    }
+
+    if (['challenge_funnel', 'results_in_advance', 'sideways'].includes(tpl.id)) {
+      if (pain === 'visits_no_purchase') baseScore = 2.5 + rand() * 3.0; // 트래픽 대비 전환 안되면 설득 퍼널 결함
+    }
+
+    if (['preeminence', 'emotional_momentum'].includes(tpl.id)) {
+      if (visitors === 'under_100') baseScore = 2.5 + rand() * 3.0; // 트래픽 적으면 사회적 증거(숫자) 부족할 확률 큼
+    }
+
+    if (tpl.id === 'positioning' || tpl.id === 'value_ladder') {
+      if (pain === 'unknown') baseScore = 3.5 + rand() * 3.0; // 원인을 모르면 대개 오퍼와 포지셔닝이 불명확함
+    }
+
+    // 최종 점수 바운딩 및 소수점 1자리 반올림
+    const score = Math.round(Math.max(1.5, Math.min(9.8, baseScore)) * 10) / 10;
+
+    const tier = score >= 6.5 ? tpl.high : tpl.low;
     const narrative = FRAMEWORK_NARRATIVES[tpl.id];
-    const isStrength = score >= 7;
+    const isStrength = score >= 7.5;
     return {
       id: tpl.id,
       name: tpl.name,

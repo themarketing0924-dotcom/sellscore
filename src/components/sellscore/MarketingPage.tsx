@@ -4,7 +4,6 @@ import { TRUST_BADGES } from '../../config/sellscore';
 import { Icon, IconBadge } from './Icon';
 import { VideoBackground } from './VideoBackground';
 import { Section, HeadlineLine, Em, FaqAccordion } from './Section';
-import { HeroScoreCard } from './HeroScoreCard';
 import { SiteFooter } from './SiteFooter';
 import { useSeo } from '../../hooks/useSeo';
 import type { ComponentProps, ReactNode } from 'react';
@@ -18,10 +17,10 @@ interface MarketingPageProps {
 const PAIN_POINTS: { icon: IconName; title: string; desc: ReactNode }[] = [
   {
     icon: 'target',
-    title: '방문은 있는데 구매로 안 이어진다',
+    title: '광고비는 쓰는데, 결제가 안 일어난다',
     desc: (
       <>
-        트래픽은 만들었는데 <Em>어디서 이탈하는지</Em>, 뭘 먼저 고쳐야 하는지 감이 안 옵니다.
+        트래픽은 만들었는데 <Em>어디서 내 돈이 새어나가고 있는지</Em>, 뭘 먼저 고쳐야 하는지 감이 안 옵니다.
       </>
     ),
   },
@@ -30,27 +29,27 @@ const PAIN_POINTS: { icon: IconName; title: string; desc: ReactNode }[] = [
     title: 'AI로 사이트는 만들었는데 그다음이 없다',
     desc: (
       <>
-        클로드·GPT로 뚝딱 만들긴 했는데, 이게 실제로 <Em>설득력 있는 구조인지</Em>는 아무도 안
+        클로드·GPT로 뚝딱 만들긴 했는데, 이게 실제로 <Em>고객 지갑을 여는 구조인지</Em>는 아무도 안
         알려줍니다.
       </>
     ),
   },
   {
     icon: 'users',
-    title: '고객사에 뭐라고 보고해야 할지 모르겠다',
+    title: '고객사에 성과를 증명할 방법이 없다',
     desc: (
       <>
-        홈페이지를 만들어드리고 나면, <Em>성과를 숫자와 근거로</Em> 설명할 방법이 마땅치
+        홈페이지를 만들어드리고 나면, <Em>성과를 숫자와 객관적 근거로</Em> 설명할 방법이 마땅치
         않습니다.
       </>
     ),
   },
   {
     icon: 'clock',
-    title: '디자이너·마케터를 따로 구할 여력이 없다',
+    title: '대행사에 수백만 원 쓸 여력이 없다',
     desc: (
       <>
-        전문가에게 맡기자니 비용과 시간이 부담되고, <Em>혼자 판단하자니 기준이 없습니다.</Em>
+        전문가에게 맡기자니 비용과 시간이 부담되고, 혼자서 <Em>돈 버리는 테스트만 반복하고 계신가요?</Em>
       </>
     ),
   },
@@ -226,9 +225,9 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
 
         <motion.div
           className="relative z-10 w-full max-w-xl sm:max-w-2xl md:max-w-3xl"
-          initial={{ opacity: 0, y: 24 }}
+          initial={{ opacity: 0, y: 60 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
         >
           <motion.span
             className="inline-flex items-center gap-2 text-[12px] sm:text-[13px] font-semibold text-[#7bd6ff] bg-[#0064ff]/10 border border-[#0064ff]/25 rounded-full px-4 py-1.5 mb-8"
@@ -241,7 +240,7 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
           </motion.span>
 
           <h1
-            className="text-white font-black leading-[1.1] tracking-[-0.04em] mb-6"
+            className="text-white font-bold tracking-tight leading-[1.1] mb-6"
             style={{ fontSize: 'clamp(32px, 6.8vw, 66px)' }}
           >
             10초 만에 이 사이트가
@@ -249,9 +248,9 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
             <span className="gradient-text-animated">안 팔리는 이유</span>를 보여드립니다
           </h1>
 
-          <p className="text-white/60 text-[18px] sm:text-[21px] font-medium mb-11 max-w-xl mx-auto leading-[1.7]">
+          <p className="text-[#86868b] text-[18px] sm:text-[21px] font-medium mb-11 max-w-xl mx-auto leading-[1.7]">
             소상공인, 1인 창업가, 홈페이지 제작 대행 서비스를 운영하신다면 —{' '}
-            <Em>어디서 고객이 이탈하는지</Em>, 무엇부터 고쳐야 하는지 10초 안에 확인하세요.
+            <Em>어디서 매출이 새어나가는지</Em>, 무엇부터 고쳐야 하는지 10초 안에 확인하세요.
           </p>
 
           <motion.div
@@ -279,19 +278,17 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
             {TRUST_BADGES.map((badge, i) => (
               <span
                 key={badge}
-                className="text-white/45 text-[11px] sm:text-[12px] font-medium flex items-center gap-1.5 bg-white/[0.04] border border-white/[0.06] rounded-full pl-2 pr-3.5 py-1.5"
+                className="text-white/85 text-[12px] sm:text-[13px] font-semibold flex items-center gap-1.5 bg-white/[0.07] border border-white/[0.14] rounded-full pl-2 pr-3.5 py-1.5"
               >
                 <Icon
                   name={(['shield', 'search', 'check'] as const)[i % 3]}
                   size={13}
-                  className="text-[#5b9bff]"
+                  className="text-[#7bb4ff]"
                 />
                 {badge}
               </span>
             ))}
           </div>
-
-          <HeroScoreCard />
         </motion.div>
       </section>
 
@@ -311,40 +308,21 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
           {PAIN_POINTS.map((p, i) => (
             <motion.div
               key={p.title}
-              className="border border-white/10 rounded-3xl p-6 bg-white/[0.02] text-left"
-              initial={{ opacity: 0, y: 16 }}
+              className="border border-white/[0.18] rounded-3xl p-7 sm:p-9 bg-white/[0.04] text-left transition-colors hover:border-white/30 hover:bg-white/[0.06]"
+              initial={{ opacity: 0, y: 60 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.06 }}
+              transition={{ duration: 1.0, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
             >
               <IconBadge name={p.icon} tint="rose" />
-              <p className="text-white font-bold text-[15px] sm:text-[16px] mt-4 mb-1.5">
+              <p className="text-white font-bold text-[17px] sm:text-[18px] mt-5 mb-2.5 tracking-tight">
                 {p.title}
               </p>
-              <p className="text-white/50 text-[13px] leading-relaxed">{p.desc}</p>
+              <p className="text-[#86868b] text-[14px] sm:text-[15px] leading-relaxed font-medium">{p.desc}</p>
             </motion.div>
           ))}
         </div>
       </Section>
-
-      {/* ══════════ 리스크 리버설 ══════════ (FAQ에 묻혀있던 정책을 전면에 배치) */}
-      <section className="px-6 pb-20 sm:pb-24">
-        <div className="max-w-3xl mx-auto flex flex-wrap items-center justify-center gap-3">
-          {[
-            { icon: 'unlock' as const, text: '카드 등록 없이 무료로 시작' },
-            { icon: 'refresh' as const, text: '개선 후 30일 내 재진단 무료' },
-            { icon: 'shield' as const, text: '동일 URL, 언제 진단해도 같은 점수' },
-          ].map((item) => (
-            <span
-              key={item.text}
-              className="flex items-center gap-2 text-white/70 text-[13px] sm:text-[14px] font-semibold bg-white/[0.04] border border-white/10 rounded-full px-4 py-2"
-            >
-              <Icon name={item.icon} size={14} className="text-emerald-300" />
-              {item.text}
-            </span>
-          ))}
-        </div>
-      </section>
 
       {/* ══════════ WHAT YOU GET ══════════ */}
       <Section
@@ -368,17 +346,17 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
           {DELIVERABLES.map((d, i) => (
             <motion.div
               key={d.title}
-              className="border border-white/10 rounded-3xl p-6 bg-white/[0.02] text-left"
-              initial={{ opacity: 0, y: 16 }}
+              className="border border-white/[0.18] rounded-3xl p-7 sm:p-9 bg-white/[0.04] text-left transition-colors hover:border-white/30 hover:bg-white/[0.06]"
+              initial={{ opacity: 0, y: 60 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.06 }}
+              transition={{ duration: 1.0, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
             >
               <IconBadge name={d.icon} tint="blue" />
-              <p className="text-white font-bold text-[15px] sm:text-[16px] mt-4 mb-1.5">
+              <p className="text-white font-bold text-[17px] sm:text-[18px] mt-5 mb-2.5 tracking-tight">
                 {d.title}
               </p>
-              <p className="text-white/50 text-[13px] leading-relaxed">{d.desc}</p>
+              <p className="text-[#86868b] text-[14px] sm:text-[15px] leading-relaxed font-medium">{d.desc}</p>
             </motion.div>
           ))}
         </div>
@@ -398,19 +376,19 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
             <motion.div
               key={s.title}
               className="text-center"
-              initial={{ opacity: 0, y: 16 }}
+              initial={{ opacity: 0, y: 60 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.1 }}
+              transition={{ duration: 1.0, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
             >
-              <div className="flex items-center justify-center gap-2 mb-4">
-                <span className="text-white/25 text-[13px] font-bold tabular-nums">
+              <div className="flex items-center justify-center gap-2 mb-5">
+                <span className="text-[#86868b]/60 text-[13px] font-bold tabular-nums">
                   {String(i + 1).padStart(2, '0')}
                 </span>
                 <IconBadge name={s.icon} tint="blue" size="sm" />
               </div>
-              <p className="text-white font-bold text-[15px] mb-1.5">{s.title}</p>
-              <p className="text-white/45 text-[13px] leading-relaxed">{s.desc}</p>
+              <p className="text-white font-bold text-[16px] sm:text-[17px] mb-2 tracking-tight">{s.title}</p>
+              <p className="text-[#86868b] text-[14px] sm:text-[15px] leading-relaxed font-medium">{s.desc}</p>
             </motion.div>
           ))}
         </div>
@@ -419,20 +397,20 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
       {/* ══════════ 채점 원리로 신뢰 연결 ══════════ (FAQ 직전, "이 점수 믿을 수 있나" 시점에 배치) */}
       <Section eyebrow="이 점수를 믿을 수 있나요" heading="감이 아니라 공개된 기준으로 채점합니다">
         <motion.div
-          className="max-w-2xl mx-auto rounded-3xl border border-white/10 bg-white/[0.02] p-7 sm:p-9 text-center"
-          initial={{ opacity: 0, y: 16 }}
+          className="max-w-2xl mx-auto rounded-3xl border border-white/10 bg-white/[0.02] p-8 sm:p-11 text-center"
+          initial={{ opacity: 0, y: 60 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
         >
           <IconBadge name="shield" tint="blue" />
-          <p className="text-white/70 text-[14px] sm:text-[15px] leading-relaxed mt-4 mb-6 max-w-md mx-auto">
+          <p className="text-[#86868b] text-[15px] sm:text-[16px] leading-relaxed mt-5 mb-8 max-w-md mx-auto font-medium">
             10개 프레임워크가 각각 무엇을 보는지, 어떤 4단계를 거쳐 100점 만점으로 환산되는지{' '}
             <Em>전부 공개</Em>합니다. 같은 사이트는 언제 재진단해도 같은 점수가 나옵니다.
           </p>
           <Link
             to="/methodology"
-            className="inline-flex items-center gap-1.5 h-11 px-6 rounded-full font-semibold text-[13px] text-white/90 border border-white/15 bg-white/5 hover:bg-white/10 no-underline transition-colors"
+            className="inline-flex items-center gap-1.5 h-12 px-7 rounded-full font-semibold text-[14px] text-white/90 border border-white/15 bg-white/5 hover:bg-white/10 no-underline transition-colors tracking-tight"
           >
             채점 원리 보러가기 →
           </Link>
@@ -454,14 +432,14 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
         />
         <motion.div
           className="relative z-10"
-          initial={{ opacity: 0, y: 16 }}
+          initial={{ opacity: 0, y: 60 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
         >
           <h2
-            className="text-white font-bold tracking-[-0.03em] mb-8"
-            style={{ fontSize: 'clamp(24px, 5vw, 40px)' }}
+            className="text-white font-bold tracking-tight mb-8"
+            style={{ fontSize: 'clamp(26px, 5vw, 44px)' }}
           >
             <span className="block mx-auto max-w-[5em]">지금 내</span>
             <span className="block">

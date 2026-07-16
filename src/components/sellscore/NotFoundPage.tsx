@@ -18,7 +18,7 @@ export function NotFoundPage() {
       </p>
       <Link
         to="/"
-        className="inline-block h-12 px-7 rounded-full font-semibold text-[14px] text-white no-underline transition-transform active:scale-[0.97] hover:brightness-110"
+        className="inline-flex items-center justify-center h-12 px-7 rounded-full font-semibold text-[14px] text-white no-underline transition-transform active:scale-[0.97] hover:brightness-110"
         style={{
           background: 'linear-gradient(135deg, #0064ff, #4f8bff)',
           boxShadow: '0 8px 24px -8px rgba(0,100,255,0.55)',

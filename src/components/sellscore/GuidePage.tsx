@@ -202,7 +202,7 @@ export function GuidePage() {
   return (
     <div>
       {/* ══════════ HERO ══════════ */}
-      <section className="relative min-h-[62dvh] sm:min-h-[70dvh] flex flex-col items-center justify-center px-6 pt-28 pb-16 overflow-hidden text-center">
+      <section className="relative flex flex-col items-center px-6 pt-36 sm:pt-44 pb-16 sm:pb-20 overflow-hidden text-center">
         <VideoBackground variant="aurora" overlay="strong" />
         <div
           className="absolute inset-0 pointer-events-none"

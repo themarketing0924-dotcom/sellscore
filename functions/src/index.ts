@@ -17,8 +17,71 @@ import { onCall, HttpsError } from 'firebase-functions/v2/https';
 import { defineSecret } from 'firebase-functions/params';
 import Anthropic from '@anthropic-ai/sdk';
 import * as cheerio from 'cheerio';
+import { initializeApp } from 'firebase-admin/app';
+import { getFirestore, FieldValue } from 'firebase-admin/firestore';
+import { createHash } from 'crypto';
+
+initializeApp();
+const db = getFirestore();
 
 const anthropicApiKey = defineSecret('ANTHROPIC_API_KEY');
+const pagespeedApiKey = defineSecret('PAGESPEED_API_KEY');
+
+// ── Google PageSpeed Insights 실측 ──
+// 실패하면 null을 반환하고 리포트에서 해당 카드를 아예 숨긴다 —
+// 추정치를 실측인 것처럼 보여주지 않는다.
+
+export interface PerformanceSnapshot {
+  score: number | null; // Lighthouse 성능 점수 0~100
+  lcpMs: number | null;
+  cls: number | null;
+  tbtMs: number | null;
+  fcpMs: number | null;
+}
+
+async function fetchPageSpeed(url: string, apiKey: string): Promise<PerformanceSnapshot | null> {
+  try {
+    const endpoint =
+      'https://www.googleapis.com/pagespeedonline/v5/runPagespeed' +
+      `?url=${encodeURIComponent(url)}&key=${apiKey}&category=PERFORMANCE&strategy=mobile`;
+    const res = await fetch(endpoint, { signal: AbortSignal.timeout(50000) });
+    if (!res.ok) {
+      console.warn('[fetchPageSpeed] HTTP', res.status);
+      return null;
+    }
+    const data = (await res.json()) as {
+      lighthouseResult?: {
+        categories?: { performance?: { score?: number } };
+        audits?: Record<string, { numericValue?: number }>;
+      };
+    };
+    const lh = data.lighthouseResult;
+    if (!lh) return null;
+    const num = (id: string) => lh.audits?.[id]?.numericValue ?? null;
+    return {
+      score:
+        lh.categories?.performance?.score != null
+          ? Math.round(lh.categories.performance.score * 100)
+          : null,
+      lcpMs: num('largest-contentful-paint'),
+      cls: num('cumulative-layout-shift'),
+      tbtMs: num('total-blocking-time'),
+      fcpMs: num('first-contentful-paint'),
+    };
+  } catch (err) {
+    console.warn('[fetchPageSpeed] 실패:', (err as Error).message);
+    return null;
+  }
+}
+
+// ── 무료 사용량 제한 ──
+// 비로그인 사용자는 같은 IP에서 3회까지만 무료 진단 가능. 초과하면 회원가입을
+// 유도한다 (가입하면 계속 무료 — 고객 DB 수집이 목적). IP는 해시로만 저장한다.
+const FREE_LIMIT_PER_IP = 3;
+
+function hashIp(ip: string): string {
+  return createHash('sha256').update(`sellscore:${ip}`).digest('hex').slice(0, 40);
+}
 
 // ── 10개 프레임워크 메타데이터 (프론트엔드 scoreEngine.ts와 동일하게 유지할 것) ──
 
@@ -158,6 +221,14 @@ async function extractPageContent(rawUrl: string): Promise<PageContent> {
   $('script, style, noscript, svg').remove();
   const bodyText = $('body').text().replace(/\s+/g, ' ').trim().slice(0, 6000);
 
+  // 읽을 콘텐츠가 사실상 없으면(자바스크립트로만 그려지는 CSR 사이트 등) 분석하지 않는다.
+  // 빈 내용을 AI에게 넘기면 근거 없는 리포트가 만들어지므로, 정직하게 실패를 반환한다.
+  if (bodyText.length < 200) {
+    throw new Error(
+      '이 사이트는 콘텐츠가 브라우저에서만 그려지는 구조(클라이언트 사이드 렌더링)라 진단 엔진이 본문 텍스트를 읽을 수 없습니다. 현재는 서버에서 HTML로 텍스트를 제공하는 사이트만 진단할 수 있습니다.'
+    );
+  }
+
   return { normalizedUrl, domain, title, metaDescription, headings, bodyText, hasJsonLd, imgCount, imgWithAlt };
 }
 
@@ -255,12 +326,31 @@ function gradeFromScore(score: number): 'S' | 'A' | 'B' | 'C' | 'D' {
 // ── Cloud Function ──
 
 export const analyzeSite = onCall(
-  { secrets: [anthropicApiKey], timeoutSeconds: 120, memory: '512MiB', cors: true },
+  { secrets: [anthropicApiKey, pagespeedApiKey], timeoutSeconds: 120, memory: '512MiB', cors: true },
   async (request) => {
     const { url, answers } = (request.data ?? {}) as { url?: string; answers?: Record<string, string> };
 
     if (!url || typeof url !== 'string') {
       throw new HttpsError('invalid-argument', 'url이 필요합니다.');
+    }
+
+    // 비로그인 사용자: IP당 무료 3회 제한 (크롤링·AI 비용이 들기 전에 먼저 확인)
+    let usageRef: FirebaseFirestore.DocumentReference | null = null;
+    if (!request.auth) {
+      const forwarded = request.rawRequest.headers['x-forwarded-for'];
+      const ip =
+        (typeof forwarded === 'string' ? forwarded.split(',')[0].trim() : forwarded?.[0]) ||
+        request.rawRequest.ip ||
+        'unknown';
+      usageRef = db.collection('usageByIp').doc(hashIp(ip));
+      const snap = await usageRef.get();
+      const count = snap.exists ? ((snap.data()?.count as number) ?? 0) : 0;
+      if (count >= FREE_LIMIT_PER_IP) {
+        throw new HttpsError(
+          'resource-exhausted',
+          `무료 진단 ${FREE_LIMIT_PER_IP}회를 모두 사용하셨습니다. 무료 회원가입하시면 계속 진단할 수 있고, 진단 내역도 저장됩니다.`
+        );
+      }
     }
 
     let page: PageContent;
@@ -269,6 +359,9 @@ export const analyzeSite = onCall(
     } catch (err) {
       throw new HttpsError('unavailable', `사이트를 불러올 수 없습니다: ${(err as Error).message}`);
     }
+
+    // PageSpeed 실측은 오래 걸리므로(20~45초) Claude 채점과 병렬로 돌린다
+    const psiPromise = fetchPageSpeed(page.normalizedUrl, pagespeedApiKey.value());
 
     const client = new Anthropic({ apiKey: anthropicApiKey.value() });
     const prompt = buildPrompt(page, answers ?? {});
@@ -344,12 +437,25 @@ export const analyzeSite = onCall(
     const weakest = [...frameworks].sort((a, b) => a.score - b.score)[0];
     const oneLiner = `가장 치명적인 병목은 '${weakest.koreanName}'입니다. ${weakest.flaw}`;
 
+    // 분석이 성공했을 때만 무료 사용량을 차감한다 (크롤링 실패 등은 횟수 소진 안 함)
+    if (usageRef) {
+      await usageRef
+        .set(
+          { count: FieldValue.increment(1), updatedAt: FieldValue.serverTimestamp() },
+          { merge: true }
+        )
+        .catch((err) => console.error('[analyzeSite] 사용량 기록 실패:', err));
+    }
+
+    const performance = await psiPromise;
+
     return {
       domain: page.domain,
       overallScore,
       grade,
       oneLiner,
       frameworks,
+      performance,
     };
   }
 );
