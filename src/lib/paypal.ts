@@ -44,7 +44,7 @@ export const PRODUCTS: PayPalProduct[] = [
   {
     id: 'sellscore-report',
     name: 'SellScore Full Report',
-    description: '설득 전환 지수 전체 리포트 — 10개 프레임워크 상세 진단 + 수정 프롬프트',
+    description: '설득 전환 지수 전체 리포트 — 12개 프레임워크 상세 진단 + 수정 프롬프트',
     price: '6.90',
     currency: 'USD',
   },

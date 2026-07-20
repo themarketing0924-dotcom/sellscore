@@ -32,6 +32,15 @@ db.settings({ ignoreUndefinedProperties: true });
 const anthropicApiKey = defineSecret('ANTHROPIC_API_KEY');
 const pagespeedApiKey = defineSecret('PAGESPEED_API_KEY');
 const tossSecretKey = defineSecret('TOSS_SECRET_KEY');
+const paypalClientId = defineSecret('PAYPAL_CLIENT_ID');
+const paypalClientSecret = defineSecret('PAYPAL_CLIENT_SECRET');
+
+// 테스트(샌드박스) 통과 후 실결제로 전환할 때 이 값만 'live'로 바꾸면 된다.
+// PayPal은 샌드박스/라이브가 API 도메인 자체가 다르고, 자격증명도 완전히 별개 쌍이다.
+const PAYPAL_ENV: 'sandbox' | 'live' = 'sandbox';
+function paypalApiBase(): string {
+  return PAYPAL_ENV === 'live' ? 'https://api-m.paypal.com' : 'https://api-m.sandbox.paypal.com';
+}
 
 // 결제 승인 후 users/{uid}에 플랜을 기록해줄 상품 — 자동 정기결제가 아니라
 // 결제 시점 기준 1개월짜리 이용권으로 취급한다 (정기 빌링 미연동 상태).
@@ -1065,6 +1074,34 @@ export const analyzeSite = onCall(
   }
 );
 
+// ── 결제 승인 공통 후처리: 구독/에이전시면 플랜 부여, 리포트 단건이면 해당
+// 리포트를 영구 언락 — 토스/페이팔 둘 다 승인 성공 후 이 로직을 그대로 쓴다.
+async function applyPurchaseSideEffects(
+  uid: string,
+  pending: FirebaseFirestore.DocumentData
+): Promise<void> {
+  const productId = pending.productId as string | undefined;
+  if (productId && PLAN_PRODUCT_IDS.has(productId)) {
+    const expiresAt = new Date();
+    expiresAt.setMonth(expiresAt.getMonth() + 1);
+    await db.collection('users').doc(uid).set(
+      { plan: productId, planExpiresAt: expiresAt.toISOString() },
+      { merge: true }
+    );
+  }
+
+  const reportId = pending.reportId as string | undefined;
+  if (reportId) {
+    const reportRef = db.collection('reports').doc(reportId);
+    const reportSnap = await reportRef.get();
+    if (reportSnap.exists && reportSnap.data()?.userId === uid) {
+      await reportRef.update({ paidUnlocked: true });
+    } else {
+      console.warn('[applyPurchaseSideEffects] reportId 소유자 불일치, 언락 건너뜀:', reportId);
+    }
+  }
+}
+
 // ============================================================
 // confirmTossPayment — 토스페이먼츠 결제 승인
 // ============================================================
@@ -1141,36 +1178,96 @@ export const confirmTossPayment = onCall(
       approvedAt: FieldValue.serverTimestamp(),
     });
 
-    const productId = pending.productId as string | undefined;
-    if (productId && PLAN_PRODUCT_IDS.has(productId)) {
-      const expiresAt = new Date();
-      expiresAt.setMonth(expiresAt.getMonth() + 1);
-      await db.collection('users').doc(request.auth.uid).set(
-        {
-          plan: productId,
-          planExpiresAt: expiresAt.toISOString(),
-        },
-        { merge: true }
-      );
-    }
-
-    // 리포트 단건 결제면 해당 리포트를 영구 언락 처리한다 — 클라이언트는
-    // reports 문서를 직접 못 고치므로(firestore.rules) 반드시 여기(Admin SDK)에서만 한다.
-    const reportId = pending.reportId as string | undefined;
-    if (reportId) {
-      const reportRef = db.collection('reports').doc(reportId);
-      const reportSnap = await reportRef.get();
-      if (reportSnap.exists && reportSnap.data()?.userId === request.auth.uid) {
-        await reportRef.update({ paidUnlocked: true });
-      } else {
-        console.warn('[confirmTossPayment] reportId 소유자 불일치, 언락 건너뜀:', reportId);
-      }
-    }
+    await applyPurchaseSideEffects(request.auth.uid, pending);
 
     return {
       success: true,
       orderId,
       receiptUrl: (tossResult.receipt as { url?: string } | undefined)?.url ?? null,
     };
+  }
+);
+
+// ============================================================
+// capturePayPalOrder — 페이팔 결제 승인(capture)
+// ============================================================
+// 예전엔 클라이언트가 PayPal JS SDK로 직접 actions.order.capture()를 호출하고
+// 그 결과를 곧이곧대로 믿었다 — 이러면 devtools에서 onSuccess를 그냥 호출해
+// 결제 없이 "성공"으로 위장할 수 있다. 이제 client는 주문 승인(approve)까지만
+// 하고, 실제 청구(capture)는 서버가 PayPal API를 직접 불러 수행 + 확인한다.
+// ============================================================
+
+async function getPayPalAccessToken(): Promise<string> {
+  const basic = Buffer.from(`${paypalClientId.value()}:${paypalClientSecret.value()}`).toString(
+    'base64'
+  );
+  const res = await fetch(`${paypalApiBase()}/v1/oauth2/token`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Basic ${basic}`,
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: 'grant_type=client_credentials',
+  });
+  if (!res.ok) {
+    throw new Error(`PayPal OAuth 토큰 발급 실패: ${res.status}`);
+  }
+  const data = (await res.json()) as { access_token: string };
+  return data.access_token;
+}
+
+export const capturePayPalOrder = onCall(
+  { secrets: [paypalClientId, paypalClientSecret], cors: true, timeoutSeconds: 30 },
+  async (request) => {
+    if (!request.auth) {
+      throw new HttpsError('unauthenticated', '로그인이 필요합니다.');
+    }
+
+    const { orderId } = (request.data ?? {}) as { orderId?: string };
+    if (!orderId) {
+      throw new HttpsError('invalid-argument', 'orderId가 필요합니다.');
+    }
+
+    const paymentRef = db.collection('payments').doc(orderId);
+    const paymentSnap = await paymentRef.get();
+    if (!paymentSnap.exists) {
+      throw new HttpsError('not-found', '결제 대기 기록을 찾을 수 없습니다.');
+    }
+    const pending = paymentSnap.data()!;
+    if (pending.userId !== request.auth.uid) {
+      throw new HttpsError('permission-denied', '본인 결제만 승인할 수 있습니다.');
+    }
+    if (pending.status === 'approved') {
+      return { success: true, orderId, alreadyApproved: true };
+    }
+
+    const accessToken = await getPayPalAccessToken();
+    const captureRes = await fetch(`${paypalApiBase()}/v2/checkout/orders/${orderId}/capture`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+    });
+    const captureResult = (await captureRes.json()) as Record<string, unknown>;
+
+    if (!captureRes.ok || captureResult.status !== 'COMPLETED') {
+      await paymentRef.update({
+        status: 'failed',
+        failReason: captureResult,
+        updatedAt: FieldValue.serverTimestamp(),
+      });
+      throw new HttpsError('aborted', 'PayPal 결제 승인에 실패했습니다.');
+    }
+
+    await paymentRef.update({
+      status: 'approved',
+      method: 'paypal',
+      approvedAt: FieldValue.serverTimestamp(),
+    });
+
+    await applyPurchaseSideEffects(request.auth.uid, pending);
+
+    return { success: true, orderId };
   }
 );

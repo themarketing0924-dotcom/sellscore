@@ -692,6 +692,7 @@ export function ResultScreen({
 
                 <PayPalCheckoutButton
                   product={paypalProduct}
+                  reportId={activeReportId}
                   onSuccess={() => setPaidUnlocked(true)}
                   onError={(err) => console.error('[PayPal] 결제 오류:', err)}
                 />
