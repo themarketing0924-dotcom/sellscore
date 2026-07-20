@@ -80,7 +80,7 @@ export function PricingPage() {
         }
         sub="카드 등록 없이 무료로 시작하고, 더 깊은 분석이 필요할 때만 결제하세요."
       >
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-6xl mx-auto items-stretch">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-5 max-w-6xl mx-auto items-stretch">
           {/* 무료 */}
           <PlanCard
             label="무료"

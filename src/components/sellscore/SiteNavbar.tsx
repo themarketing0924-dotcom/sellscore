@@ -8,7 +8,9 @@ import { BRAND } from '../../config/sellscore';
 // 애플 macbook-pro 페이지 상단 헤더 스펙을 그대로 따른다:
 // 44px 높이, 12px 폰트, 일반 굵기, 좁은 자간, 반투명 블러 배경 + 얇은 하단 경계선.
 // 애플은 모바일/아이패드 폭에서는 텍스트 메뉴 대신 항상 햄버거 아이콘으로 접는다
-// (넓이가 남아도 접는다 — 터치 UX 일관성 때문). md(768px) 미만에서 동일하게 적용.
+// (넓이가 남아도 접는다 — 터치 UX 일관성 때문). lg(1024px) 미만에서 동일하게 적용
+// — 네비 링크 5개 + 로그인 상태(이메일·내 진단 내역·로그아웃) + CTA가
+// md(768px) 아이패드 폭에서는 겹쳐서 깨지기 때문에 lg로 올림.
 const NAV_LINKS = [
   { to: '/', label: '홈' },
   { to: '/guide', label: '가이드' },
@@ -41,7 +43,7 @@ export function SiteNavbar() {
           </Link>
 
           {/* 데스크톱 가운데 메뉴 (md 이상) */}
-          <div className="hidden md:flex flex-1 items-center justify-center gap-9">
+          <div className="hidden lg:flex flex-1 items-center justify-center gap-9">
             {NAV_LINKS.map((link) => {
               const active = location.pathname === link.to;
               return (
@@ -58,7 +60,7 @@ export function SiteNavbar() {
           </div>
 
           {/* 데스크톱 로그인 + 무료 진단 CTA (md 이상) */}
-          <div className="hidden md:flex items-center gap-5 shrink-0">
+          <div className="hidden lg:flex items-center gap-5 shrink-0">
             {user ? (
               <div className="flex items-center gap-3">
                 <Link
@@ -103,7 +105,7 @@ export function SiteNavbar() {
           {/* 모바일/아이패드: 햄버거 아이콘만 (md 미만) */}
           <button
             onClick={() => setMenuOpen((v) => !v)}
-            className="md:hidden ml-auto flex items-center justify-center w-8 h-8 -mr-1.5 bg-transparent border-none cursor-pointer"
+            className="lg:hidden ml-auto flex items-center justify-center w-8 h-8 -mr-1.5 bg-transparent border-none cursor-pointer"
             aria-label="메뉴 열기"
           >
             <HamburgerIcon open={menuOpen} />
@@ -115,7 +117,7 @@ export function SiteNavbar() {
       <AnimatePresence>
         {menuOpen && (
           <motion.div
-            className="md:hidden fixed top-14 left-0 right-0 z-40 bg-black/95 backdrop-blur-xl border-b border-white/10"
+            className="lg:hidden fixed top-14 left-0 right-0 z-40 bg-black/95 backdrop-blur-xl border-b border-white/10"
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
