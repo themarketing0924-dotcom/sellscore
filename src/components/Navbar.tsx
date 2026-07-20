@@ -33,9 +33,7 @@ export function Navbar({ entranceComplete }: NavbarProps) {
       >
         {/* ===== DESKTOP ===== */}
         <div className="hidden sm:flex items-center justify-between w-full">
-          {/* Left group */}
           <div className="flex items-center gap-2">
-            {/* Logo pill */}
             <motion.div
               className={`h-12 px-5 bg-white/15 backdrop-blur-md rounded-[14px] flex items-center gap-2.5 cursor-pointer ${
                 menuOpen ? 'hidden md:flex' : 'flex'
@@ -49,13 +47,11 @@ export function Navbar({ entranceComplete }: NavbarProps) {
               </span>
             </motion.div>
 
-            {/* Expanding menu pill */}
             <motion.div
               className="h-12 rounded-[14px] bg-white/15 backdrop-blur-md flex items-center overflow-hidden"
-              animate={{ width: menuOpen ? 290 : 48 }}
+              animate={{ width: menuOpen ? 400 : 48 }}
               transition={{ type: 'spring', stiffness: 350, damping: 28 }}
             >
-              {/* Hamburger button */}
               <motion.button
                 className="flex items-center justify-center shrink-0 cursor-pointer"
                 style={{
@@ -71,7 +67,6 @@ export function Navbar({ entranceComplete }: NavbarProps) {
                 <SquashHamburger isOpen={menuOpen} />
               </motion.button>
 
-              {/* Nav links */}
               <AnimatePresence>
                 {menuOpen && (
                   <motion.div
@@ -97,6 +92,12 @@ export function Navbar({ entranceComplete }: NavbarProps) {
                     >
                       <ScrambleText text="Metrics" isHovered={metricsHovered} />
                     </button>
+                    <button
+                      className="text-[16px] font-normal text-white/85 hover:text-white transition-colors cursor-pointer bg-transparent border-none"
+                      onClick={() => window.open('/marketing-glossary.html', '_blank')}
+                    >
+                      마케팅 용어집
+                    </button>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -105,7 +106,6 @@ export function Navbar({ entranceComplete }: NavbarProps) {
 
           {/* Right buttons */}
           <div className="flex items-center gap-2">
-            {/* Sign In / User button */}
             {user ? (
               <div className="flex items-center gap-2">
                 <div className="h-12 px-5 bg-white/10 backdrop-blur-md rounded-[14px] flex items-center gap-3">
@@ -141,7 +141,6 @@ export function Navbar({ entranceComplete }: NavbarProps) {
               </motion.button>
             )}
 
-            {/* Download button */}
             <motion.button
               className="h-12 px-6 bg-white rounded-full flex items-center gap-2.5 cursor-pointer border-none"
               whileHover={{ scale: 1.03, backgroundColor: '#e2e2e6' }}
@@ -159,9 +158,7 @@ export function Navbar({ entranceComplete }: NavbarProps) {
 
         {/* ===== MOBILE ===== */}
         <div className="flex sm:hidden items-center justify-between w-full">
-          {/* Left group */}
           <div className="flex items-center gap-1.5 flex-1 min-w-0">
-            {/* Logo pill (collapses when menu open) */}
             <motion.div
               className="h-9 px-3 bg-white/15 backdrop-blur-md rounded-[10px] flex items-center gap-2 overflow-hidden shrink-0"
               animate={{ width: menuOpen ? 0 : 'auto', opacity: menuOpen ? 0 : 1, paddingLeft: menuOpen ? 0 : 12, paddingRight: menuOpen ? 0 : 12 }}
@@ -169,11 +166,10 @@ export function Navbar({ entranceComplete }: NavbarProps) {
             >
               <ConnectAILabLogo size={14} className="text-white shrink-0" />
               <span className="text-[13px] font-medium tracking-tight text-white whitespace-nowrap">
-                Connect AI LAB
+                sellscore AI
               </span>
             </motion.div>
 
-            {/* Expanding menu capsule */}
             <motion.div
               className="h-9 rounded-[10px] bg-white/15 backdrop-blur-md flex items-center overflow-hidden"
               animate={{ width: menuOpen ? '100%' : 36 }}
@@ -214,6 +210,12 @@ export function Navbar({ entranceComplete }: NavbarProps) {
                     >
                       Metrics
                     </button>
+                    <button
+                      className="text-[13px] font-normal text-white/85 cursor-pointer bg-transparent border-none"
+                      onClick={() => window.open('/marketing-glossary.html', '_blank')}
+                    >
+                      마케팅 용어집
+                    </button>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -222,7 +224,6 @@ export function Navbar({ entranceComplete }: NavbarProps) {
 
           {/* Right buttons */}
           <div className="flex items-center gap-1.5 ml-2">
-            {/* Sign In / Avatar */}
             {user ? (
               <motion.button
                 className="h-9 w-9 rounded-full bg-white/15 backdrop-blur-md flex items-center justify-center cursor-pointer border-none overflow-hidden"
@@ -247,7 +248,6 @@ export function Navbar({ entranceComplete }: NavbarProps) {
               </motion.button>
             )}
 
-            {/* Download button */}
             <motion.button
               className="h-9 px-3.5 bg-white rounded-full flex items-center gap-1.5 cursor-pointer border-none shrink-0"
               whileTap={{ scale: 0.95 }}
@@ -259,7 +259,6 @@ export function Navbar({ entranceComplete }: NavbarProps) {
         </div>
       </motion.nav>
 
-      {/* Auth Modal */}
       <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} />
     </>
   );
