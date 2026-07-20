@@ -966,9 +966,9 @@ export const analyzeSite = onCall(
       // output_config.format이 아님 — SDK 버전에 따라 API 표면이 다르다).
       response = await client.beta.messages.create({
         model: 'claude-sonnet-5',
-        // 10개→12개 프레임워크로 늘면서 출력량도 늘어 8000으로는 중간에 잘려
-        // JSON 파싱이 깨졌다 — 여유 있게 잡는다.
-        max_tokens: 12000,
+        // 12개 프레임워크 + 마스터 인용까지 출력량이 많아 사이트에 따라
+        // 12000도 부족한 경우가 있었다(실사이트 테스트에서 확인) — 여유를 더 둔다.
+        max_tokens: 20000,
         betas: ['structured-outputs-2025-11-13'],
         output_format: { type: 'json_schema', schema: REPORT_SCHEMA },
         messages: [{ role: 'user', content: prompt }],
@@ -979,6 +979,13 @@ export const analyzeSite = onCall(
 
     if (response.stop_reason === 'refusal') {
       throw new HttpsError('internal', 'AI가 이 요청을 처리할 수 없습니다.');
+    }
+    if (response.stop_reason === 'max_tokens') {
+      console.error('[analyzeSite] max_tokens 도달로 응답이 중간에 잘림:', {
+        url: page.normalizedUrl,
+        usage: response.usage,
+      });
+      throw new HttpsError('internal', 'AI 응답이 너무 길어 중간에 잘렸습니다. 다시 시도해주세요.');
     }
 
     const textBlock = response.content.find(
@@ -991,7 +998,14 @@ export const analyzeSite = onCall(
     let parsed: { frameworks: RawFrameworkResult[] };
     try {
       parsed = JSON.parse(textBlock.text);
-    } catch {
+    } catch (err) {
+      console.error('[analyzeSite] JSON 파싱 실패:', {
+        url: page.normalizedUrl,
+        stopReason: response.stop_reason,
+        textLength: textBlock.text.length,
+        textTail: textBlock.text.slice(-300),
+        parseError: (err as Error).message,
+      });
       throw new HttpsError('internal', 'AI 응답이 올바른 JSON이 아닙니다.');
     }
 
