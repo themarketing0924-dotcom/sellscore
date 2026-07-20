@@ -226,9 +226,9 @@ export const PRICING_TIERS: PricingTier[] = [
     label: '리포트 1회',
     price: PRICING.report.price,
     unit: '1회',
-    description: '지금 이 사이트가 왜 안 팔리는지 10개 프레임워크로 전체 진단',
+    description: '지금 이 사이트가 왜 안 팔리는지 12개 프레임워크로 전체 진단',
     features: [
-      '10개 프레임워크 전체 상세 진단',
+      '12개 프레임워크 전체 상세 진단',
       'Before/After 수정 프롬프트',
       '실행 우선순위 로드맵',
       '개선 후 30일 내 재진단 무료',

@@ -48,6 +48,14 @@ export function SiteFooter() {
                 채점 원리
               </Link>
             </li>
+            <li>
+              <Link
+                to="/pricing"
+                className="text-white/50 hover:text-white/80 text-[13px] no-underline transition-colors"
+              >
+                요금제
+              </Link>
+            </li>
           </ul>
         </div>
         <div>

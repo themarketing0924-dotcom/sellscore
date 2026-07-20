@@ -4,7 +4,6 @@ import { TRUST_BADGES } from '../../config/sellscore';
 import { Icon, IconBadge } from './Icon';
 import { VideoBackground } from './VideoBackground';
 import { Section, HeadlineLine, Em, FaqAccordion } from './Section';
-import { SiteFooter } from './SiteFooter';
 import { useSeo } from '../../hooks/useSeo';
 import type { ComponentProps, ReactNode } from 'react';
 
@@ -316,14 +315,9 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
           </h1>
 
           <p className="text-[#86868b] text-[18px] sm:text-[21px] font-medium mb-11 max-w-xl mx-auto leading-[1.7]">
-<<<<<<< HEAD
             광고를 해도 문의와 결제가 늘지 않는다면, 문제는 방문자 수가 아니라{' '}
             <Em>사이트의 설득 구조</Em>일 수 있습니다. 사이트 주소를 입력하면 고객이 어디에서
             이탈하는지, 무엇부터 고쳐야 하는지 우선순위대로 확인할 수 있습니다.
-=======
-            홈페이지를 만들어도 문의와 결제가 늘지 않는다면,문제는 방문자 수가 아니라 사이트의 설득 구조일 수 있습니다.—{' '}
-            <Em>사이트 주소를 입력하면 고객이 어디에서 이탈하는지</Em>, 무엇부터 고쳐야 하는지 우선순위대로 확인할 수 있습니다.
->>>>>>> 8a28fd79d940bd4cbb862abc33d1328d815dfe0d
           </p>
 
           <motion.div
@@ -374,34 +368,16 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
         heading={
           <>
             <HeadlineLine>사이트는 있는데,</HeadlineLine>
-<<<<<<< HEAD
             <span className="block mx-auto max-w-[11em]">
               <span className="gradient-text-static">무엇을 고쳐야 매출이 오르는지</span> 모르겠다면
-=======
-
-            <span className="block mx-auto max-w-[12em]">
-              무엇을 고쳐야{' '}
-              <span className="gradient-text-static">매출이 오르는지</span>
-              <br />
-              모르겠다면
->>>>>>> 8a28fd79d940bd4cbb862abc33d1328d815dfe0d
             </span>
           </>
         }
         sub={
           <>
-<<<<<<< HEAD
             방문자는 들어오는데 문의와 결제가 일어나지 않는 이유를 감으로 찾고 계시지는 않나요?
             SellScore는 <Em>카피, 설득 구조, 사용자 경험, 검색 노출, 신뢰 요소</Em>를 함께 분석해
             매출을 막는 문제부터 찾아냅니다.
-=======
-            방문자는 들어오는데 문의와 결제가 일어나지 않는 이유를
-            감으로 찾고 계시지는 않나요?
-            <br />
-            <br />
-            SellScore는 카피, 설득 구조, 사용자 경험, 검색 노출, 신뢰 요소를 함께 분석해{' '}
-            <Em>매출을 막는 문제부터 찾아냅니다.</Em>
->>>>>>> 8a28fd79d940bd4cbb862abc33d1328d815dfe0d
           </>
         }
       >
@@ -438,42 +414,18 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
         eyebrow="무엇을 받게 되나요?"
         heading={
           <>
-<<<<<<< HEAD
             <span className="block mx-auto max-w-[9em]">막연한 조언이 아니라,</span>
             <HeadlineLine>
               무엇을 왜 고쳐야 하는지 <span className="gradient-text-static">실행 가능한 결과</span>
             </HeadlineLine>
             <span className="block">로 보여드립니다</span>
-=======
-            <HeadlineLine>막연한 조언이 아니라,</HeadlineLine>
-
-            <span className="block mx-auto max-w-[11em]">
-              무엇을 왜 고쳐야 하는지
-            </span>
-
-            <span className="block mx-auto max-w-[11em]">
-              <span className="gradient-text-static">
-                실행 가능한 결과
-              </span>
-              로 보여드립니다
-            </span>
->>>>>>> 8a28fd79d940bd4cbb862abc33d1328d815dfe0d
           </>
         }
         sub={
           <>
-<<<<<<< HEAD
             <Em>12가지 설득·카피·사용자 경험·검색 최적화</Em> 분석 프레임워크로 사이트를 교차
             평가합니다. 점수만 보여주는 것이 아니라 감점 이유, 수정 방향, 실제 수정에 사용할
             지시문까지 제공합니다.
-=======
-            글로벌 마케팅 전문가들의 저서와 공개 방법론을 바탕으로 구성한{' '}
-            <Em>12개 분석 프레임워크</Em>로 사이트를 교차 평가합니다.
-            <br />
-            <br />
-            점수만 보여주는 것이 아니라 감점 이유, 수정 방향,
-            실제 수정에 사용할 지시문까지 제공합니다.
->>>>>>> 8a28fd79d940bd4cbb862abc33d1328d815dfe0d
           </>
         }
       >
@@ -505,7 +457,6 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
         </div>
       </Section>
 
-<<<<<<< HEAD
       {/* ══════════ 샘플 리포트 미리보기 ══════════ */}
       <Section
         eyebrow="실제 결과 미리보기"
@@ -570,118 +521,17 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
       </Section>
 
       {/* ══════════ HOW IT WORKS ══════════ */}
-=======
-            {/* ══════════ SAMPLE REPORT PREVIEW ══════════ */}
->>>>>>> 8a28fd79d940bd4cbb862abc33d1328d815dfe0d
-      <Section
-        eyebrow="실제 결과 미리보기"
-        heading={
-          <>
-<<<<<<< HEAD
-            복잡한 설정 없이, <span className="gradient-text-static">3단계면 진단이 끝납니다</span>
-=======
-            <HeadlineLine>진단을 받으면</HeadlineLine>
-
-            <span className="block mx-auto max-w-[10em]">
-              <span className="gradient-text-static">이런 결과</span>를 확인하게 됩니다
-            </span>
->>>>>>> 8a28fd79d940bd4cbb862abc33d1328d815dfe0d
-          </>
-        }
-        sub={
-          <>
-<<<<<<< HEAD
-            전문 용어를 알 필요도, 별도의 프로그램을 설치할 필요도 없습니다. 사이트 주소와 몇
-            가지 정보만 입력하면 <Em>분석 결과와 수정 방향</Em>을 바로 확인할 수 있습니다.
-=======
-            설명만 보고 판단하지 마세요.
-            <br />
-            <br />
-            SellScore가 어떤 문제를 찾고, 어떤 근거를 제시하며,
-            무엇부터 수정하라고 안내하는지 실제 분석 화면에서 확인해 보세요.
-          </>
-        }
-      >
-        <motion.div
-          className="max-w-4xl mx-auto"
-          initial={{ opacity: 0, y: 60 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{
-            duration: 1.0,
-            ease: [0.16, 1, 0.3, 1],
-          }}
-        >
-          <div className="overflow-hidden rounded-3xl border border-white/[0.16] bg-white/[0.03] shadow-2xl">
-            <video
-              className="block w-full h-auto"
-              src="/videos/sales_hero.mp4"
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="metadata"
-            />
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 mt-6">
-            {[
-              '종합 설득 전환 점수',
-              '가장 큰 감점 원인',
-              '우선 수정해야 할 핵심 문제',
-              '바로 사용하는 수정 지시문',
-              '실행 순서와 재진단 결과',
-            ].map((item) => (
-              <div
-                key={item}
-                className="rounded-2xl border border-white/[0.12] bg-white/[0.03] px-4 py-4 text-center"
-              >
-                <p className="text-white/80 text-[13px] sm:text-[14px] font-semibold leading-relaxed">
-                  {item}
-                </p>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-8 text-center">
-            <button
-              onClick={onStart}
-              className="h-14 px-9 rounded-full font-semibold text-[15px] text-white border-none cursor-pointer whitespace-nowrap transition-transform active:scale-[0.97] hover:brightness-110"
-              style={{
-                background: 'linear-gradient(135deg, #0064ff, #4f8bff)',
-                boxShadow: '0 8px 24px -8px rgba(0,100,255,0.55)',
-              }}
-            >
-              샘플 분석 결과 자세히 보기 →
-            </button>
-
-            <p className="text-white/35 text-[12px] font-medium mt-4">
-              실제 서비스 화면을 바탕으로 구성된 예시입니다.
-            </p>
-          </div>
-        </motion.div>
-      </Section>
-
-      {/* ══════════ HOW IT WORKS ══════════ */}
       <Section
         eyebrow="어떻게 진행되나요?"
         heading={
           <>
-            <HeadlineLine>복잡한 설정 없이,</HeadlineLine>
-
-            <span className="block mx-auto max-w-[10em]">
-              <span className="gradient-text-static">3단계면 진단이 끝납니다</span>
-            </span>
+            복잡한 설정 없이, <span className="gradient-text-static">3단계면 진단이 끝납니다</span>
           </>
         }
         sub={
           <>
-            전문 용어를 알 필요도, 별도의 프로그램을 설치할 필요도 없습니다.
-            <br />
-            <br />
-            사이트 주소와 몇 가지 정보만 입력하면
-            분석 결과와 수정 방향을 바로 확인할 수 있습니다.
->>>>>>> 8a28fd79d940bd4cbb862abc33d1328d815dfe0d
+            전문 용어를 알 필요도, 별도의 프로그램을 설치할 필요도 없습니다. 사이트 주소와 몇
+            가지 정보만 입력하면 <Em>분석 결과와 수정 방향</Em>을 바로 확인할 수 있습니다.
           </>
         }
       >
@@ -699,15 +549,7 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
                 ease: [0.16, 1, 0.3, 1],
               }}
             >
-<<<<<<< HEAD
               <div className="flex items-center justify-center mb-5">
-=======
-              <div className="flex items-center justify-center gap-2 mb-5">
-                <span className="text-[#86868b]/60 text-[13px] font-bold tabular-nums">
-                  {String(i + 1).padStart(2, '0')}
-                </span>
-
->>>>>>> 8a28fd79d940bd4cbb862abc33d1328d815dfe0d
                 <IconBadge name={s.icon} tint="blue" size="sm" />
               </div>
 
@@ -723,7 +565,6 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
         </div>
       </Section>
 
-<<<<<<< HEAD
       {/* ══════════ 평가 기준과 신뢰 ══════════ (FAQ 직전, "이 점수 믿을 수 있나" 시점에 배치) */}
       <Section
         eyebrow="이 점수를 믿을 수 있나요"
@@ -734,10 +575,6 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
           </>
         }
       >
-=======
-      {/* ══════════ 채점 원리로 신뢰 연결 ══════════ */}
-      <Section eyebrow="이 점수를 믿을 수 있나요" heading="감이 아니라 공개된 기준으로 채점합니다">
->>>>>>> 8a28fd79d940bd4cbb862abc33d1328d815dfe0d
         <motion.div
           className="max-w-2xl mx-auto text-center mb-10"
           initial={{ opacity: 0, y: 40 }}
@@ -921,8 +758,6 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
           </p>
         </motion.div>
       </section>
-
-      <SiteFooter />
     </div>
   );
 }

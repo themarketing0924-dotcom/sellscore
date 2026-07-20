@@ -14,6 +14,7 @@ const NAV_LINKS = [
   { to: '/guide', label: '가이드' },
   { to: '/blog', label: '블로그' },
   { to: '/methodology', label: '채점 원리' },
+  { to: '/pricing', label: '요금제' },
 ];
 
 export function SiteNavbar() {

@@ -5,7 +5,6 @@ import { BLOG_AUTHOR, BLOG_CATEGORIES, BLOG_POSTS, isNewPost } from '../../confi
 import { useSeo } from '../../hooks/useSeo';
 import { Icon } from './Icon';
 import { BlogBanner } from './BlogBanner';
-import { SiteFooter } from './SiteFooter';
 
 const PAGE_SIZE = 9;
 
@@ -194,7 +193,6 @@ export function BlogPage() {
         </div>
       )}
     </div>
-    <SiteFooter />
     </>
   );
 }

@@ -165,11 +165,7 @@ export function Navbar({ entranceComplete }: NavbarProps) {
             >
               <ConnectAILabLogo size={14} className="text-white shrink-0" />
               <span className="text-[13px] font-medium tracking-tight text-white whitespace-nowrap">
-<<<<<<< HEAD
                 sales score
-=======
-                sellscore AI
->>>>>>> 8a28fd79d940bd4cbb862abc33d1328d815dfe0d
               </span>
             </motion.div>
 
