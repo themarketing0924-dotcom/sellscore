@@ -7,7 +7,7 @@ import { RadarChart } from '../charts/RadarChart';
 import { AlgorithmFlow } from './AlgorithmFlow';
 import { FloatingFormulaOrb } from './FloatingFormulaOrb';
 import { VideoBackground } from './VideoBackground';
-import { LOADING_FRAMEWORK_NAMES } from '../../config/sellscore';
+import { LOADING_FRAMEWORK_NAMES, MARKETING_MASTERS } from '../../config/sellscore';
 import { useSeo } from '../../hooks/useSeo';
 import type { ComponentProps } from 'react';
 
@@ -15,7 +15,7 @@ type IconName = ComponentProps<typeof Icon>['name'];
 
 const PIPELINE_STEPS: { icon: IconName; title: string; desc: string }[] = [
   { icon: 'search', title: '수집', desc: '입력한 URL의 공개 페이지 텍스트와 구조를 가져옵니다.' },
-  { icon: 'spark', title: '대조', desc: '10개 설득 프레임워크 기준과 하나씩 대조합니다.' },
+  { icon: 'spark', title: '대조', desc: '12개 설득 프레임워크 기준과 하나씩 대조합니다.' },
   { icon: 'chart', title: '채점', desc: '항목별 0~10점을 매기고 가중 평균으로 종합 점수를 냅니다.' },
   { icon: 'check', title: '등급 산정', desc: '100점 기준 S/A/B/C/D 등급과 근거 문장을 붙입니다.' },
 ];
@@ -49,19 +49,21 @@ const STANDARDS: { icon: IconName; name: string; desc: string; url: string }[] =
   },
 ];
 
-const SAMPLE_FRAMEWORK_SCORES = [6.7, 3.7, 7.8, 8.6, 4.1, 3.8, 6.0, 7.8, 6.7, 5.4];
+const SAMPLE_FRAMEWORK_SCORES = [6.7, 3.7, 7.8, 8.6, 4.1, 3.8, 6.0, 7.8, 6.7, 5.4, 5.9, 4.8];
 
 const FRAMEWORK_DETAILS: { focus: string; weight: number }[] = [
-  { focus: '전문성 신호와 환불·보장 문구', weight: 12 },
-  { focus: '상품 단계 구성과 첫 문장 후킹력', weight: 11 },
-  { focus: '직접 설득 대신 스토리로 유도하는 흐름', weight: 8 },
-  { focus: '차별화 포지셔닝과 즉시 반응 유도 문구', weight: 11 },
-  { focus: '구매 전 가치를 먼저 체감시키는 장치', weight: 9 },
-  { focus: '스크롤 흐름과 정보 밀도 배분', weight: 8 },
-  { focus: '메타데이터·구조화 데이터·크롤링 최적화', weight: 10 },
-  { focus: '감정 곡선 설계와 숫자 근거 제시', weight: 9 },
-  { focus: '한정성·마감 요소의 설득력', weight: 10 },
-  { focus: '가격 앵커링과 재구매 유도 구조', weight: 12 },
+  { focus: '전문성 신호와 환불·보장 문구', weight: 10 },
+  { focus: '상품 단계 구성과 첫 문장 후킹력', weight: 10 },
+  { focus: '직접 설득 대신 스토리로 유도하는 흐름', weight: 7 },
+  { focus: '차별화 포지셔닝과 즉시 반응 유도 문구', weight: 10 },
+  { focus: '구매 전 가치를 먼저 체감시키는 장치', weight: 8 },
+  { focus: '스크롤 흐름과 정보 밀도 배분', weight: 7 },
+  { focus: '메타데이터·구조화 데이터·크롤링 최적화', weight: 9 },
+  { focus: '감정 곡선 설계와 숫자 근거 제시', weight: 8 },
+  { focus: '한정성·마감 요소의 설득력', weight: 9 },
+  { focus: '가격 앵커링과 재구매 유도 구조', weight: 10 },
+  { focus: '유입 채널이 사업 단계에 맞게 다각화되어 있는지', weight: 6 },
+  { focus: '운영자의 전문성을 신뢰 자산으로 보여주는지', weight: 6 },
 ];
 
 const SEGMENT_COLORS = ['#0064ff', '#5b9bff', '#7bd6ff', '#a389ff', '#00c2a8'];
@@ -70,14 +72,14 @@ export function MethodologyPage() {
   useSeo({
     title: '채점 방법론 — 설득 전환 지수는 어떻게 계산되나요? | 세일즈스코어',
     description:
-      '10개 설득 프레임워크 교차 채점, 4단계 처리 과정, S~D 등급 기준까지 — 세일즈스코어 점수 산출 방식을 투명하게 공개합니다.',
+      '12개 설득 프레임워크 교차 채점, 4단계 처리 과정, S~D 등급 기준까지 — 세일즈스코어 점수 산출 방식을 투명하게 공개합니다.',
     path: '/methodology',
     jsonLd: {
       '@context': 'https://schema.org',
       '@type': 'Article',
       headline: '설득 전환 지수는 어떻게 계산되나요?',
       description:
-        '10개 설득 프레임워크 교차 채점, 4단계 처리 과정, S~D 등급 기준까지 — 세일즈스코어 점수 산출 방식을 투명하게 공개합니다.',
+        '12개 설득 프레임워크 교차 채점, 4단계 처리 과정, S~D 등급 기준까지 — 세일즈스코어 점수 산출 방식을 투명하게 공개합니다.',
       author: { '@type': 'Organization', name: '세일즈스코어' },
     },
   });
@@ -125,7 +127,7 @@ export function MethodologyPage() {
             나오는지는 전부 투명하게 보여드립니다.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-2.5">
-            {['10개 프레임워크 교차 채점', '공식 가이드 기준 인용', '동일 URL 재현 가능'].map((t) => (
+            {['12개 프레임워크 교차 채점', '공식 가이드 기준 인용', '동일 URL 재현 가능'].map((t) => (
               <span
                 key={t}
                 className="text-white/50 text-[11px] font-medium flex items-center gap-1.5 bg-white/[0.04] border border-white/[0.08] rounded-full px-3 py-1.5"
@@ -153,7 +155,7 @@ export function MethodologyPage() {
         eyebrow="AI 채점 엔진"
         heading={
           <>
-            10개 프레임워크를 <span className="gradient-text-static">동시에 대조</span>하는
+            12개 프레임워크를 <span className="gradient-text-static">동시에 대조</span>하는
             가중합 모델입니다
           </>
         }
@@ -214,7 +216,7 @@ export function MethodologyPage() {
         eyebrow="프레임워크 매핑"
         heading={
           <>
-            10개 프레임워크가 각각 <span className="gradient-text-static">무엇을 봅니다</span>
+            12개 프레임워크가 각각 <span className="gradient-text-static">무엇을 봅니다</span>
           </>
         }
         sub={
@@ -260,6 +262,55 @@ export function MethodologyPage() {
                   />
                 </span>
               </span>
+            </motion.div>
+          ))}
+        </div>
+      </Section>
+
+      {/* ══════════ 12명 마케팅 거장 ══════════ */}
+      <Section
+        icon="users"
+        eyebrow="채점 기준의 뿌리"
+        heading={
+          <>
+            <span className="gradient-text-static">12명의 심사위원</span>이 각자 자기 전문
+            분야만 봅니다
+          </>
+        }
+        sub={
+          <>
+            전부 실제 책을 냈고, 실제 매출로 검증된 인물입니다. <Em>이름만 빌린 게 아니라</Em>{' '}
+            각자의 핵심 이론을 채점 기준으로 그대로 옮겼습니다.
+          </>
+        }
+      >
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto">
+          {MARKETING_MASTERS.map((m, i) => (
+            <motion.div
+              key={m.frameworkId}
+              className="rounded-2xl border border-white/10 bg-white/[0.02] p-5"
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: (i % 6) * 0.06 }}
+            >
+              <div className="flex items-center gap-2 mb-2.5">
+                <span
+                  className="w-7 h-7 rounded-full flex items-center justify-center text-[12px] font-black shrink-0"
+                  style={{
+                    background: `${SEGMENT_COLORS[i % SEGMENT_COLORS.length]}22`,
+                    color: SEGMENT_COLORS[i % SEGMENT_COLORS.length],
+                  }}
+                >
+                  {i + 1}
+                </span>
+                <p className="text-white font-bold text-[14px]">{m.name}</p>
+              </div>
+              <p className="text-white/40 text-[11px] tracking-[0.06em] uppercase mb-2 font-semibold">
+                {LOADING_FRAMEWORK_NAMES[i]}
+              </p>
+              <p className="text-white/55 text-[12.5px] leading-relaxed mb-2">{m.theory}</p>
+              {m.book && <p className="text-white/30 text-[11.5px] italic">『{m.book}』</p>}
             </motion.div>
           ))}
         </div>

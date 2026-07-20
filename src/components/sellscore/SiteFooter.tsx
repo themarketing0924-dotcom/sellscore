@@ -70,17 +70,39 @@ export function SiteFooter() {
             고객지원
           </p>
           <ul className="flex flex-col gap-2">
-            <li className="text-white/50 text-[13px]">이메일: [고객센터 이메일 입력 예정]</li>
+            <li>
+              <a
+                href="mailto:themarketing0924@gmail.com"
+                className="text-white/50 hover:text-white/80 text-[13px] no-underline transition-colors"
+              >
+                이메일 문의
+              </a>
+            </li>
+            <li>
+              <Link
+                to="/privacy"
+                className="text-white/50 hover:text-white/80 text-[13px] no-underline transition-colors"
+              >
+                개인정보처리방침
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/terms"
+                className="text-white/50 hover:text-white/80 text-[13px] no-underline transition-colors"
+              >
+                이용약관
+              </Link>
+            </li>
           </ul>
         </div>
       </div>
 
       <div className="max-w-5xl mx-auto border-t border-white/[0.06] pt-6">
         <p className="text-white/25 text-[11px] leading-relaxed mb-2">
-          캐시홀딩스 · 대표 [대표자명 입력 예정] · 사업자등록번호 [입력 예정] · 통신판매업신고
-          [입력 예정]
+          캐시홀딩스(KASH HOLDINGS) · 대표 이대영 · 사업자등록번호 616-37-73094
           <br />
-          주소 [사업장 주소 입력 예정] · 고객센터 [이메일 입력 예정]
+          고객센터 themarketing0924@gmail.com
         </p>
         <p className="text-white/20 text-[11px] max-w-md leading-relaxed">{BRAND.footerNote}</p>
       </div>

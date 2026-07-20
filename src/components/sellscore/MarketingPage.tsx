@@ -17,39 +17,41 @@ interface MarketingPageProps {
 const PAIN_POINTS: { icon: IconName; title: string; desc: ReactNode }[] = [
   {
     icon: 'target',
-    title: '광고비는 쓰는데, 결제가 안 일어난다',
+    title: '광고비는 쓰는데 결제가 일어나지 않습니다',
     desc: (
       <>
-        트래픽은 만들었는데 <Em>어디서 내 돈이 새어나가고 있는지</Em>, 뭘 먼저 고쳐야 하는지 감이 안 옵니다.
+        트래픽은 늘었지만 <Em>고객이 어느 지점에서 이탈하는지</Em> 알 수 없습니다. 광고를 더
+        집행하기 전에 사이트 안에서 매출이 새어나가는 지점부터 확인해야 합니다.
       </>
     ),
   },
   {
     icon: 'spark',
-    title: 'AI로 사이트는 만들었는데 그다음이 없다',
+    title: 'AI로 사이트는 만들었는데, 그다음이 없습니다',
     desc: (
       <>
-        클로드·GPT로 뚝딱 만들긴 했는데, 이게 실제로 <Em>고객 지갑을 여는 구조인지</Em>는 아무도 안
-        알려줍니다.
+        Claude나 ChatGPT로 홈페이지를 만들었지만 실제 고객이 <Em>이해하고 신뢰하고 구매하는 구조인지</Em>는
+        확인하기 어렵습니다. 보기 좋은 사이트와 실제로 팔리는 사이트는 다릅니다.
       </>
     ),
   },
   {
     icon: 'users',
-    title: '고객사에 성과를 증명할 방법이 없다',
+    title: '고객사에 성과를 설명할 근거가 없습니다',
     desc: (
       <>
-        홈페이지를 만들어드리고 나면, <Em>성과를 숫자와 객관적 근거로</Em> 설명할 방법이 마땅치
-        않습니다.
+        홈페이지를 제작한 뒤 무엇이 개선됐는지 숫자와 객관적인 기준으로 설명하기 어렵습니다.
+        SellScore를 활용하면 <Em>진단 전후 점수와 수정 항목</Em>을 고객에게 명확하게 제시할 수 있습니다.
       </>
     ),
   },
   {
     icon: 'clock',
-    title: '대행사에 수백만 원 쓸 여력이 없다',
+    title: '전문가에게 맡기기에는 비용과 시간이 부담됩니다',
     desc: (
       <>
-        전문가에게 맡기자니 비용과 시간이 부담되고, 혼자서 <Em>돈 버리는 테스트만 반복하고 계신가요?</Em>
+        대행사나 컨설턴트에게 수백만 원을 지불하기 전에 무엇이 문제인지부터 확인할 수 있습니다.
+        <Em>무엇을 요청해야 하는지</Em> 알고 맡기면 불필요한 수정 비용과 시간을 줄일 수 있습니다.
       </>
     ),
   },
@@ -61,7 +63,8 @@ const DELIVERABLES: { icon: IconName; title: string; desc: ReactNode }[] = [
     title: '설득 전환 지수 100점 점수화',
     desc: (
       <>
-        <Em>10명의 마케팅 대가 프레임워크</Em>로 사이트를 교차 채점합니다.
+        사이트가 방문자의 관심을 붙잡고 신뢰를 만들고 <Em>행동을 유도하는 구조</Em>인지 항목별로
+        평가합니다. 단순한 디자인 점수가 아니라 실제 전환을 방해하는 요소를 기준으로 분석합니다.
       </>
     ),
   },
@@ -70,17 +73,20 @@ const DELIVERABLES: { icon: IconName; title: string; desc: ReactNode }[] = [
     title: '무엇이, 왜 감점됐는지 근거 제시',
     desc: (
       <>
-        <Em>WCAG, Google Search Essentials, 네이버 가이드</Em> 등 공식 기준을 근거로 듭니다.
+        어떤 문구와 구조가 고객의 행동을 막고 있는지 구체적으로 설명합니다.{' '}
+        <Em>공개된 웹 접근성·검색 품질 가이드와 SellScore 평가 기준</Em>을 바탕으로 판단 근거를
+        함께 제공합니다.
       </>
     ),
   },
   {
     icon: 'spark',
-    title: '그대로 붙여넣는 수정 지시문',
+    title: '그대로 복사해 사용하는 수정 지시문',
     desc: (
       <>
-        현재 → 목표, 대안 2~3개까지 정리된 프롬프트를 <Em>Claude·Cursor·GPT</Em>에 바로
-        붙여넣습니다.
+        현재 문제, 수정 목표, 추천 문구, 적용 방법을 정리해 제공합니다.{' '}
+        <Em>Claude Code, Cursor, ChatGPT</Em> 등 사용 중인 AI 개발 도구에 그대로 붙여넣어 수정할
+        수 있습니다.
       </>
     ),
   },
@@ -89,7 +95,8 @@ const DELIVERABLES: { icon: IconName; title: string; desc: ReactNode }[] = [
     title: '실행 우선순위 로드맵',
     desc: (
       <>
-        <Em>지금 당장 / 1주 내 / 1개월 내</Em>로 나눠, 뭐부터 손대야 할지 순서를 정해줍니다.
+        문제를 한꺼번에 나열하지 않습니다. <Em>점수가 가장 낮은, 즉 가장 시급한 문제</Em>부터
+        순서대로 정리해 효과가 큰 작업부터 먼저 확인할 수 있습니다.
       </>
     ),
   },
@@ -98,41 +105,95 @@ const DELIVERABLES: { icon: IconName; title: string; desc: ReactNode }[] = [
 const STEPS: { icon: IconName; title: string; desc: ReactNode }[] = [
   {
     icon: 'search',
-    title: 'URL 입력',
+    title: '01. 사이트 정보 입력',
     desc: (
       <>
-        사이트 주소와 목적·타겟 같은 <Em>질문 5개</Em>에 답합니다.
+        분석할 사이트 주소와 <Em>사이트 목적, 주요 고객, 판매 상품</Em> 등 간단한 질문에 답합니다.
       </>
     ),
   },
   {
     icon: 'spark',
-    title: 'AI 교차 진단',
+    title: '02. 다각도 교차 진단',
     desc: (
       <>
-        <Em>10개 설득 프레임워크</Em>로 카피·디자인·SEO를 채점합니다.
+        설득 구조, 카피, 사용자 경험, 검색 최적화, 접근성, 신뢰 요소를{' '}
+        <Em>여러 기준으로 분석</Em>하고 항목별 점수를 계산합니다.
       </>
     ),
   },
   {
     icon: 'check',
-    title: '바로 실행',
+    title: '03. 결과 확인 및 바로 수정',
     desc: (
       <>
-        수정 지시문을 복사해 <Em>AI 툴에 붙여넣고</Em> 바로 고칩니다.
+        감점 이유와 우선순위를 확인하고 제공된 수정 지시문을 복사해{' '}
+        <Em>Claude Code, Cursor, ChatGPT</Em> 등에 붙여넣습니다. 수정 후 다시 진단해 점수가
+        어떻게 달라졌는지 확인할 수 있습니다.
       </>
     ),
   },
 ];
 
+const TRUST_POINTS: { icon: IconName; title: string; desc: ReactNode }[] = [
+  {
+    icon: 'search',
+    title: '평가 항목 공개',
+    desc: (
+      <>
+        어떤 요소를 평가하는지 숨기지 않습니다. 각 프레임워크가 확인하는 질문과{' '}
+        <Em>주요 배점 기준을 공개</Em>합니다.
+      </>
+    ),
+  },
+  {
+    icon: 'chart',
+    title: '감점 근거 제공',
+    desc: (
+      <>
+        점수만 낮게 표시하지 않습니다. <Em>어떤 요소가 왜 문제인지</Em> 해당 화면과 문구를
+        기준으로 설명합니다.
+      </>
+    ),
+  },
+  {
+    icon: 'check',
+    title: '수정 전후 비교',
+    desc: (
+      <>
+        사이트를 수정한 뒤 다시 진단해 <Em>어떤 항목이 개선됐고 어떤 문제가 남았는지</Em>{' '}
+        비교할 수 있습니다.
+      </>
+    ),
+  },
+];
+
+const FREE_INCLUDES = [
+  '종합 설득 전환 점수',
+  'SEO·기술 최적화 점수 (구글·네이버 공식 기준)',
+  '가장 큰 핵심 문제',
+  '우선 확인해야 할 주요 감점 항목',
+  '기본 개선 방향',
+];
+
+const PAID_INCLUDES = [
+  '세부 항목별 전체 점수',
+  '감점된 위치와 구체적인 판단 근거',
+  '교체 가능한 헤드카피와 서브카피',
+  'AI 개발 도구에 붙여넣는 수정 지시문',
+  '점수 낮은 순 실행 우선순위',
+  '수정 전후 비교와 재진단',
+];
+
 const FAQ: { q: string; a: ReactNode }[] = [
   {
-    q: '이 점수를 어떻게 믿을 수 있나요?',
+    q: 'SellScore 점수를 어떻게 믿을 수 있나요?',
     a: (
       <>
-        채점 기준(WCAG 2.2, Google Search Essentials, 네이버 서치어드바이저 가이드)을 그대로
-        공개합니다. <Em>같은 사이트는 언제 다시 진단해도 같은 점수</Em>가 나오도록 설계되어
-        있습니다.
+        SellScore는 설득, 카피, 사용자 경험, 검색 최적화, 접근성, 신뢰 요소를 분리해
+        평가합니다. 각 항목의 평가 기준과 배점을 적용하며, 점수와 함께{' '}
+        <Em>감점 이유와 수정 방향</Em>을 제공합니다. 자세한 채점 방식은 방법론 페이지에서 확인할
+        수 있습니다.
       </>
     ),
   },
@@ -140,62 +201,66 @@ const FAQ: { q: string; a: ReactNode }[] = [
     q: '제 사이트가 아니라 고객사 사이트도 진단할 수 있나요?',
     a: (
       <>
-        네. 홈페이지 제작을 대행하시는 분들을 위해 <Em>다중 사이트 관리와 화이트라벨 리포트</Em>
-        를 제공하는 에이전시 플랜이 별도로 있습니다.
+        네. 공개적으로 접속 가능한 사이트라면 고객사 사이트도 진단할 수 있습니다. 다만{' '}
+        <Em>분석 결과를 외부에 공개하거나 영업 자료로 사용</Em>할 때는 사이트 소유자와의 계약 및
+        관련 권한을 확인해 주세요.
       </>
     ),
   },
   {
-    q: '결제하면 바로 확인할 수 있나요?',
+    q: '결제하면 결과를 바로 확인할 수 있나요?',
     a: (
       <>
-        결제 즉시 잠겨있던 <Em>7개 프레임워크 상세 진단</Em>과 Before/After 수정 문구, 실행
-        로드맵이 바로 열립니다.
+        결제 완료 후 <Em>전체 분석 리포트를 바로</Em> 확인할 수 있도록 제공됩니다. 사이트 규모와
+        분석 상태에 따라 세부 분석 완료 시간에는 차이가 있을 수 있습니다.
       </>
     ),
   },
   {
-    q: '리포트를 산 뒤 사이트를 고치면요?',
+    q: '리포트를 받은 뒤 사이트를 수정하면 어떻게 되나요?',
     a: (
       <>
-        리포트를 받고 개선한 뒤 <Em>30일 이내 재진단은 무료</Em>입니다. 점수가 실제로 올랐는지
-        바로 확인할 수 있습니다.
-      </>
-    ),
-  },
-  {
-    q: '무료로도 충분한가요, 꼭 결제해야 하나요?',
-    a: (
-      <>
-        무료로도 <Em>종합 점수와 3개 프레임워크 상세 진단</Em>은 전부 확인할 수 있습니다. 나머지
-        7개와 수정 지시문이 필요할 때만 결제하시면 됩니다.
-      </>
-    ),
-  },
-  {
-    q: '카드 등록 없이 무료 진단을 받을 수 있나요?',
-    a: (
-      <>
-        네. <Em>URL과 질문 5개</Em>만 입력하면 카드 등록이나 회원가입 없이 바로 점수를 확인할 수
+        제공된 수정 방향과 지시문을 활용해 사이트를 수정한 뒤 다시 진단할 수 있습니다.{' '}
+        <Em>수정 전후 점수를 비교</Em>하면 어떤 항목이 개선됐고 어떤 문제가 남았는지 확인할 수
         있습니다.
       </>
     ),
   },
   {
-    q: '에이전시 플랜은 몇 개 사이트까지 관리할 수 있나요?',
+    q: '무료 진단만 받아도 도움이 되나요?',
     a: (
       <>
-        <Em>사이트 다중 등록</Em>에 제한이 없고, 클라이언트별로 화이트라벨 PDF 리포트와 공유
-        링크를 따로 관리할 수 있습니다.
+        무료 진단만으로도 <Em>종합 점수, SEO·기술 최적화 점수, 핵심 문제</Em>를 확인할 수
+        있습니다. 세부 감점 근거, 전체 수정 문구, 실행 지시문이 필요하다면 전체 리포트를 선택할
+        수 있습니다.
       </>
     ),
   },
   {
-    q: '진단에 걸리는 시간은 얼마나 되나요?',
+    q: '무료 진단에 카드 등록이 필요한가요?',
     a: (
       <>
-        URL 입력부터 결과 확인까지 <Em>보통 10~15초</Em>입니다. 질문 5개에 답하는 시간까지
-        합쳐도 1분이 채 걸리지 않습니다.
+        아니요. 무료 진단을 시작할 때 <Em>카드 등록을 요구하지 않습니다</Em>. 무료 결과를 먼저
+        확인한 뒤 필요할 때만 전체 리포트를 선택할 수 있습니다.
+      </>
+    ),
+  },
+  {
+    q: '에이전시·대행사도 쓸 수 있나요?',
+    a: (
+      <>
+        네. 여러 고객사의 사이트를 반복적으로 진단하고 수정 전후 결과를 관리해야 하는 웹
+        제작사·마케팅 대행사·프리랜서에게 적합합니다. <Em>다중 사이트 관리가 필요</Em>하시면
+        별도로 문의해 주세요.
+      </>
+    ),
+  },
+  {
+    q: '진단에는 얼마나 걸리나요?',
+    a: (
+      <>
+        기본 진단은 사이트 주소와 정보를 입력한 뒤 빠르게 확인할 수 있습니다. 사이트 상태, 페이지
+        분량, 네트워크 환경에 따라 <Em>분석 시간에는 차이</Em>가 있을 수 있습니다.
       </>
     ),
   },
@@ -236,21 +301,24 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
             transition={{ delay: 0.15 }}
           >
             <Icon name="spark" size={13} />
-            무료로 시작하는 유료 컨설팅급 사이트 분석
+            전문 컨설팅 수준의 사이트 분석을 무료로 시작하세요
           </motion.span>
 
           <h1
             className="text-white font-bold tracking-tight leading-[1.1] mb-6"
             style={{ fontSize: 'clamp(32px, 6.8vw, 66px)' }}
           >
-            10초 만에 이 사이트가
+            10초 만에
             <br />
-            <span className="gradient-text-animated">안 팔리는 이유</span>를 보여드립니다
+            <span className="gradient-text-animated">이 사이트가 안 팔리는 이유</span>를
+            <br />
+            보여드립니다
           </h1>
 
           <p className="text-[#86868b] text-[18px] sm:text-[21px] font-medium mb-11 max-w-xl mx-auto leading-[1.7]">
-            소상공인, 1인 창업가, 홈페이지 제작 대행 서비스를 운영하신다면 —{' '}
-            <Em>어디서 매출이 새어나가는지</Em>, 무엇부터 고쳐야 하는지 10초 안에 확인하세요.
+            광고를 해도 문의와 결제가 늘지 않는다면, 문제는 방문자 수가 아니라{' '}
+            <Em>사이트의 설득 구조</Em>일 수 있습니다. 사이트 주소를 입력하면 고객이 어디에서
+            이탈하는지, 무엇부터 고쳐야 하는지 우선순위대로 확인할 수 있습니다.
           </p>
 
           <motion.div
@@ -270,11 +338,11 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
               무료로 내 사이트 진단받기 →
             </button>
             <span className="text-white/35 text-[12px] font-medium">
-              카드 등록 없이 · 10초 안에 결과 확인
+              카드 등록 없이 · 빠른 결과 확인 · 수정 방향까지 제공
             </span>
           </motion.div>
 
-          <div className="flex flex-wrap items-center justify-center gap-3 mb-14">
+          <div className="flex flex-wrap items-center justify-center gap-3 mb-4">
             {TRUST_BADGES.map((badge, i) => (
               <span
                 key={badge}
@@ -289,6 +357,9 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
               </span>
             ))}
           </div>
+          <p className="text-white/30 text-[11.5px] max-w-md mx-auto mb-10 leading-relaxed">
+            공개된 웹 접근성·검색 품질 가이드와 SellScore 자체 평가 기준을 함께 적용합니다.
+          </p>
         </motion.div>
       </section>
 
@@ -298,9 +369,16 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
         heading={
           <>
             <HeadlineLine>사이트는 있는데,</HeadlineLine>
-            <span className="block mx-auto max-w-[9em]">
-              정작 <span className="gradient-text-static">뭘 고쳐야 할지</span> 모르겠다면
+            <span className="block mx-auto max-w-[11em]">
+              <span className="gradient-text-static">무엇을 고쳐야 매출이 오르는지</span> 모르겠다면
             </span>
+          </>
+        }
+        sub={
+          <>
+            방문자는 들어오는데 문의와 결제가 일어나지 않는 이유를 감으로 찾고 계시지는 않나요?
+            SellScore는 <Em>카피, 설득 구조, 사용자 경험, 검색 노출, 신뢰 요소</Em>를 함께 분석해
+            매출을 막는 문제부터 찾아냅니다.
           </>
         }
       >
@@ -329,16 +407,18 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
         eyebrow="무엇을 받게 되나요"
         heading={
           <>
-            <span className="block mx-auto max-w-[6em]">컨설턴트에게</span>
+            <span className="block mx-auto max-w-[9em]">막연한 조언이 아니라,</span>
             <HeadlineLine>
-              물어볼 질문을, <span className="gradient-text-static">AI 10명</span>이 먼저
+              무엇을 왜 고쳐야 하는지 <span className="gradient-text-static">실행 가능한 결과</span>
             </HeadlineLine>
-            <span className="block mx-auto max-w-[7em]">답해드립니다</span>
+            <span className="block">로 보여드립니다</span>
           </>
         }
         sub={
           <>
-            추상적인 조언이 아니라, <Em>지금 바로 복사해서 쓸 수 있는 결과물</Em>입니다.
+            <Em>12가지 설득·카피·사용자 경험·검색 최적화</Em> 분석 프레임워크로 사이트를 교차
+            평가합니다. 점수만 보여주는 것이 아니라 감점 이유, 수정 방향, 실제 수정에 사용할
+            지시문까지 제공합니다.
           </>
         }
       >
@@ -362,12 +442,81 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
         </div>
       </Section>
 
+      {/* ══════════ 샘플 리포트 미리보기 ══════════ */}
+      <Section
+        eyebrow="실제 결과 미리보기"
+        heading={
+          <>
+            진단을 받으면 <span className="gradient-text-static">이런 결과</span>를 확인하게
+            됩니다
+          </>
+        }
+        sub={
+          <>
+            설명만 보고 판단하지 마세요. SellScore가 어떤 문제를 찾고, 어떤 근거를 제시하며,
+            무엇부터 수정하라고 안내하는지 <Em>실제 분석 화면</Em>에서 확인해 보세요.
+          </>
+        }
+      >
+        <motion.div
+          className="max-w-3xl mx-auto"
+          initial={{ opacity: 0, y: 60 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <div className="rounded-3xl border border-white/[0.14] bg-white/[0.03] p-3 sm:p-4 mb-8">
+            <video
+              src="/sales-hero.mp4"
+              className="w-full rounded-2xl aspect-video object-cover"
+              autoPlay
+              muted
+              loop
+              playsInline
+            />
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-10">
+            {[
+              '종합 설득 전환 점수',
+              '가장 큰 감점 원인',
+              '우선 수정해야 할 핵심 문제',
+              '바로 사용하는 수정 지시문',
+              '실행 순서와 재진단 결과',
+            ].map((t) => (
+              <div
+                key={t}
+                className="rounded-xl border border-white/10 bg-white/[0.02] px-3 py-3 text-center"
+              >
+                <p className="text-white/70 text-[12px] font-semibold leading-snug">{t}</p>
+              </div>
+            ))}
+          </div>
+          <div className="text-center">
+            <button
+              onClick={onStart}
+              className="inline-flex items-center gap-1.5 h-12 px-7 rounded-full font-semibold text-[14px] text-white/90 border border-white/15 bg-white/5 hover:bg-white/10 transition-colors tracking-tight cursor-pointer"
+            >
+              샘플 분석 결과 자세히 보기 →
+            </button>
+            <p className="text-white/30 text-[11.5px] mt-3">
+              실제 서비스 화면을 바탕으로 구성된 예시입니다.
+            </p>
+          </div>
+        </motion.div>
+      </Section>
+
       {/* ══════════ HOW IT WORKS ══════════ */}
       <Section
         eyebrow="어떻게 진행되나요"
         heading={
           <>
-            3단계, <span className="gradient-text-static">1분이면 끝납니다</span>
+            복잡한 설정 없이, <span className="gradient-text-static">3단계면 진단이 끝납니다</span>
+          </>
+        }
+        sub={
+          <>
+            전문 용어를 알 필요도, 별도의 프로그램을 설치할 필요도 없습니다. 사이트 주소와 몇
+            가지 정보만 입력하면 <Em>분석 결과와 수정 방향</Em>을 바로 확인할 수 있습니다.
           </>
         }
       >
@@ -381,10 +530,7 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
               viewport={{ once: true }}
               transition={{ duration: 1.0, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
             >
-              <div className="flex items-center justify-center gap-2 mb-5">
-                <span className="text-[#86868b]/60 text-[13px] font-bold tabular-nums">
-                  {String(i + 1).padStart(2, '0')}
-                </span>
+              <div className="flex items-center justify-center mb-5">
                 <IconBadge name={s.icon} tint="blue" size="sm" />
               </div>
               <p className="text-white font-bold text-[16px] sm:text-[17px] mb-2 tracking-tight">{s.title}</p>
@@ -394,31 +540,152 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
         </div>
       </Section>
 
-      {/* ══════════ 채점 원리로 신뢰 연결 ══════════ (FAQ 직전, "이 점수 믿을 수 있나" 시점에 배치) */}
-      <Section eyebrow="이 점수를 믿을 수 있나요" heading="감이 아니라 공개된 기준으로 채점합니다">
+      {/* ══════════ 평가 기준과 신뢰 ══════════ (FAQ 직전, "이 점수 믿을 수 있나" 시점에 배치) */}
+      <Section
+        eyebrow="이 점수를 믿을 수 있나요"
+        heading={
+          <>
+            감이 아니라, <span className="gradient-text-static">공개된 기준과 일관된 배점</span>으로
+            평가합니다
+          </>
+        }
+      >
         <motion.div
-          className="max-w-2xl mx-auto rounded-3xl border border-white/10 bg-white/[0.02] p-8 sm:p-11 text-center"
-          initial={{ opacity: 0, y: 60 }}
+          className="max-w-2xl mx-auto text-center mb-10"
+          initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
         >
-          <IconBadge name="shield" tint="blue" />
-          <p className="text-[#86868b] text-[15px] sm:text-[16px] leading-relaxed mt-5 mb-8 max-w-md mx-auto font-medium">
-            10개 프레임워크가 각각 무엇을 보는지, 어떤 4단계를 거쳐 100점 만점으로 환산되는지{' '}
-            <Em>전부 공개</Em>합니다. 같은 사이트는 언제 재진단해도 같은 점수가 나옵니다.
+          <p className="text-[#86868b] text-[15px] sm:text-[16px] leading-relaxed font-medium">
+            SellScore는 단순히 AI에게 사이트가 좋은지 물어보고 임의의 점수를 보여주는 서비스가
+            아닙니다. 설득, 카피, 사용자 경험, 검색 최적화, 접근성, 신뢰 요소를 각각 분리해
+            평가하고 항목별 판단 기준과 배점을 적용합니다. 어떤 기준으로 점수가 계산되는지
+            공개하며, 동일한 분석 조건에서는 <Em>일관된 평가 결과</Em>가 나오도록 설계했습니다.
           </p>
+        </motion.div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 max-w-4xl mx-auto mb-12">
+          {TRUST_POINTS.map((t, i) => (
+            <motion.div
+              key={t.title}
+              className="border border-white/[0.14] rounded-3xl p-7 bg-white/[0.03] text-left"
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <IconBadge name={t.icon} tint="blue" size="sm" />
+              <p className="text-white font-bold text-[15px] mt-4 mb-2 tracking-tight">{t.title}</p>
+              <p className="text-[#86868b] text-[13.5px] leading-relaxed font-medium">{t.desc}</p>
+            </motion.div>
+          ))}
+        </div>
+
+        <motion.div
+          className="text-center"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+        >
           <Link
             to="/methodology"
             className="inline-flex items-center gap-1.5 h-12 px-7 rounded-full font-semibold text-[14px] text-white/90 border border-white/15 bg-white/5 hover:bg-white/10 no-underline transition-colors tracking-tight"
           >
             채점 원리 보러가기 →
           </Link>
+          <p className="text-white/25 text-[11px] max-w-md mx-auto mt-6 leading-relaxed">
+            SellScore는 Google, 네이버, W3C와 제휴하거나 공식 인증을 받은 서비스가 아닙니다.
+            공개된 가이드와 SellScore 자체 분석 기준을 바탕으로 진단 결과를 제공합니다.
+          </p>
         </motion.div>
       </Section>
 
+      {/* ══════════ 무료 진단과 전체 리포트 비교 ══════════ */}
+      <Section
+        eyebrow="무료로 어디까지 확인할 수 있나요"
+        heading={
+          <>
+            먼저 무료로 확인하고,
+            <br />
+            <span className="gradient-text-static">더 깊은 분석이 필요할 때만</span> 전체 리포트를
+            선택하세요
+          </>
+        }
+        sub={
+          <>
+            카드 등록 없이 무료 결과를 먼저 확인할 수 있습니다. 결제 전에{' '}
+            <Em>어떤 방식으로 분석되는지</Em> 충분히 판단하세요.
+          </>
+        }
+      >
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-3xl mx-auto mb-10">
+          <motion.div
+            className="border border-white/[0.14] rounded-3xl p-7 sm:p-9 bg-white/[0.03] text-left"
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <p className="text-white/50 text-[12px] tracking-[0.12em] uppercase font-bold mb-4">
+              무료 진단
+            </p>
+            <ul className="flex flex-col gap-3">
+              {FREE_INCLUDES.map((t) => (
+                <li key={t} className="flex items-start gap-2.5 text-white/75 text-[14px] leading-relaxed">
+                  <Icon name="check" size={14} className="text-[#7bd6ff] mt-0.5 shrink-0" />
+                  {t}
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+          <motion.div
+            className="border rounded-3xl p-7 sm:p-9 text-left"
+            style={{ borderColor: 'rgba(0,100,255,0.35)', background: 'rgba(0,100,255,0.06)' }}
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <p className="text-[#7bd6ff] text-[12px] tracking-[0.12em] uppercase font-bold mb-4">
+              전체 리포트에서 추가로 받는 내용
+            </p>
+            <ul className="flex flex-col gap-3">
+              {PAID_INCLUDES.map((t) => (
+                <li key={t} className="flex items-start gap-2.5 text-white/85 text-[14px] leading-relaxed">
+                  <Icon name="unlock" size={14} className="text-[#7bd6ff] mt-0.5 shrink-0" />
+                  {t}
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+        </div>
+
+        <div className="text-center">
+          <button
+            onClick={onStart}
+            className="h-14 px-9 rounded-full font-semibold text-[15px] text-white border-none cursor-pointer whitespace-nowrap transition-transform active:scale-[0.97] hover:brightness-110"
+            style={{
+              background: 'linear-gradient(135deg, #0064ff, #4f8bff)',
+              boxShadow: '0 8px 24px -8px rgba(0,100,255,0.55)',
+            }}
+          >
+            무료 진단부터 시작하기 →
+          </button>
+        </div>
+      </Section>
+
       {/* ══════════ FAQ ══════════ */}
-      <Section eyebrow="자주 묻는 질문" heading="궁금하신 점">
+      <Section
+        eyebrow="자주 묻는 질문"
+        heading={
+          <>
+            진단 전에 <span className="gradient-text-static">가장 많이 묻는 질문</span>을
+            정리했습니다
+          </>
+        }
+      >
         <FaqAccordion items={FAQ} />
       </Section>
 
@@ -438,14 +705,19 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
           transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
         >
           <h2
-            className="text-white font-bold tracking-tight mb-8"
+            className="text-white font-bold tracking-tight mb-6"
             style={{ fontSize: 'clamp(26px, 5vw, 44px)' }}
           >
-            <span className="block mx-auto max-w-[5em]">지금 내</span>
+            <span className="block mx-auto max-w-[7em]">지금 내 사이트에서</span>
             <span className="block">
-              <span className="gradient-text-static">사이트 점수</span>, 궁금하지 않으세요?
+              <span className="gradient-text-static">매출을 막고 있는 문제</span>부터 확인해
+              보세요
             </span>
           </h2>
+          <p className="text-[#86868b] text-[15px] sm:text-[16px] max-w-lg mx-auto mb-9 leading-relaxed">
+            광고비를 더 쓰기 전에, 사이트를 다시 만들기 전에, 무엇을 먼저 고쳐야 하는지
+            확인하세요. 카드 등록 없이 무료로 시작할 수 있습니다.
+          </p>
           <button
             onClick={onStart}
             className="h-14 px-9 rounded-full font-semibold text-[15px] text-white border-none cursor-pointer whitespace-nowrap transition-transform active:scale-[0.97] hover:brightness-110"
@@ -456,6 +728,9 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
           >
             무료로 내 사이트 진단받기 →
           </button>
+          <p className="text-white/35 text-[12px] mt-4">
+            카드 등록 없이 · 빠른 결과 확인 · 언제든 다시 진단
+          </p>
         </motion.div>
       </section>
 

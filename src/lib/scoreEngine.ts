@@ -16,6 +16,13 @@ export interface FixPrompt {
   copyPasteInstruction: string;
 }
 
+/** 실존 마케터 이론 인용 — 없으면(공식 가이드/심리학 원칙 등) undefined */
+export interface FrameworkMaster {
+  name: string;
+  theory: string;
+  book?: string;
+}
+
 export interface FrameworkResult {
   id: string;
   name: string;
@@ -33,6 +40,8 @@ export interface FrameworkResult {
   isStrength: boolean;
   /** 프롬프트 잠금 해제 카테고리 */
   promptCategory: 'sales' | 'seo';
+  /** 이 프레임워크의 근거가 된 실존 마케터 — 실제 진단 엔진에서만 채워진다 */
+  master?: FrameworkMaster;
 }
 
 export interface TrafficSnapshot {
@@ -46,10 +55,56 @@ export interface TrafficSnapshot {
 /** Google PageSpeed Insights 실측값 — 측정 실패 시 리포트에서 카드 자체를 숨긴다 */
 export interface PerformanceSnapshot {
   score: number | null;
+  seoScore: number | null;
+  accessibilityScore: number | null;
+  bestPracticesScore: number | null;
   lcpMs: number | null;
   cls: number | null;
   tbtMs: number | null;
   fcpMs: number | null;
+}
+
+/** LLM 판단 없이 마크업 사실만으로 채점하는 하드체크 1개 항목 */
+export interface HardCheckItem {
+  id: string;
+  label: string;
+  status: 'pass' | 'warn' | 'fail';
+  detail: string;
+}
+
+/** 네이버/구글/다음 공식 등록 페이지 링크 — 미등록 항목은 recommended: true */
+export interface OfficialLink {
+  id: string;
+  label: string;
+  url: string;
+  recommended: boolean;
+}
+
+/** 마케팅 인프라(분석 도구·검색엔진 등록·SNS·연락채널) 연결 여부 스냅샷 */
+export interface TrafficInfra {
+  hasAnalytics: boolean;
+  naverVerified: boolean;
+  googleVerified: boolean;
+  snsChannels: string[];
+  hasContactChannel: boolean;
+  missingCount: number;
+}
+
+/** SEO·기술 최적화 점수 1개 항목 — 하드체크 사실에 공식 출처를 붙인 것 */
+export interface TechSeoScoreItem {
+  id: string;
+  label: string;
+  source: string;
+  sourceUrl?: string;
+  status: 'pass' | 'warn' | 'fail';
+  points: number;
+}
+
+/** "AI 판단"과 분리된, 구글·네이버 공식 가이드 기준 객관적 점수 */
+export interface TechSeoScore {
+  score: number;
+  grade: 'S' | 'A' | 'B' | 'C' | 'D';
+  items: TechSeoScoreItem[];
 }
 
 export interface DiagnosisReport {
@@ -61,6 +116,14 @@ export interface DiagnosisReport {
   frameworks: FrameworkResult[];
   /** Google PageSpeed 실측 — 실제 진단 엔진에서만 채워진다 */
   performance?: PerformanceSnapshot | null;
+  /** 하드체크 결과 — 실제 진단 엔진에서만 채워진다 */
+  hardChecks?: HardCheckItem[];
+  /** 공식 검색엔진 등록 링크 — 실제 진단 엔진에서만 채워진다 */
+  officialLinks?: OfficialLink[];
+  /** 마케팅 인프라 연결 스냅샷 — 실제 진단 엔진에서만 채워진다 */
+  trafficInfra?: TrafficInfra;
+  /** 구글·네이버 공식 기준 가중합산 점수 — 실제 진단 엔진에서만 채워진다 */
+  techSeoScore?: TechSeoScore;
 }
 
 // ── 시드 기반 PRNG (같은 URL이면 항상 같은 결과) ──
@@ -296,9 +359,9 @@ const FRAMEWORK_TEMPLATES: FrameworkTemplate[] = [
   },
   {
     id: 'seo_infra',
-    name: 'SEO & Traffic Infrastructure',
+    name: 'Pillar-Cluster 모델',
     koreanName: '검색 유입 구조',
-    evidence: 'Google Search Essentials / 네이버 서치어드바이저 가이드',
+    evidence: '닐 파텔 — Pillar-Cluster Model / Google Search Essentials',
     low: {
       currentState: '{domain}의 title/meta description이 비어있거나 브랜드명만 담고 있을 가능성이 높습니다.',
       flaw: '검색 의도를 반영한 키워드가 title 태그에 없어 검색 유입 자체가 제한적입니다.',
@@ -324,9 +387,9 @@ const FRAMEWORK_TEMPLATES: FrameworkTemplate[] = [
   },
   {
     id: 'emotional_momentum',
-    name: 'Emotional Momentum & Scale Framing',
+    name: '사회적 증거(Social Proof) 원칙',
     koreanName: '감정 모멘텀 & 스케일 프레이밍',
-    evidence: '전환 심리 — 사회적 증거와 숫자 프레이밍',
+    evidence: '로버트 치알디니 — Influence, 사회적 증거 원칙',
     low: {
       currentState: '{domain}에는 규모나 실적을 나타내는 숫자가 보이지 않습니다.',
       flaw: '"얼마나 많은 사람이 이미 신뢰했는지"를 보여주는 스케일 신호가 없습니다.',
@@ -406,6 +469,62 @@ const FRAMEWORK_TEMPLATES: FrameworkTemplate[] = [
       ],
     },
   },
+  {
+    id: 'channel_strategy',
+    name: 'Five Money-Making Marketing Models',
+    koreanName: '채널 전략 진단',
+    evidence: '에벤 페이건 — 콜드/매스/추천/검색/1대1 채널 진단',
+    low: {
+      currentState: '{domain}은 단일 채널(예: 인스타그램만)에만 의존하고 있는 것으로 보입니다.',
+      flaw: '유입 채널이 하나뿐이면 그 채널이 흔들릴 때 매출 전체가 흔들립니다.',
+      fixCurrent: '단일 채널 의존',
+      fixTarget: '검색·추천·SNS 등 최소 2개 이상 채널을 동시에 운영',
+      alternatives: [
+        '네이버 블로그/검색 채널을 추가로 개설',
+        '기존 고객에게 추천(리퍼럴) 요청 문구 추가',
+        '카카오톡 채널 등 저비용 1대1 채널 개설',
+      ],
+    },
+    high: {
+      currentState: '{domain}은 여러 채널을 병행하고 있습니다.',
+      flaw: '채널은 여러 개지만 어떤 채널이 실제 성과를 내는지 추적하는 장치가 없습니다.',
+      fixCurrent: '채널별 성과 추적 안 됨',
+      fixTarget: '채널별 유입 링크에 UTM 등 추적 파라미터 부여',
+      alternatives: [
+        '채널별 랜딩 링크를 구분해 방문자 출처 파악',
+        '가장 성과 좋은 채널에 예산/시간을 집중',
+        '성과 낮은 채널은 과감히 정리',
+      ],
+    },
+  },
+  {
+    id: 'expert_authority',
+    name: 'Expert Positioning',
+    koreanName: '전문가 신뢰 자산화',
+    evidence: '브렌든 버처드 — High Performance, Experts Academy',
+    low: {
+      currentState: '{domain}에는 운영자/전문가가 누구인지 드러나는 소개가 없습니다.',
+      flaw: '얼굴 없는 사이트는 낯선 방문자에게 신뢰를 얻기 어렵습니다.',
+      fixCurrent: '운영자 소개 없음',
+      fixTarget: '이력·자격·경험을 짧게 소개하는 섹션 추가',
+      alternatives: [
+        '대표/운영자 사진과 한 줄 소개 추가',
+        '관련 경력·자격증·수상 이력 명시',
+        '"왜 이 일을 하는지" 짧은 스토리 추가',
+      ],
+    },
+    high: {
+      currentState: '{domain}은 운영자 소개가 있습니다.',
+      flaw: '소개는 있지만 이를 신뢰 자산(후기, 언론 노출 등)으로 확장하지 못하고 있습니다.',
+      fixCurrent: '소개만 있고 신뢰 자산 연결 없음',
+      fixTarget: '소개 옆에 후기·언론 노출·수상 이력을 함께 배치',
+      alternatives: [
+        '고객 후기를 소개 섹션 바로 옆에 배치',
+        '언론 보도나 협업 이력이 있다면 로고로 노출',
+        '전문성을 보여주는 콘텐츠(블로그·영상) 링크 추가',
+      ],
+    },
+  },
 ];
 
 // ── 컨설팅 서사용 메타데이터 (기법명 + 칭찬/위험 문장 + 프롬프트 카테고리) ──
@@ -416,6 +535,22 @@ interface FrameworkNarrative {
   risk: string;
   promptCategory: 'sales' | 'seo';
 }
+
+// 실제 진단 엔진(functions/src/index.ts)의 FRAMEWORKS 가중치와 동일하게 유지할 것 — 합 100
+const FRAMEWORK_WEIGHTS: Record<string, number> = {
+  preeminence: 10,
+  value_ladder: 10,
+  sideways: 7,
+  positioning: 10,
+  results_in_advance: 8,
+  attention_rhythm: 7,
+  seo_infra: 9,
+  emotional_momentum: 8,
+  challenge_funnel: 9,
+  pricing_ltv: 10,
+  channel_strategy: 6,
+  expert_authority: 6,
+};
 
 const FRAMEWORK_NARRATIVES: Record<string, FrameworkNarrative> = {
   preeminence: {
@@ -455,13 +590,13 @@ const FRAMEWORK_NARRATIVES: Record<string, FrameworkNarrative> = {
     promptCategory: 'seo',
   },
   seo_infra: {
-    technique: '검색 인프라 최적화(SEO Infrastructure)',
+    technique: 'Pillar-Cluster 모델',
     praise: 'title/meta 기본 구조가 잘 갖춰져 있어 검색엔진이 페이지를 정확히 이해할 수 있습니다.',
     risk: '이 부분이 비어있으면 구글·네이버 검색에 아예 노출되지 않거나, AI 검색(SGE, Perplexity 등)에서 인용조차 되지 않을 수 있습니다.',
     promptCategory: 'seo',
   },
   emotional_momentum: {
-    technique: '감정 모멘텀 & 스케일 프레이밍(Scale Framing)',
+    technique: '사회적 증거(Social Proof) 원칙',
     praise: '실적 숫자를 노출해 사회적 증거(Social Proof)를 효과적으로 활용하고 있습니다.',
     risk: '규모를 보여주는 신호가 없으면 신생 사이트처럼 보여 신뢰가 떨어지고 구매 전환이 낮아집니다.',
     promptCategory: 'sales',
@@ -476,6 +611,18 @@ const FRAMEWORK_NARRATIVES: Record<string, FrameworkNarrative> = {
     technique: '가격 앵커링(Price Anchoring) & LTV 설계',
     praise: '다단계 가격 구조로 방문자가 합리적으로 가격을 판단할 수 있도록 돕고 있습니다.',
     risk: '비교 기준이 없는 단일 가격은 방문자가 "비싸다"고 느끼게 만들어 구매 직전 이탈로 이어집니다.',
+    promptCategory: 'sales',
+  },
+  channel_strategy: {
+    technique: 'Five Money-Making Marketing Models',
+    praise: '여러 채널을 병행하고 있어 특정 채널이 흔들려도 매출 전체가 흔들리지 않습니다.',
+    risk: '채널이 하나뿐이면 그 채널의 알고리즘이나 정책이 바뀌는 순간 매출이 통째로 사라질 위험이 있습니다.',
+    promptCategory: 'seo',
+  },
+  expert_authority: {
+    technique: 'Expert Positioning',
+    praise: '운영자/전문가가 누구인지 명확히 드러나 있어 방문자가 신뢰를 형성하기 쉽습니다.',
+    risk: '얼굴 없는 사이트는 낯선 방문자에게 신뢰를 얻기 어려워 문의·구매 전환이 낮아집니다.',
     promptCategory: 'sales',
   },
 };
@@ -602,8 +749,10 @@ export function generateReport(
     };
   });
 
+  // 실제 진단 엔진(functions/src/index.ts)과 동일한 가중합산 공식 —
+  // FRAMEWORK_WEIGHTS 합이 100이므로 Σ(score×weight)/10이 0~100점이 된다.
   const overallScore = Math.round(
-    (frameworks.reduce((sum, f) => sum + f.score, 0) / frameworks.length) * 10
+    frameworks.reduce((sum, f) => sum + f.score * (FRAMEWORK_WEIGHTS[f.id] ?? 8), 0) / 10
   );
   const grade = gradeFromScore(overallScore);
 

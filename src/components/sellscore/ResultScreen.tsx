@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import type { DiagnosisReport, FrameworkResult } from '../../lib/scoreEngine';
+import type { DiagnosisReport, FrameworkResult, HardCheckItem } from '../../lib/scoreEngine';
 import { BarChart } from '../charts/BarChart';
 import { RadarChart } from '../charts/RadarChart';
 import TossCheckoutButton from '../payment/TossCheckoutButton';
@@ -41,6 +41,8 @@ const FRAMEWORK_ICON: Record<string, Parameters<typeof Icon>[0]['name']> = {
   emotional_momentum: 'users',
   challenge_funnel: 'clock',
   pricing_ltv: 'chart',
+  channel_strategy: 'share',
+  expert_authority: 'shield',
 };
 
 // 프롬프트 언락 경제: 즉시 3개 무료(상호성 원칙) → 회원가입 시 +2(리드 확보) →
@@ -193,13 +195,41 @@ export function ResultScreen({ report, answers, onRestart }: ResultScreenProps) 
             <p className="text-white/35 text-[12px] mb-6 text-center sm:text-left">
               추정치가 아니라 구글이 직접 측정한 모바일 기준 실측값입니다
             </p>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            {/* 구글 Lighthouse 공식 점수 4종 */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
               <PerfStat
                 label="성능 점수"
                 value={`${report.performance.score}`}
                 unit="/100"
                 level={report.performance.score >= 90 ? 'good' : report.performance.score >= 50 ? 'warn' : 'bad'}
               />
+              {report.performance.seoScore != null && (
+                <PerfStat
+                  label="구글 SEO 점수"
+                  value={`${report.performance.seoScore}`}
+                  unit="/100"
+                  level={report.performance.seoScore >= 90 ? 'good' : report.performance.seoScore >= 50 ? 'warn' : 'bad'}
+                />
+              )}
+              {report.performance.accessibilityScore != null && (
+                <PerfStat
+                  label="접근성 점수"
+                  value={`${report.performance.accessibilityScore}`}
+                  unit="/100"
+                  level={report.performance.accessibilityScore >= 90 ? 'good' : report.performance.accessibilityScore >= 50 ? 'warn' : 'bad'}
+                />
+              )}
+              {report.performance.bestPracticesScore != null && (
+                <PerfStat
+                  label="권장사항 준수"
+                  value={`${report.performance.bestPracticesScore}`}
+                  unit="/100"
+                  level={report.performance.bestPracticesScore >= 90 ? 'good' : report.performance.bestPracticesScore >= 50 ? 'warn' : 'bad'}
+                />
+              )}
+            </div>
+            {/* 핵심 웹 지표 실측 */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
               {report.performance.lcpMs != null && (
                 <PerfStat
                   label="최대 콘텐츠 표시(LCP)"
@@ -225,6 +255,161 @@ export function ResultScreen({ report, answers, onRestart }: ResultScreenProps) 
                 />
               )}
             </div>
+          </motion.div>
+        )}
+
+        {/* ── SEO·기술 최적화 점수: 구글/네이버 공식 기준 (AI 판단과 분리) ── */}
+        {report.techSeoScore && report.hardChecks && report.hardChecks.length > 0 && (
+          <motion.div
+            className="border border-white/10 rounded-3xl p-6 sm:p-8 mb-10 bg-white/[0.02]"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <p className="text-white/55 text-[13px] tracking-[0.18em] uppercase mb-1.5 font-bold text-center sm:text-left">
+              SEO·기술 최적화 점수
+            </p>
+            <p className="text-white/35 text-[12px] mb-6 text-center sm:text-left">
+              AI의 판단이 아니라 구글·네이버 공식 가이드 기준 + PageSpeed 실측을 가중합산한 객관적 점수입니다
+            </p>
+
+            <div className="flex items-end gap-3 mb-7">
+              <span
+                className={`text-[44px] sm:text-[52px] font-black leading-none tabular-nums ${GRADE_STYLE[report.techSeoScore.grade].text}`}
+              >
+                {report.techSeoScore.score}
+              </span>
+              <span className="text-white/35 text-[16px] font-medium mb-1.5">/100</span>
+              <span
+                className={`text-[16px] font-bold mb-1.5 px-2.5 py-0.5 rounded-xl border ${GRADE_STYLE[report.techSeoScore.grade].text} ${GRADE_STYLE[report.techSeoScore.grade].tint}`}
+              >
+                {report.techSeoScore.grade}
+              </span>
+            </div>
+
+            <div className="flex flex-col gap-2.5 mb-7">
+              {report.techSeoScore.items.map((item, i) => (
+                <div key={item.id} className="flex items-center gap-3">
+                  <div className="w-[110px] sm:w-[160px] shrink-0 text-[12.5px] sm:text-[13px] font-semibold text-white/70 truncate">
+                    {item.label}
+                  </div>
+                  <div className="flex-1 h-2.5 bg-white/[0.1] rounded-full overflow-hidden">
+                    <motion.div
+                      className={`h-full rounded-full ${TECH_ITEM_BAR[item.status]}`}
+                      initial={{ width: 0 }}
+                      whileInView={{ width: `${item.points}%` }}
+                      transition={{ duration: 0.7, delay: i * 0.04, ease: 'easeOut' }}
+                      viewport={{ once: true }}
+                    />
+                  </div>
+                  <div className="w-[34px] shrink-0 text-right text-[13px] font-bold text-white tabular-nums">
+                    {item.points}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {report.hardChecks.map((c) => {
+                const item = report.techSeoScore!.items.find((i) => i.id === c.id);
+                return (
+                  <div
+                    key={c.id}
+                    className="flex items-start gap-3 rounded-2xl border border-white/[0.06] bg-white/[0.02] p-4"
+                  >
+                    <span
+                      className={`shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-[13px] font-black ${HARD_CHECK_STYLE[c.status].badge}`}
+                    >
+                      {HARD_CHECK_STYLE[c.status].glyph}
+                    </span>
+                    <div>
+                      <p className="text-white text-[14px] font-bold mb-0.5">{c.label}</p>
+                      {item && (
+                        <p className="text-white/35 text-[11px] font-semibold mb-1">
+                          출처: {item.sourceUrl ? (
+                            <a
+                              href={item.sourceUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-[#7bd6ff]/80 hover:text-[#7bd6ff] underline"
+                            >
+                              {item.source}
+                            </a>
+                          ) : (
+                            item.source
+                          )}
+                        </p>
+                      )}
+                      <p className="text-white/55 text-[12.5px] leading-relaxed font-medium">{c.detail}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </motion.div>
+        )}
+
+        {/* ── 마케팅 인프라 연결 상태 + 공식 등록 링크 ── */}
+        {report.trafficInfra && (
+          <motion.div
+            className="border border-white/10 rounded-3xl p-6 sm:p-8 mb-10 bg-white/[0.02]"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <p className="text-white/55 text-[13px] tracking-[0.18em] uppercase mb-1.5 font-bold text-center sm:text-left">
+              마케팅 인프라 연결 상태
+            </p>
+            <p className="text-white/35 text-[12px] mb-6 text-center sm:text-left">
+              사이트는 만들었지만 마케팅 인프라를 연결하지 않은 경우가 많습니다 — 방치되면 트래픽이 있어도 성과를
+              추적할 수 없습니다
+            </p>
+
+            {report.trafficInfra.missingCount >= 3 && (
+              <div className="rounded-2xl border border-amber-400/25 bg-amber-400/[0.06] p-4 mb-5">
+                <p className="text-amber-300 text-[14px] font-bold">
+                  핵심 인프라 {report.trafficInfra.missingCount}개가 연결되어 있지 않습니다
+                </p>
+                <p className="text-white/60 text-[12.5px] mt-1 font-medium">
+                  방문자가 와도 몇 명이 왔는지, 어디서 왔는지, 무엇을 했는지 전혀 알 수 없는 상태입니다.
+                </p>
+              </div>
+            )}
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
+              <InfraChip label="애널리틱스" ok={report.trafficInfra.hasAnalytics} />
+              <InfraChip label="네이버 서치어드바이저" ok={report.trafficInfra.naverVerified} />
+              <InfraChip label="구글 서치콘솔" ok={report.trafficInfra.googleVerified} />
+              <InfraChip label="SNS·채널 연결" ok={report.trafficInfra.snsChannels.length > 0} />
+              <InfraChip label="연락 채널" ok={report.trafficInfra.hasContactChannel} />
+            </div>
+
+            {report.officialLinks && report.officialLinks.length > 0 && (
+              <div className="border-t border-white/10 pt-5">
+                <p className="text-white/50 text-[12px] font-bold mb-3 uppercase tracking-[0.08em]">
+                  공식 등록 페이지로 바로 이동
+                </p>
+                <div className="flex flex-wrap gap-2.5">
+                  {report.officialLinks.map((link) => (
+                    <a
+                      key={link.id}
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`inline-flex items-center gap-1.5 h-10 px-4 rounded-full text-[13px] font-semibold border transition-colors ${
+                        link.recommended
+                          ? 'text-[#7bd6ff] bg-[#0064ff]/10 border-[#0064ff]/25 hover:bg-[#0064ff]/20'
+                          : 'text-white/50 bg-white/[0.03] border-white/10 hover:bg-white/[0.06]'
+                      }`}
+                    >
+                      {link.label} ↗
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
           </motion.div>
         )}
 
@@ -258,7 +443,7 @@ export function ResultScreen({ report, answers, onRestart }: ResultScreenProps) 
           transition={{ duration: 0.6 }}
         >
           <p className="text-white/55 text-[13px] tracking-[0.18em] uppercase mb-6 font-bold text-center">
-            10개 프레임워크 진단
+            12개 프레임워크 진단
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center border border-white/10 rounded-3xl p-6 sm:p-8 bg-white/[0.02]">
             <BarChart items={report.frameworks.map((f) => ({ label: f.koreanName, score: f.score }))} />
@@ -603,6 +788,33 @@ function SnapshotStat({
   );
 }
 
+const HARD_CHECK_STYLE: Record<HardCheckItem['status'], { badge: string; glyph: string }> = {
+  pass: { badge: 'bg-emerald-400/15 text-emerald-300', glyph: '✓' },
+  warn: { badge: 'bg-amber-400/15 text-amber-300', glyph: '!' },
+  fail: { badge: 'bg-rose-400/15 text-rose-300', glyph: '✕' },
+};
+
+const TECH_ITEM_BAR: Record<HardCheckItem['status'], string> = {
+  pass: 'bg-emerald-400',
+  warn: 'bg-amber-400',
+  fail: 'bg-rose-400',
+};
+
+function InfraChip({ label, ok }: { label: string; ok: boolean }) {
+  return (
+    <div
+      className={`rounded-xl border px-3 py-2.5 text-center ${
+        ok ? 'border-emerald-400/20 bg-emerald-400/[0.05]' : 'border-white/10 bg-white/[0.02]'
+      }`}
+    >
+      <p className={`text-[12px] font-bold ${ok ? 'text-emerald-300' : 'text-white/40'}`}>
+        {ok ? '연결됨' : '미연결'}
+      </p>
+      <p className="text-white/55 text-[11px] font-medium mt-0.5">{label}</p>
+    </div>
+  );
+}
+
 const PERF_LEVEL_STYLE = {
   good: 'text-emerald-300',
   warn: 'text-amber-300',
@@ -680,9 +892,16 @@ function PromptCard({
 
       <div className={open ? '' : 'blur-sm select-none pointer-events-none'}>
         <p className="text-white/75 text-[15px] leading-relaxed mb-2 font-medium">{framework.currentState}</p>
-        <p className="text-white/50 text-[14px] mb-4">
+        <p className="text-white/50 text-[14px] mb-1">
           근거: <strong className="text-white/70 font-semibold">{framework.evidence}</strong>
         </p>
+        {framework.master && (
+          <p className="text-[#7bd6ff]/70 text-[12.5px] leading-relaxed mb-4">
+            📖 {framework.master.name}
+            {framework.master.book && ` · 『${framework.master.book}』`} — {framework.master.theory}
+          </p>
+        )}
+        {!framework.master && <div className="mb-4" />}
         <div className="bg-white/[0.04] rounded-2xl p-4">
           <p className="text-rose-300/90 text-[14px] mb-3 font-bold">결함: {framework.flaw}</p>
           <p className="text-white/60 text-[14px] mb-1 font-medium">

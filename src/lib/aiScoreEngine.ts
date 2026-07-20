@@ -11,11 +11,15 @@ import {
   buildTrafficSnapshot,
   type DiagnosisReport,
   type FrameworkResult,
+  type HardCheckItem,
+  type OfficialLink,
   type PerformanceSnapshot,
+  type TechSeoScore,
+  type TrafficInfra,
 } from './scoreEngine';
 
-// Cloud Function 자체 제한이 120초이므로 그보다 약간 짧게 잡는다.
-const CALL_TIMEOUT_MS = 110000;
+// Cloud Function 자체 제한이 240초이므로 그보다 약간 짧게 잡는다.
+const CALL_TIMEOUT_MS = 230000;
 
 interface AnalyzeSiteResponse {
   domain: string;
@@ -24,6 +28,10 @@ interface AnalyzeSiteResponse {
   oneLiner: string;
   frameworks: FrameworkResult[];
   performance?: PerformanceSnapshot | null;
+  hardChecks?: HardCheckItem[];
+  officialLinks?: OfficialLink[];
+  trafficInfra?: TrafficInfra;
+  techSeoScore?: TechSeoScore;
 }
 
 function extractDomainForTraffic(url: string): string {
@@ -80,10 +88,13 @@ export async function getDiagnosisReport(
   answers: Record<string, string>
 ): Promise<DiagnosisReport> {
   try {
+    // httpsCallable 자체에도 내부 기본 타임아웃(70초)이 있어, 아래 withTimeout과
+    // 별개로 여기서도 명시적으로 늘려주지 않으면 크롤링+AI채점이 끝나기 전에
+    // "deadline-exceeded"로 끊긴다.
     const analyzeSite = httpsCallable<
       { url: string; answers: Record<string, string> },
       AnalyzeSiteResponse
-    >(functions, 'analyzeSite');
+    >(functions, 'analyzeSite', { timeout: CALL_TIMEOUT_MS });
 
     const result = await withTimeout(
       analyzeSite({ url, answers }),
@@ -101,6 +112,10 @@ export async function getDiagnosisReport(
       traffic,
       frameworks: data.frameworks,
       performance: data.performance ?? null,
+      hardChecks: data.hardChecks,
+      officialLinks: data.officialLinks,
+      trafficInfra: data.trafficInfra,
+      techSeoScore: data.techSeoScore,
     };
   } catch (err) {
     console.error('[aiScoreEngine] analyzeSite 호출 실패:', err);
