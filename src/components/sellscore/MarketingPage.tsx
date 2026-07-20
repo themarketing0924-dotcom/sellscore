@@ -236,7 +236,7 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
             transition={{ delay: 0.15 }}
           >
             <Icon name="spark" size={13} />
-            무료로 시작하는 유료 컨설팅급 사이트 분석
+            전문 컨설팅 수준의 사이트 분석을 무료로 시작하세요
           </motion.span>
 
           <h1
@@ -249,8 +249,8 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
           </h1>
 
           <p className="text-[#86868b] text-[18px] sm:text-[21px] font-medium mb-11 max-w-xl mx-auto leading-[1.7]">
-            소상공인, 1인 창업가, 홈페이지 제작 대행 서비스를 운영하신다면 —{' '}
-            <Em>어디서 매출이 새어나가는지</Em>, 무엇부터 고쳐야 하는지 10초 안에 확인하세요.
+            홈페이지를 만들어도 문의와 결제가 늘지 않는다면,문제는 방문자 수가 아니라 사이트의 설득 구조일 수 있습니다.—{' '}
+            <Em>사이트 주소를 입력하면 고객이 어디에서 이탈하는지</Em>, 무엇부터 고쳐야 하는지 우선순위대로 확인할 수 있습니다.
           </p>
 
           <motion.div
@@ -270,7 +270,7 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
               무료로 내 사이트 진단받기 →
             </button>
             <span className="text-white/35 text-[12px] font-medium">
-              카드 등록 없이 · 10초 안에 결과 확인
+              카드 등록 없이 · 빠른 결과 확인 · 수정 방향까지 제공
             </span>
           </motion.div>
 
@@ -292,15 +292,29 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
         </motion.div>
       </section>
 
-      {/* ══════════ PAIN POINTS ══════════ (삼각형: 넓게 시작해 좁게 마무리) */}
+      {/* ══════════ PAIN POINTS ══════════ */}
       <Section
-        eyebrow="이런 고민 있으신가요"
+        eyebrow="이런 고민 있으신가요?"
         heading={
           <>
             <HeadlineLine>사이트는 있는데,</HeadlineLine>
-            <span className="block mx-auto max-w-[9em]">
-              정작 <span className="gradient-text-static">뭘 고쳐야 할지</span> 모르겠다면
+
+            <span className="block mx-auto max-w-[12em]">
+              무엇을 고쳐야{' '}
+              <span className="gradient-text-static">매출이 오르는지</span>
+              <br />
+              모르겠다면
             </span>
+          </>
+        }
+        sub={
+          <>
+            방문자는 들어오는데 문의와 결제가 일어나지 않는 이유를
+            감으로 찾고 계시지는 않나요?
+            <br />
+            <br />
+            SellScore는 카피, 설득 구조, 사용자 경험, 검색 노출, 신뢰 요소를 함께 분석해{' '}
+            <Em>매출을 막는 문제부터 찾아냅니다.</Em>
           </>
         }
       >
@@ -312,13 +326,21 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
               initial={{ opacity: 0, y: 60 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 1.0, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
+              transition={{
+                duration: 1.0,
+                delay: i * 0.1,
+                ease: [0.16, 1, 0.3, 1],
+              }}
             >
               <IconBadge name={p.icon} tint="rose" />
+
               <p className="text-white font-bold text-[17px] sm:text-[18px] mt-5 mb-2.5 tracking-tight">
                 {p.title}
               </p>
-              <p className="text-[#86868b] text-[14px] sm:text-[15px] leading-relaxed font-medium">{p.desc}</p>
+
+              <p className="text-[#86868b] text-[14px] sm:text-[15px] leading-relaxed font-medium">
+                {p.desc}
+              </p>
             </motion.div>
           ))}
         </div>
@@ -326,19 +348,31 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
 
       {/* ══════════ WHAT YOU GET ══════════ */}
       <Section
-        eyebrow="무엇을 받게 되나요"
+        eyebrow="무엇을 받게 되나요?"
         heading={
           <>
-            <span className="block mx-auto max-w-[6em]">컨설턴트에게</span>
-            <HeadlineLine>
-              물어볼 질문을, <span className="gradient-text-static">AI 10명</span>이 먼저
-            </HeadlineLine>
-            <span className="block mx-auto max-w-[7em]">답해드립니다</span>
+            <HeadlineLine>막연한 조언이 아니라,</HeadlineLine>
+
+            <span className="block mx-auto max-w-[11em]">
+              무엇을 왜 고쳐야 하는지
+            </span>
+
+            <span className="block mx-auto max-w-[11em]">
+              <span className="gradient-text-static">
+                실행 가능한 결과
+              </span>
+              로 보여드립니다
+            </span>
           </>
         }
         sub={
           <>
-            추상적인 조언이 아니라, <Em>지금 바로 복사해서 쓸 수 있는 결과물</Em>입니다.
+            글로벌 마케팅 전문가들의 저서와 공개 방법론을 바탕으로 구성한{' '}
+            <Em>12개 분석 프레임워크</Em>로 사이트를 교차 평가합니다.
+            <br />
+            <br />
+            점수만 보여주는 것이 아니라 감점 이유, 수정 방향,
+            실제 수정에 사용할 지시문까지 제공합니다.
           </>
         }
       >
@@ -350,24 +384,127 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
               initial={{ opacity: 0, y: 60 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 1.0, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
+              transition={{
+                duration: 1.0,
+                delay: i * 0.1,
+                ease: [0.16, 1, 0.3, 1],
+              }}
             >
               <IconBadge name={d.icon} tint="blue" />
+
               <p className="text-white font-bold text-[17px] sm:text-[18px] mt-5 mb-2.5 tracking-tight">
                 {d.title}
               </p>
-              <p className="text-[#86868b] text-[14px] sm:text-[15px] leading-relaxed font-medium">{d.desc}</p>
+
+              <p className="text-[#86868b] text-[14px] sm:text-[15px] leading-relaxed font-medium">
+                {d.desc}
+              </p>
             </motion.div>
           ))}
         </div>
       </Section>
 
-      {/* ══════════ HOW IT WORKS ══════════ */}
+            {/* ══════════ SAMPLE REPORT PREVIEW ══════════ */}
       <Section
-        eyebrow="어떻게 진행되나요"
+        eyebrow="실제 결과 미리보기"
         heading={
           <>
-            3단계, <span className="gradient-text-static">1분이면 끝납니다</span>
+            <HeadlineLine>진단을 받으면</HeadlineLine>
+
+            <span className="block mx-auto max-w-[10em]">
+              <span className="gradient-text-static">이런 결과</span>를 확인하게 됩니다
+            </span>
+          </>
+        }
+        sub={
+          <>
+            설명만 보고 판단하지 마세요.
+            <br />
+            <br />
+            SellScore가 어떤 문제를 찾고, 어떤 근거를 제시하며,
+            무엇부터 수정하라고 안내하는지 실제 분석 화면에서 확인해 보세요.
+          </>
+        }
+      >
+        <motion.div
+          className="max-w-4xl mx-auto"
+          initial={{ opacity: 0, y: 60 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{
+            duration: 1.0,
+            ease: [0.16, 1, 0.3, 1],
+          }}
+        >
+          <div className="overflow-hidden rounded-3xl border border-white/[0.16] bg-white/[0.03] shadow-2xl">
+            <video
+              className="block w-full h-auto"
+              src="/videos/sales_hero.mp4"
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 mt-6">
+            {[
+              '종합 설득 전환 점수',
+              '가장 큰 감점 원인',
+              '우선 수정해야 할 핵심 문제',
+              '바로 사용하는 수정 지시문',
+              '실행 순서와 재진단 결과',
+            ].map((item) => (
+              <div
+                key={item}
+                className="rounded-2xl border border-white/[0.12] bg-white/[0.03] px-4 py-4 text-center"
+              >
+                <p className="text-white/80 text-[13px] sm:text-[14px] font-semibold leading-relaxed">
+                  {item}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-8 text-center">
+            <button
+              onClick={onStart}
+              className="h-14 px-9 rounded-full font-semibold text-[15px] text-white border-none cursor-pointer whitespace-nowrap transition-transform active:scale-[0.97] hover:brightness-110"
+              style={{
+                background: 'linear-gradient(135deg, #0064ff, #4f8bff)',
+                boxShadow: '0 8px 24px -8px rgba(0,100,255,0.55)',
+              }}
+            >
+              샘플 분석 결과 자세히 보기 →
+            </button>
+
+            <p className="text-white/35 text-[12px] font-medium mt-4">
+              실제 서비스 화면을 바탕으로 구성된 예시입니다.
+            </p>
+          </div>
+        </motion.div>
+      </Section>
+
+      {/* ══════════ HOW IT WORKS ══════════ */}
+      <Section
+        eyebrow="어떻게 진행되나요?"
+        heading={
+          <>
+            <HeadlineLine>복잡한 설정 없이,</HeadlineLine>
+
+            <span className="block mx-auto max-w-[10em]">
+              <span className="gradient-text-static">3단계면 진단이 끝납니다</span>
+            </span>
+          </>
+        }
+        sub={
+          <>
+            전문 용어를 알 필요도, 별도의 프로그램을 설치할 필요도 없습니다.
+            <br />
+            <br />
+            사이트 주소와 몇 가지 정보만 입력하면
+            분석 결과와 수정 방향을 바로 확인할 수 있습니다.
           </>
         }
       >
@@ -379,22 +516,33 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
               initial={{ opacity: 0, y: 60 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 1.0, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
+              transition={{
+                duration: 1.0,
+                delay: i * 0.1,
+                ease: [0.16, 1, 0.3, 1],
+              }}
             >
               <div className="flex items-center justify-center gap-2 mb-5">
                 <span className="text-[#86868b]/60 text-[13px] font-bold tabular-nums">
                   {String(i + 1).padStart(2, '0')}
                 </span>
+
                 <IconBadge name={s.icon} tint="blue" size="sm" />
               </div>
-              <p className="text-white font-bold text-[16px] sm:text-[17px] mb-2 tracking-tight">{s.title}</p>
-              <p className="text-[#86868b] text-[14px] sm:text-[15px] leading-relaxed font-medium">{s.desc}</p>
+
+              <p className="text-white font-bold text-[16px] sm:text-[17px] mb-2 tracking-tight">
+                {s.title}
+              </p>
+
+              <p className="text-[#86868b] text-[14px] sm:text-[15px] leading-relaxed font-medium">
+                {s.desc}
+              </p>
             </motion.div>
           ))}
         </div>
       </Section>
 
-      {/* ══════════ 채점 원리로 신뢰 연결 ══════════ (FAQ 직전, "이 점수 믿을 수 있나" 시점에 배치) */}
+      {/* ══════════ 채점 원리로 신뢰 연결 ══════════ */}
       <Section eyebrow="이 점수를 믿을 수 있나요" heading="감이 아니라 공개된 기준으로 채점합니다">
         <motion.div
           className="max-w-2xl mx-auto rounded-3xl border border-white/10 bg-white/[0.02] p-8 sm:p-11 text-center"
