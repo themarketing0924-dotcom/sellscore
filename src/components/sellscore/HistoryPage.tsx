@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../../contexts/AuthContext';
@@ -27,6 +27,53 @@ function formatDate(ts: SavedReport['createdAt']): string {
   return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
 }
 
+function toMillis(ts: SavedReport['createdAt']): number {
+  if (ts && typeof (ts as any).toMillis === 'function') return (ts as any).toMillis();
+  return 0;
+}
+
+// ── 같은 도메인을 여러 번 진단한 경우 첫 진단과 최근 진단 점수를 비교한다.
+// 이미 저장된 점수끼리 비교만 하므로 AI 재호출이 없다 — 추가 비용 0원.
+interface DomainProgress {
+  domain: string;
+  firstScore: number;
+  latestScore: number;
+  delta: number;
+  firstDate: SavedReport['createdAt'];
+  latestDate: SavedReport['createdAt'];
+  latestReportId: string;
+  diagnoseCount: number;
+}
+
+function computeDomainProgress(reports: SavedReport[]): DomainProgress[] {
+  const byDomain = new Map<string, SavedReport[]>();
+  for (const r of reports) {
+    const list = byDomain.get(r.domain) ?? [];
+    list.push(r);
+    byDomain.set(r.domain, list);
+  }
+
+  const progress: DomainProgress[] = [];
+  for (const [domain, list] of byDomain) {
+    if (list.length < 2) continue;
+    const sorted = [...list].sort((a, b) => toMillis(a.createdAt) - toMillis(b.createdAt));
+    const first = sorted[0];
+    const latest = sorted[sorted.length - 1];
+    progress.push({
+      domain,
+      firstScore: Math.round(first.overallScore),
+      latestScore: Math.round(latest.overallScore),
+      delta: Math.round(latest.overallScore) - Math.round(first.overallScore),
+      firstDate: first.createdAt,
+      latestDate: latest.createdAt,
+      latestReportId: latest.id,
+      diagnoseCount: list.length,
+    });
+  }
+
+  return progress.sort((a, b) => b.delta - a.delta);
+}
+
 export function HistoryPage() {
   useSeo({
     title: '내 진단 내역 — 세일즈스코어',
@@ -47,6 +94,7 @@ export function HistoryPage() {
   }, [user]);
 
   const referralLink = user ? buildReferralLink(getReferralCode(user.uid)) : '';
+  const domainProgress = useMemo(() => computeDomainProgress(reports ?? []), [reports]);
 
   if (!authLoading && !user) {
     return (
@@ -76,6 +124,64 @@ export function HistoryPage() {
         <h1 className="text-white font-bold text-[26px] sm:text-[30px] tracking-[-0.02em] mb-10">
           내 진단 내역
         </h1>
+
+        {/* 개선 추이 — 같은 사이트를 재진단했을 때 점수가 얼마나 올랐는지 */}
+        {domainProgress.length > 0 && (
+          <div className="mb-10">
+            <p className="text-white/45 text-[11px] tracking-[0.1em] uppercase mb-4 font-semibold">
+              개선 추이
+            </p>
+            <div className="flex flex-col gap-3">
+              {domainProgress.map((p, i) => {
+                const improved = p.delta > 0;
+                const unchanged = p.delta === 0;
+                return (
+                  <motion.button
+                    key={p.domain}
+                    onClick={() => navigate(`/diagnose/report/${p.latestReportId}`)}
+                    className="text-left rounded-2xl border p-5 sm:p-6 cursor-pointer transition-colors"
+                    style={{
+                      borderColor: improved ? 'rgba(48,209,88,0.3)' : 'rgba(255,255,255,0.1)',
+                      background: improved ? 'rgba(48,209,88,0.06)' : 'rgba(255,255,255,0.02)',
+                    }}
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: i * 0.05 }}
+                  >
+                    <div className="flex items-center justify-between gap-4 mb-3">
+                      <p className="text-white font-bold text-[14px] truncate">{p.domain}</p>
+                      <span
+                        className={`text-[13px] font-bold px-2.5 py-1 rounded-lg shrink-0 ${
+                          improved
+                            ? 'text-emerald-300 bg-emerald-400/12'
+                            : unchanged
+                              ? 'text-white/50 bg-white/[0.06]'
+                              : 'text-rose-300 bg-rose-400/12'
+                        }`}
+                      >
+                        {improved ? '+' : ''}
+                        {p.delta}점
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2.5">
+                      <span className="text-white/40 text-[20px] font-extrabold tabular-nums">
+                        {p.firstScore}
+                      </span>
+                      <span className="text-white/20 text-[16px]">→</span>
+                      <span className="text-white text-[20px] font-extrabold tabular-nums">
+                        {p.latestScore}
+                      </span>
+                      <span className="text-white/30 text-[12px] font-medium ml-1">/100</span>
+                    </div>
+                    <p className="text-white/30 text-[11px] mt-2">
+                      {formatDate(p.firstDate)} → {formatDate(p.latestDate)} · 총 {p.diagnoseCount}회 진단
+                    </p>
+                  </motion.button>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* 리퍼럴 요약 카드 */}
         <motion.div
