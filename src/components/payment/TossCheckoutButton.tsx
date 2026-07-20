@@ -33,6 +33,8 @@ interface TossCheckoutButtonProps {
   customerEmail?: string;
   customerName?: string;
   customerKey?: string;
+  /** 이 결제로 언락할 리포트 문서 ID — 있으면 결제 승인 시 서버가 해당 리포트를 언락 처리한다 */
+  reportId?: string;
   method?: '카드' | '가상계좌' | '계좌이체' | '휴대폰';
   onError?: (error: any) => void;
   className?: string;
@@ -43,6 +45,7 @@ const TossCheckoutButton: React.FC<TossCheckoutButtonProps> = ({
   customerEmail,
   customerName,
   customerKey,
+  reportId,
   method = '카드',
   onError,
   className,
@@ -100,6 +103,7 @@ const TossCheckoutButton: React.FC<TossCheckoutButtonProps> = ({
         amount: product.price,
         currency: product.currency,
         status: 'pending',
+        ...(reportId ? { reportId } : {}),
         createdAt: serverTimestamp(),
       });
 
@@ -126,7 +130,7 @@ const TossCheckoutButton: React.FC<TossCheckoutButtonProps> = ({
     } finally {
       setProcessing(false);
     }
-  }, [product, customerEmail, customerName, customerKey, method, processing, user]);
+  }, [product, customerEmail, customerName, customerKey, reportId, method, processing, user]);
 
   return (
     <>

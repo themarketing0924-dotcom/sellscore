@@ -1154,6 +1154,19 @@ export const confirmTossPayment = onCall(
       );
     }
 
+    // 리포트 단건 결제면 해당 리포트를 영구 언락 처리한다 — 클라이언트는
+    // reports 문서를 직접 못 고치므로(firestore.rules) 반드시 여기(Admin SDK)에서만 한다.
+    const reportId = pending.reportId as string | undefined;
+    if (reportId) {
+      const reportRef = db.collection('reports').doc(reportId);
+      const reportSnap = await reportRef.get();
+      if (reportSnap.exists && reportSnap.data()?.userId === request.auth.uid) {
+        await reportRef.update({ paidUnlocked: true });
+      } else {
+        console.warn('[confirmTossPayment] reportId 소유자 불일치, 언락 건너뜀:', reportId);
+      }
+    }
+
     return {
       success: true,
       orderId,

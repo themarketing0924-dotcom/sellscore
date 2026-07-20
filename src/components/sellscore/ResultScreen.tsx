@@ -17,8 +17,12 @@ import { useCountUp } from '../../hooks/useCountUp';
 
 interface ResultScreenProps {
   report: DiagnosisReport;
-  /** Firestore에 리포트를 저장할 때 재계산용으로 함께 저장한다 (answers만 있으면 언제든 동일 리포트 재현 가능) */
+  /** Firestore에 리포트를 저장할 때 함께 저장한다 (재현용 answers) */
   answers?: Record<string, string>;
+  /** 이미 저장된 리포트를 다시 볼 때(SavedReportPage) 전달 — 결제 시 이 리포트를 언락 대상으로 지정한다 */
+  reportId?: string;
+  /** 이미 저장된 리포트를 다시 볼 때, Firestore에 기록된 결제 언락 여부 */
+  initialPaidUnlocked?: boolean;
   onRestart: () => void;
 }
 
@@ -52,17 +56,32 @@ const FREE_COUNT = 3;
 const SIGNUP_UNLOCK_COUNT = 2;
 const REFERRAL_UNLOCK_COUNT = 2;
 
-export function ResultScreen({ report, answers, onRestart }: ResultScreenProps) {
+export function ResultScreen({
+  report,
+  answers,
+  reportId,
+  initialPaidUnlocked,
+  onRestart,
+}: ResultScreenProps) {
   const { user } = useAuth();
   const [authOpen, setAuthOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
-  const [paidUnlocked, setPaidUnlocked] = useState(false);
+  const [paidUnlocked, setPaidUnlocked] = useState(!!initialPaidUnlocked);
   const [referred, setReferred] = useState(false);
+  // 새로 진단한 리포트를 저장하면 그 문서 ID를 여기 담아 결제 언락 대상으로 쓴다.
+  const [newlySavedReportId, setNewlySavedReportId] = useState<string | null>(null);
+  const activeReportId = reportId ?? newlySavedReportId ?? undefined;
   const reportProduct = TOSS_PRODUCTS.find((p) => p.id === PRICING.report.id)!;
   const paypalProduct = PAYPAL_PRODUCTS.find((p) => p.id === PRICING.report.id)!;
   const animatedScore = useCountUp(report.overallScore, 1100);
   const grade = GRADE_STYLE[report.grade];
   const signedUp = !!user;
+
+  // SavedReportPage는 비동기로 Firestore에서 언락 여부를 가져와 이 prop을 나중에
+  // 채워준다 — prop이 true가 되면 반영하되, 이미 이번 세션에서 언락된 걸 되돌리진 않는다.
+  useEffect(() => {
+    if (initialPaidUnlocked) setPaidUnlocked(true);
+  }, [initialPaidUnlocked]);
 
   // 로그인된 상태로 진단이 끝나면(또는 진단 도중 로그인하면) 리포트를 1회만 저장한다.
   const savedRef = useRef(false);
@@ -75,7 +94,16 @@ export function ResultScreen({ report, answers, onRestart }: ResultScreenProps) 
       answers,
       overallScore: report.overallScore,
       grade: report.grade,
-    }).catch((err) => console.error('Failed to save report:', err));
+      oneLiner: report.oneLiner,
+      frameworks: report.frameworks,
+      performance: report.performance ?? null,
+      hardChecks: report.hardChecks,
+      officialLinks: report.officialLinks,
+      trafficInfra: report.trafficInfra,
+      techSeoScore: report.techSeoScore,
+    })
+      .then((id) => setNewlySavedReportId(id))
+      .catch((err) => console.error('Failed to save report:', err));
   }, [user, answers, report]);
 
   const allPrompts = useMemo(
@@ -652,6 +680,7 @@ export function ResultScreen({ report, answers, onRestart }: ResultScreenProps) 
               <div className="max-w-sm mx-auto flex flex-col gap-3">
                 <TossCheckoutButton
                   product={reportProduct}
+                  reportId={activeReportId}
                   onError={(err) => console.error('[Toss] 결제 오류:', err)}
                 />
 

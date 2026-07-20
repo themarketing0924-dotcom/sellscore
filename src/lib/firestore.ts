@@ -21,6 +21,14 @@ import {
   type DocumentData,
 } from 'firebase/firestore';
 import { db } from './firebase';
+import type {
+  FrameworkResult,
+  PerformanceSnapshot,
+  HardCheckItem,
+  OfficialLink,
+  TrafficInfra,
+  TechSeoScore,
+} from './scoreEngine';
 
 // ── Collection Names ──
 export const COLLECTIONS = {
@@ -189,9 +197,11 @@ export async function deleteProduct(productId: string): Promise<void> {
 }
 
 // ── 세일즈스코어: 진단 리포트 저장 ──
-// scoreEngine.generateReport()는 domain+answers만 있으면 항상 같은 결과를
-// 재현하는 결정론적 엔진이므로, 전체 리포트를 통째로 저장하지 않고
-// domain/answers만 저장해뒀다가 조회 시 다시 계산한다 (문서 용량 절약).
+// 실제 AI 진단 결과 전체(프레임워크·SEO 점수·하드체크 등)를 그대로 저장한다.
+// (예전엔 domain/answers만 저장하고 나중에 mock 엔진으로 재계산했는데, 그러면
+// 다시 열 때마다 실제 진단과 다른 가짜 내용이 나오는 문제가 있었다 — 전체를
+// 저장해두면 언제 다시 열어도 그때 봤던 진짜 결과가 그대로 나온다.)
+// traffic 스냅샷만 domain+answers로 결정론적으로 재현 가능해서 저장하지 않는다.
 
 export interface SavedReport {
   id: string;
@@ -200,14 +210,23 @@ export interface SavedReport {
   answers: Record<string, string>;
   overallScore: number;
   grade: 'S' | 'A' | 'B' | 'C' | 'D';
+  oneLiner: string;
+  frameworks: FrameworkResult[];
+  performance?: PerformanceSnapshot | null;
+  hardChecks?: HardCheckItem[];
+  officialLinks?: OfficialLink[];
+  trafficInfra?: TrafficInfra;
+  techSeoScore?: TechSeoScore;
+  /** 정식 리포트 결제/포인트 언락 여부 — 서버(결제 승인 함수)만 true로 바꿀 수 있다 */
+  paidUnlocked?: boolean;
   createdAt: Timestamp;
 }
 
 export async function saveReport(
-  data: Omit<SavedReport, 'id' | 'createdAt'>
+  data: Omit<SavedReport, 'id' | 'createdAt' | 'paidUnlocked'>
 ): Promise<string> {
   const ref = doc(collection(db, COLLECTIONS.REPORTS));
-  await setDoc(ref, { ...data, id: ref.id, createdAt: serverTimestamp() });
+  await setDoc(ref, { ...data, id: ref.id, paidUnlocked: false, createdAt: serverTimestamp() });
   return ref.id;
 }
 

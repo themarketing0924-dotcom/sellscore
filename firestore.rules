@@ -46,10 +46,15 @@ service cloud.firestore {
     }
 
     // 공유 링크(/diagnose/report/:id)로 누구나 단건 조회 가능, 목록 열람("내 리포트")은 본인 것만.
+    // paidUnlocked는 생성 시 반드시 false여야 한다 — 결제 없이 스스로 리포트를
+    // "결제됨" 상태로 만들어 저장하는 걸 막는다. true로의 전환은 결제 승인
+    // 함수(Admin SDK)만 할 수 있다.
     match /reports/{reportId} {
       allow get: if true;
       allow list: if request.auth != null && resource.data.userId == request.auth.uid;
-      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      allow create: if request.auth != null
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.paidUnlocked == false;
       allow update, delete: if false;
     }
 

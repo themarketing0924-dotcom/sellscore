@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getReport } from '../../lib/firestore';
-import { generateReport, type DiagnosisReport } from '../../lib/scoreEngine';
+import { buildTrafficSnapshot, type DiagnosisReport } from '../../lib/scoreEngine';
 import { ResultScreen } from './ResultScreen';
 
 export function SavedReportPage() {
@@ -9,6 +9,7 @@ export function SavedReportPage() {
   const navigate = useNavigate();
   const [state, setState] = useState<'loading' | 'not-found' | 'ready'>('loading');
   const [report, setReport] = useState<DiagnosisReport | null>(null);
+  const [paidUnlocked, setPaidUnlocked] = useState(false);
 
   useEffect(() => {
     if (!reportId) return;
@@ -18,8 +19,22 @@ export function SavedReportPage() {
           setState('not-found');
           return;
         }
-        // domain+answers만 저장해뒀으므로 동일한 결정론적 엔진으로 다시 계산한다.
-        setReport(generateReport(saved.domain, saved.answers));
+        // 저장 당시 실제 AI 진단 결과를 그대로 복원한다 — traffic 스냅샷만
+        // domain+answers로 항상 동일하게 재현 가능해서 별도 저장하지 않는다.
+        setReport({
+          domain: saved.domain,
+          overallScore: saved.overallScore,
+          grade: saved.grade,
+          oneLiner: saved.oneLiner,
+          traffic: buildTrafficSnapshot(saved.domain, saved.answers),
+          frameworks: saved.frameworks,
+          performance: saved.performance ?? null,
+          hardChecks: saved.hardChecks,
+          officialLinks: saved.officialLinks,
+          trafficInfra: saved.trafficInfra,
+          techSeoScore: saved.techSeoScore,
+        });
+        setPaidUnlocked(!!saved.paidUnlocked);
         setState('ready');
       })
       .catch(() => setState('not-found'));
@@ -49,5 +64,12 @@ export function SavedReportPage() {
   }
 
   // answers를 넘기지 않아 ResultScreen이 이 리포트를 다시 저장하지 않도록 한다 (이미 저장된 리포트).
-  return <ResultScreen report={report} onRestart={() => navigate('/diagnose')} />;
+  return (
+    <ResultScreen
+      report={report}
+      reportId={reportId}
+      initialPaidUnlocked={paidUnlocked}
+      onRestart={() => navigate('/diagnose')}
+    />
+  );
 }
