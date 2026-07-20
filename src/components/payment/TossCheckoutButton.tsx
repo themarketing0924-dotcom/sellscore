@@ -13,6 +13,10 @@
 // ============================================================
 
 import React, { useState, useEffect, useCallback } from 'react';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { db } from '../../lib/firebase';
+import { useAuth } from '../../contexts/AuthContext';
+import { AuthModal } from '../AuthModal';
 import { TOSS_CONFIG, generateOrderId, type TossProduct } from '../../lib/toss';
 
 // 토스페이먼츠 SDK 타입 (외부 스크립트)
@@ -43,8 +47,10 @@ const TossCheckoutButton: React.FC<TossCheckoutButtonProps> = ({
   onError,
   className,
 }) => {
+  const { user } = useAuth();
   const [sdkLoaded, setSdkLoaded] = useState(false);
   const [processing, setProcessing] = useState(false);
+  const [authOpen, setAuthOpen] = useState(false);
 
   // 토스페이먼츠 SDK 로드
   useEffect(() => {
@@ -71,19 +77,41 @@ const TossCheckoutButton: React.FC<TossCheckoutButtonProps> = ({
   const handlePayment = useCallback(async () => {
     if (!window.TossPayments || processing) return;
 
+    // 결제 기록을 특정 사용자에게 귀속시켜야 승인 후 플랜을 부여할 수 있다 —
+    // 로그인 없이는 결제 자체를 시작하지 않는다.
+    if (!user) {
+      setAuthOpen(true);
+      return;
+    }
+
     setProcessing(true);
 
     try {
-      const tossPayments = window.TossPayments(TOSS_CONFIG.clientKey);
       const orderId = generateOrderId();
+
+      // 토스 결제창은 결제 완료 후 paymentKey/orderId/amount만 돌려준다 — 이 주문이
+      // 어떤 상품인지는 서버가 알아야 하므로, 결제창을 열기 전에 먼저 pending
+      // 상태로 기록해둔다. (승인 완료 처리는 confirmTossPayment 함수가 한다)
+      await setDoc(doc(db, 'payments', orderId), {
+        userId: user.uid,
+        orderId,
+        productId: product.id,
+        productName: product.name,
+        amount: product.price,
+        currency: product.currency,
+        status: 'pending',
+        createdAt: serverTimestamp(),
+      });
+
+      const tossPayments = window.TossPayments(TOSS_CONFIG.clientKey);
 
       await tossPayments.requestPayment(method, {
         amount: product.price,
         orderId,
         orderName: product.name,
-        customerName: customerName || '고객',
-        customerEmail: customerEmail || undefined,
-        customerKey: customerKey || TOSS_CONFIG.customerKey || undefined,
+        customerName: customerName || user.displayName || '고객',
+        customerEmail: customerEmail || user.email || undefined,
+        customerKey: customerKey || user.uid,
         successUrl: TOSS_CONFIG.successUrl,
         failUrl: TOSS_CONFIG.failUrl,
       });
@@ -98,9 +126,10 @@ const TossCheckoutButton: React.FC<TossCheckoutButtonProps> = ({
     } finally {
       setProcessing(false);
     }
-  }, [product, customerEmail, customerName, customerKey, method, processing]);
+  }, [product, customerEmail, customerName, customerKey, method, processing, user]);
 
   return (
+    <>
     <button
       onClick={handlePayment}
       disabled={!sdkLoaded || processing}
@@ -137,6 +166,8 @@ const TossCheckoutButton: React.FC<TossCheckoutButtonProps> = ({
         </>
       )}
     </button>
+    <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} />
+    </>
   );
 };
 

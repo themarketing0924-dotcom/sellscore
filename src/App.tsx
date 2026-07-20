@@ -6,6 +6,8 @@ import { GuidePage } from './components/sellscore/GuidePage';
 import { DiagnoseFlow } from './components/sellscore/DiagnoseFlow';
 import { MethodologyPage } from './components/sellscore/MethodologyPage';
 import { PricingPage } from './components/sellscore/PricingPage';
+import { PaymentSuccessPage } from './components/sellscore/PaymentSuccessPage';
+import { PaymentFailPage } from './components/sellscore/PaymentFailPage';
 import { BlogPage } from './components/sellscore/BlogPage';
 import { BlogPostPage } from './components/sellscore/BlogPostPage';
 import { HistoryPage } from './components/sellscore/HistoryPage';
@@ -28,6 +30,8 @@ export default function App() {
             <Route path="/diagnose/report/:reportId" element={<SavedReportPage />} />
             <Route path="/methodology" element={<MethodologyPage />} />
             <Route path="/pricing" element={<PricingPage />} />
+            <Route path="/payment/success" element={<PaymentSuccessPage />} />
+            <Route path="/payment/fail" element={<PaymentFailPage />} />
             <Route path="/blog" element={<BlogPage />} />
             <Route path="/blog/:slug" element={<BlogPostPage />} />
             <Route path="/privacy" element={<PrivacyPolicyPage />} />

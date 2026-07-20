@@ -276,7 +276,7 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
   return (
     <div className="relative">
       {/* ══════════ HERO ══════════ */}
-      <section className="relative min-h-[100dvh] flex flex-col items-center justify-center px-6 overflow-hidden text-center">
+      <section className="relative min-h-[100dvh] flex flex-col items-center justify-center px-6 overflow-hidden text-center pt-14">
         <VideoBackground variant="aurora" overlay="strong" />
         <div
           className="absolute inset-0 pointer-events-none"
@@ -362,9 +362,9 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
         </motion.div>
       </section>
 
-      {/* ══════════ PAIN POINTS ══════════ */}
+      {/* ══════════ PAIN POINTS ══════════ (삼각형: 넓게 시작해 좁게 마무리) */}
       <Section
-        eyebrow="이런 고민 있으신가요?"
+        eyebrow="이런 고민 있으신가요"
         heading={
           <>
             <HeadlineLine>사이트는 있는데,</HeadlineLine>
@@ -389,21 +389,13 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
               initial={{ opacity: 0, y: 60 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{
-                duration: 1.0,
-                delay: i * 0.1,
-                ease: [0.16, 1, 0.3, 1],
-              }}
+              transition={{ duration: 1.0, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
             >
               <IconBadge name={p.icon} tint="rose" />
-
               <p className="text-white font-bold text-[17px] sm:text-[18px] mt-5 mb-2.5 tracking-tight">
                 {p.title}
               </p>
-
-              <p className="text-[#86868b] text-[14px] sm:text-[15px] leading-relaxed font-medium">
-                {p.desc}
-              </p>
+              <p className="text-[#86868b] text-[14px] sm:text-[15px] leading-relaxed font-medium">{p.desc}</p>
             </motion.div>
           ))}
         </div>
@@ -411,7 +403,7 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
 
       {/* ══════════ WHAT YOU GET ══════════ */}
       <Section
-        eyebrow="무엇을 받게 되나요?"
+        eyebrow="무엇을 받게 되나요"
         heading={
           <>
             <span className="block mx-auto max-w-[9em]">막연한 조언이 아니라,</span>
@@ -437,21 +429,13 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
               initial={{ opacity: 0, y: 60 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{
-                duration: 1.0,
-                delay: i * 0.1,
-                ease: [0.16, 1, 0.3, 1],
-              }}
+              transition={{ duration: 1.0, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
             >
               <IconBadge name={d.icon} tint="blue" />
-
               <p className="text-white font-bold text-[17px] sm:text-[18px] mt-5 mb-2.5 tracking-tight">
                 {d.title}
               </p>
-
-              <p className="text-[#86868b] text-[14px] sm:text-[15px] leading-relaxed font-medium">
-                {d.desc}
-              </p>
+              <p className="text-[#86868b] text-[14px] sm:text-[15px] leading-relaxed font-medium">{d.desc}</p>
             </motion.div>
           ))}
         </div>
@@ -522,7 +506,7 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
 
       {/* ══════════ HOW IT WORKS ══════════ */}
       <Section
-        eyebrow="어떻게 진행되나요?"
+        eyebrow="어떻게 진행되나요"
         heading={
           <>
             복잡한 설정 없이, <span className="gradient-text-static">3단계면 진단이 끝납니다</span>
@@ -543,23 +527,13 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
               initial={{ opacity: 0, y: 60 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{
-                duration: 1.0,
-                delay: i * 0.1,
-                ease: [0.16, 1, 0.3, 1],
-              }}
+              transition={{ duration: 1.0, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
             >
               <div className="flex items-center justify-center mb-5">
                 <IconBadge name={s.icon} tint="blue" size="sm" />
               </div>
-
-              <p className="text-white font-bold text-[16px] sm:text-[17px] mb-2 tracking-tight">
-                {s.title}
-              </p>
-
-              <p className="text-[#86868b] text-[14px] sm:text-[15px] leading-relaxed font-medium">
-                {s.desc}
-              </p>
+              <p className="text-white font-bold text-[16px] sm:text-[17px] mb-2 tracking-tight">{s.title}</p>
+              <p className="text-[#86868b] text-[14px] sm:text-[15px] leading-relaxed font-medium">{s.desc}</p>
             </motion.div>
           ))}
         </div>

@@ -8,7 +8,12 @@ service cloud.firestore {
     }
 
     match /users/{uid} {
-      allow read, write: if isOwner(uid);
+      allow read, create: if isOwner(uid);
+      // plan/planExpiresAt는 결제 승인(confirmTossPayment, Admin SDK)만 쓸 수 있다 —
+      // 클라이언트가 결제 없이 스스로 플랜을 부여하지 못하도록 막는다.
+      allow update: if isOwner(uid)
+        && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['plan', 'planExpiresAt']);
+      allow delete: if false;
     }
 
     match /orders/{orderId} {
@@ -26,6 +31,18 @@ service cloud.firestore {
     match /products/{productId} {
       allow read: if true;
       allow write: if false;
+    }
+
+    // 토스 결제 기록. 결제창을 열기 전 클라이언트가 status:'pending'으로만
+    // 미리 만들 수 있고, 'approved'/'failed'로의 전환은 confirmTossPayment
+    // 함수(Admin SDK, 규칙 우회)만 할 수 있다 — 클라이언트가 스스로 결제를
+    // "승인됨"으로 조작하지 못하게 막는 것이 핵심.
+    match /payments/{orderId} {
+      allow get, list: if request.auth != null && resource.data.userId == request.auth.uid;
+      allow create: if request.auth != null
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.status == 'pending';
+      allow update, delete: if false;
     }
 
     // 공유 링크(/diagnose/report/:id)로 누구나 단건 조회 가능, 목록 열람("내 리포트")은 본인 것만.

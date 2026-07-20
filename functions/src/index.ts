@@ -31,6 +31,11 @@ db.settings({ ignoreUndefinedProperties: true });
 
 const anthropicApiKey = defineSecret('ANTHROPIC_API_KEY');
 const pagespeedApiKey = defineSecret('PAGESPEED_API_KEY');
+const tossSecretKey = defineSecret('TOSS_SECRET_KEY');
+
+// 결제 승인 후 users/{uid}에 플랜을 기록해줄 상품 — 자동 정기결제가 아니라
+// 결제 시점 기준 1개월짜리 이용권으로 취급한다 (정기 빌링 미연동 상태).
+const PLAN_PRODUCT_IDS = new Set(['sellscore-subscription', 'sellscore-agency']);
 
 // ── Google PageSpeed Insights 실측 ──
 // 실패하면 null을 반환하고 리포트에서 해당 카드를 아예 숨긴다 —
@@ -1057,5 +1062,102 @@ export const analyzeSite = onCall(
     );
 
     return reportPayload;
+  }
+);
+
+// ============================================================
+// confirmTossPayment — 토스페이먼츠 결제 승인
+// ============================================================
+// 토스 결제창은 카드 입력만 받고, 실제 승인(청구 확정)은 서버가
+// paymentKey로 토스 승인 API를 호출해야 완료된다. 이 호출이 없으면
+// 결제창을 다 채워도 승인 대기 상태로 남아 실제로 청구되지 않는다.
+//
+// 클라이언트(TossCheckoutButton)가 결제창을 열기 직전에
+// payments/{orderId} 문서를 status:'pending'으로 미리 만들어두고,
+// 이 함수는 그 문서에서 productId를 찾아 승인 후 상태를 갱신한다.
+// ============================================================
+
+export const confirmTossPayment = onCall(
+  { secrets: [tossSecretKey], cors: true, timeoutSeconds: 30 },
+  async (request) => {
+    if (!request.auth) {
+      throw new HttpsError('unauthenticated', '로그인이 필요합니다.');
+    }
+
+    const { paymentKey, orderId, amount } = (request.data ?? {}) as {
+      paymentKey?: string;
+      orderId?: string;
+      amount?: number;
+    };
+    if (!paymentKey || !orderId || typeof amount !== 'number') {
+      throw new HttpsError('invalid-argument', 'paymentKey, orderId, amount가 필요합니다.');
+    }
+
+    const paymentRef = db.collection('payments').doc(orderId);
+    const paymentSnap = await paymentRef.get();
+    if (!paymentSnap.exists) {
+      throw new HttpsError('not-found', '결제 대기 기록을 찾을 수 없습니다.');
+    }
+    const pending = paymentSnap.data()!;
+    if (pending.userId !== request.auth.uid) {
+      throw new HttpsError('permission-denied', '본인 결제만 승인할 수 있습니다.');
+    }
+    if (pending.amount !== amount) {
+      throw new HttpsError('invalid-argument', '결제 금액이 일치하지 않습니다.');
+    }
+    if (pending.status === 'approved') {
+      // 이미 승인 처리된 주문 — 중복 호출(새로고침 등) 시 그대로 성공 반환
+      return { success: true, orderId, alreadyApproved: true };
+    }
+
+    const basicAuth = Buffer.from(`${tossSecretKey.value()}:`).toString('base64');
+    const tossRes = await fetch('https://api.tosspayments.com/v1/payments/confirm', {
+      method: 'POST',
+      headers: {
+        Authorization: `Basic ${basicAuth}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ paymentKey, orderId, amount }),
+    });
+    const tossResult = (await tossRes.json()) as Record<string, unknown>;
+
+    if (!tossRes.ok) {
+      await paymentRef.update({
+        status: 'failed',
+        failReason: tossResult,
+        updatedAt: FieldValue.serverTimestamp(),
+      });
+      throw new HttpsError(
+        'aborted',
+        (tossResult.message as string) || '결제 승인에 실패했습니다.'
+      );
+    }
+
+    await paymentRef.update({
+      status: 'approved',
+      paymentKey,
+      method: tossResult.method ?? null,
+      receiptUrl: (tossResult.receipt as { url?: string } | undefined)?.url ?? null,
+      approvedAt: FieldValue.serverTimestamp(),
+    });
+
+    const productId = pending.productId as string | undefined;
+    if (productId && PLAN_PRODUCT_IDS.has(productId)) {
+      const expiresAt = new Date();
+      expiresAt.setMonth(expiresAt.getMonth() + 1);
+      await db.collection('users').doc(request.auth.uid).set(
+        {
+          plan: productId,
+          planExpiresAt: expiresAt.toISOString(),
+        },
+        { merge: true }
+      );
+    }
+
+    return {
+      success: true,
+      orderId,
+      receiptUrl: (tossResult.receipt as { url?: string } | undefined)?.url ?? null,
+    };
   }
 );
