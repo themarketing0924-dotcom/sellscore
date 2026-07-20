@@ -1,40 +1,121 @@
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useSeo } from '../../hooks/useSeo';
-import { getPost, BLOG_POSTS, categoryLabel, BLOG_AUTHOR, isNewPost } from '../../config/blog';
-import { Icon, IconBadge } from './Icon';
+import {
+  getPost,
+  BLOG_POSTS,
+  categoryLabel,
+  BLOG_AUTHOR,
+  isNewPost,
+  type BlogSectionVisual,
+} from '../../config/blog';
+import { Icon } from './Icon';
 import { BlogBanner } from './BlogBanner';
 
-const TOC = [
-  { id: 'why', label: '왜 방문은 있는데 수익이 없을까' },
-  { id: 'reason-1', label: '1. 오퍼가 명확하지 않다' },
-  { id: 'reason-2', label: '2. 신뢰 신호가 없다' },
-  { id: 'reason-3', label: '3. 결제 단계가 복잡하다' },
-  { id: 'checklist', label: '체크리스트' },
-  { id: 'faq', label: '자주 묻는 질문' },
-];
+// ============================================================
+// 블로그 아티클 페이지 — 글마다 다른 본문을 config/blog.ts의
+// 구조화된 데이터(sections/checklist/faq)로부터 렌더링한다.
+// 배너·요약박스·목차·CTA·관련글 등 틀은 공용이고 내용만 글마다 다르다.
+// ============================================================
 
-const FAQ = [
-  {
-    q: '방문자는 늘었는데 왜 매출은 그대로일까요?',
-    a: '트래픽과 전환은 완전히 다른 문제입니다. 유입 채널을 아무리 늘려도 페이지 안에서 설득이 끊기면 매출로 이어지지 않습니다.',
-  },
-  {
-    q: '부업 사이트도 진단이 필요한가요?',
-    a: '네. 오히려 예산과 시간이 적은 부업일수록 어디를 먼저 고쳐야 하는지 우선순위를 아는 게 더 중요합니다.',
-  },
-  {
-    q: '지금 바로 확인할 수 있는 방법이 있나요?',
-    a: '세일즈스코어에 URL을 입력하면 10초 안에 설득 전환 지수와 병목 지점을 확인할 수 있습니다.',
-  },
-];
+/** "**강조**" 구문만 최소 지원 — 별도 마크다운 파서 없이 굵게만 처리한다 */
+function renderInlineBold(text: string): ReactNode[] {
+  const parts = text.split(/(\*\*[^*]+\*\*)/g);
+  return parts.map((part, i) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return (
+        <strong key={i} className="text-white font-semibold">
+          {part.slice(2, -2)}
+        </strong>
+      );
+    }
+    return <span key={i}>{part}</span>;
+  });
+}
+
+function SectionVisualBlock({ visual }: { visual: BlogSectionVisual }) {
+  if (visual.kind === 'table' && visual.table) {
+    return (
+      <figure className="rounded-2xl border border-white/10 overflow-hidden mb-3">
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse text-[13px] min-w-[420px]">
+            <thead>
+              <tr className="bg-white/[0.04]">
+                {visual.table.headers.map((h) => (
+                  <th key={h} className="text-left text-white/60 font-semibold px-4 py-3">
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {visual.table.rows.map((row, i) => (
+                <tr key={i} className="border-t border-white/[0.06]">
+                  {row.map((cell, j) => (
+                    <td key={j} className="text-white/70 px-4 py-3">
+                      {cell}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        {visual.caption && (
+          <figcaption className="text-white/35 text-[11px] px-4 py-2.5 bg-white/[0.02]">
+            {visual.caption}
+          </figcaption>
+        )}
+      </figure>
+    );
+  }
+
+  if (visual.kind === 'bars' && visual.bars) {
+    return (
+      <figure className="rounded-2xl border border-white/10 bg-white/[0.02] p-5 mb-3">
+        <div className="flex flex-col gap-3">
+          {visual.bars.map((bar) => (
+            <div key={bar.label}>
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-white/60 text-[12.5px]">{bar.label}</span>
+                <span className="text-white/70 text-[12.5px] font-semibold tabular-nums">
+                  {bar.valueLabel ?? `${bar.value}%`}
+                </span>
+              </div>
+              <div className="h-2 rounded-full bg-white/[0.06] overflow-hidden">
+                <div
+                  className="h-full rounded-full"
+                  style={{
+                    width: `${Math.min(100, Math.max(0, bar.value))}%`,
+                    background: 'linear-gradient(90deg, #0064ff, #7bd6ff)',
+                  }}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+        {visual.caption && (
+          <figcaption className="text-white/35 text-[11px] mt-4">{visual.caption}</figcaption>
+        )}
+      </figure>
+    );
+  }
+
+  return null;
+}
 
 export function BlogPostPage() {
   const { slug } = useParams();
   const navigate = useNavigate();
   const post = slug ? getPost(slug) : undefined;
   const [tocOpen, setTocOpen] = useState(false);
+
+  const toc = [
+    ...(post?.sections?.map((s) => ({ id: s.id, label: s.heading })) ?? []),
+    ...(post?.checklist?.length ? [{ id: 'checklist', label: '체크리스트' }] : []),
+    ...(post?.faq?.length ? [{ id: 'faq', label: '자주 묻는 질문' }] : []),
+  ];
 
   const jsonLd = post
     ? {
@@ -47,14 +128,18 @@ export function BlogPostPage() {
             datePublished: post.date,
             author: { '@type': 'Organization', name: '세일즈스코어' },
           },
-          {
-            '@type': 'FAQPage',
-            mainEntity: FAQ.map((f) => ({
-              '@type': 'Question',
-              name: f.q,
-              acceptedAnswer: { '@type': 'Answer', text: f.a },
-            })),
-          },
+          ...(post.faq?.length
+            ? [
+                {
+                  '@type': 'FAQPage',
+                  mainEntity: post.faq.map((f) => ({
+                    '@type': 'Question',
+                    name: f.q,
+                    acceptedAnswer: { '@type': 'Answer', text: f.a },
+                  })),
+                },
+              ]
+            : []),
         ],
       }
     : undefined;
@@ -69,6 +154,18 @@ export function BlogPostPage() {
     return (
       <div className="px-6 pt-32 pb-24 text-center">
         <p className="text-white/60 mb-6">글을 찾을 수 없습니다.</p>
+        <Link to="/blog" className="text-[#7bd6ff] no-underline">
+          블로그로 돌아가기
+        </Link>
+      </div>
+    );
+  }
+
+  if (!post.hasArticle || !post.sections?.length) {
+    return (
+      <div className="px-6 pt-32 pb-24 text-center">
+        <p className="text-white/60 mb-2">아직 준비 중인 글입니다.</p>
+        <p className="text-white/35 text-[13px] mb-6">{post.title}</p>
         <Link to="/blog" className="text-[#7bd6ff] no-underline">
           블로그로 돌아가기
         </Link>
@@ -136,122 +233,89 @@ export function BlogPostPage() {
       />
 
       {/* 요약 박스 — AEO(답변엔진 최적화)용 핵심 요약 */}
-      <div className="rounded-2xl border border-[#0064ff]/25 bg-[#0064ff]/[0.06] p-5 mb-10">
-        <p className="text-white/45 text-[11px] tracking-[0.1em] uppercase mb-3 font-semibold">
-          핵심 요약
-        </p>
-        <ul className="flex flex-col gap-2">
-          {[
-            '트래픽과 전환은 별개의 문제입니다.',
-            '매출이 안 나는 이유는 대부분 오퍼·신뢰·결제 단계 셋 중 하나입니다.',
-            '어디가 문제인지는 사이트를 진단해보면 10초 안에 알 수 있습니다.',
-          ].map((line) => (
-            <li key={line} className="flex items-start gap-2.5 text-white/75 text-[13px] leading-relaxed">
-              <span className="w-1.5 h-1.5 mt-1.5 rounded-[2px] bg-[#5b9bff] shrink-0" />
-              {line}
-            </li>
-          ))}
-        </ul>
-      </div>
+      {!!post.summary?.length && (
+        <div className="rounded-2xl border border-[#0064ff]/25 bg-[#0064ff]/[0.06] p-5 mb-10">
+          <p className="text-white/45 text-[11px] tracking-[0.1em] uppercase mb-3 font-semibold">
+            핵심 요약
+          </p>
+          <ul className="flex flex-col gap-2">
+            {post.summary.map((line) => (
+              <li key={line} className="flex items-start gap-2.5 text-white/75 text-[13px] leading-relaxed">
+                <span className="w-1.5 h-1.5 mt-1.5 rounded-[2px] bg-[#5b9bff] shrink-0" />
+                {line}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       {/* 목차 */}
-      <nav id="toc" aria-label="목차" className="rounded-2xl border border-white/10 p-5 mb-10">
-        <p className="text-white/45 text-[11px] tracking-[0.1em] uppercase mb-3 font-semibold">
-          목차
-        </p>
-        <ol className="flex flex-col gap-1.5">
-          {TOC.map((t, i) => (
-            <li key={t.id}>
-              <a
-                href={`#${t.id}`}
-                className="text-white/60 text-[13px] no-underline hover:text-white"
-              >
-                {i + 1}. {t.label}
-              </a>
-            </li>
+      {toc.length > 0 && (
+        <nav id="toc" aria-label="목차" className="rounded-2xl border border-white/10 p-5 mb-10">
+          <p className="text-white/45 text-[11px] tracking-[0.1em] uppercase mb-3 font-semibold">
+            목차
+          </p>
+          <ol className="flex flex-col gap-1.5">
+            {toc.map((t, i) => (
+              <li key={t.id}>
+                <a
+                  href={`#${t.id}`}
+                  className="text-white/60 text-[13px] no-underline hover:text-white"
+                >
+                  {i + 1}. {t.label}
+                </a>
+              </li>
+            ))}
+          </ol>
+        </nav>
+      )}
+
+      {/* 본문 — post.sections 데이터로부터 렌더링 */}
+      {post.sections.map((section) => (
+        <section key={section.id} id={section.id} className="mb-10">
+          <h2 className="text-white font-bold text-[20px] mb-3">{section.heading}</h2>
+          {section.body.map((paragraph, i) => (
+            <p key={i} className="text-white/60 text-[14px] leading-relaxed mb-3 last:mb-0">
+              {renderInlineBold(paragraph)}
+            </p>
           ))}
-        </ol>
-      </nav>
-
-      {/* 본문 */}
-      <section id="why" className="mb-10">
-        <h2 className="text-white font-bold text-[20px] mb-3">왜 방문은 있는데 수익이 없을까</h2>
-        <p className="text-white/60 text-[14px] leading-relaxed">
-          온라인 부업으로 사이트나 스마트스토어, 블로그를 운영하시는 분들이 가장 많이 하는
-          착각이 "트래픽만 늘리면 매출도 따라온다"는 것입니다. 하지만 방문자 수와 전환율은
-          완전히 다른 지표입니다. 사람들이 들어오긴 하는데 사지 않는다면, 문제는 유입이 아니라
-          <strong className="text-white font-semibold"> 페이지 안에서 설득이 끊기는 지점</strong>
-          에 있습니다.
-        </p>
-      </section>
-
-      <section id="reason-1" className="mb-10">
-        <h2 className="text-white font-bold text-[20px] mb-3">1. 오퍼가 명확하지 않다</h2>
-        <p className="text-white/60 text-[14px] leading-relaxed">
-          "이걸 사면 정확히 무엇을 얻는지"가 3초 안에 전달되지 않으면 방문자는 그대로
-          이탈합니다. 특히 부업으로 시작한 사이트는 상품 설명에 공을 들이는 대신, 정작 가장
-          중요한 "왜 지금 이걸 사야 하는지"는 비어있는 경우가 많습니다.
-        </p>
-      </section>
-
-      <section id="reason-2" className="mb-10">
-        <h2 className="text-white font-bold text-[20px] mb-3">2. 신뢰 신호가 없다</h2>
-        <p className="text-white/60 text-[14px] leading-relaxed">
-          후기, 실적, 환불 보장 같은 신뢰 신호가 없으면 아무리 좋은 상품이라도 결제 직전에
-          망설이게 됩니다. 특히 개인이 운영하는 부업 사이트는 브랜드 신뢰가 낮기 때문에 이
-          부분을 더 신경 써야 합니다.
-        </p>
-      </section>
-
-      <section id="reason-3" className="mb-10">
-        <h2 className="text-white font-bold text-[20px] mb-3">3. 결제 단계가 복잡하다</h2>
-        <p className="text-white/60 text-[14px] leading-relaxed">
-          결제 버튼을 누르기까지 클릭이 많거나, 회원가입을 먼저 요구하면 그 사이에 방문자는
-          이탈합니다. 결제까지 가는 경로는 짧고 단순할수록 좋습니다.
-        </p>
-      </section>
-
-      {/* 영상 섹션 — 영상 콘텐츠 자리 (SEO 구조 데모) */}
-      <section className="mb-10">
-        <h2 className="text-white font-bold text-[20px] mb-3">영상으로 보기</h2>
-        <figure className="rounded-2xl border border-white/10 bg-white/[0.02] aspect-video flex flex-col items-center justify-center gap-3">
-          <IconBadge name="spark" tint="blue" />
-          <figcaption className="text-white/35 text-[12px]">
-            요약 설명 영상 준비 중입니다
-          </figcaption>
-        </figure>
-      </section>
+          {section.visual && (
+            <div className="mt-4">
+              <SectionVisualBlock visual={section.visual} />
+            </div>
+          )}
+        </section>
+      ))}
 
       {/* 체크리스트 */}
-      <section id="checklist" className="mb-10">
-        <h2 className="text-white font-bold text-[20px] mb-4">체크리스트</h2>
-        <div className="flex flex-col gap-2.5">
-          {[
-            '헤드라인만 보고 3초 안에 "뭘 파는지" 알 수 있는가',
-            '후기나 실적 같은 신뢰 신호가 CTA 근처에 있는가',
-            '결제까지 3클릭 이내로 끝나는가',
-            '가격이 비교 기준(앵커) 없이 단독으로만 표시되어 있진 않은가',
-          ].map((item) => (
-            <div key={item} className="flex items-start gap-2.5">
-              <Icon name="check" size={15} className="text-[#5b9bff] mt-0.5 shrink-0" />
-              <span className="text-white/70 text-[13px] leading-relaxed">{item}</span>
-            </div>
-          ))}
-        </div>
-      </section>
+      {!!post.checklist?.length && (
+        <section id="checklist" className="mb-10">
+          <h2 className="text-white font-bold text-[20px] mb-4">체크리스트</h2>
+          <div className="flex flex-col gap-2.5">
+            {post.checklist.map((item) => (
+              <div key={item} className="flex items-start gap-2.5">
+                <Icon name="check" size={15} className="text-[#5b9bff] mt-0.5 shrink-0" />
+                <span className="text-white/70 text-[13px] leading-relaxed">{item}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* FAQ */}
-      <section id="faq" className="mb-12">
-        <h2 className="text-white font-bold text-[20px] mb-4">자주 묻는 질문</h2>
-        <div className="flex flex-col gap-3">
-          {FAQ.map((item) => (
-            <div key={item.q} className="rounded-2xl border border-white/10 bg-white/[0.02] p-5">
-              <p className="text-white font-bold text-[14px] mb-1.5">{item.q}</p>
-              <p className="text-white/50 text-[13px] leading-relaxed">{item.a}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+      {!!post.faq?.length && (
+        <section id="faq" className="mb-12">
+          <h2 className="text-white font-bold text-[20px] mb-4">자주 묻는 질문</h2>
+          <div className="flex flex-col gap-3">
+            {post.faq.map((item) => (
+              <div key={item.q} className="rounded-2xl border border-white/10 bg-white/[0.02] p-5">
+                <p className="text-white font-bold text-[14px] mb-1.5">{item.q}</p>
+                <p className="text-white/50 text-[13px] leading-relaxed">{item.a}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* CTA */}
       <motion.div
@@ -261,7 +325,7 @@ export function BlogPostPage() {
         viewport={{ once: true }}
       >
         <p className="text-white font-bold text-[15px] mb-4">
-          내 부업 사이트는 어디가 문제인지 10초 안에 확인해보세요
+          내 사이트는 어디가 문제인지 10초 안에 확인해보세요
         </p>
         <button
           onClick={() => navigate('/diagnose')}
@@ -295,7 +359,7 @@ export function BlogPostPage() {
 
     {/* 하단 고정 바 — neilpatel.com 아티클의 "Table of contents / Want better results?" 스티키 바 구조 */}
     <AnimatePresence>
-      {tocOpen && (
+      {tocOpen && toc.length > 0 && (
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
@@ -308,7 +372,7 @@ export function BlogPostPage() {
               목차
             </p>
             <ol className="flex flex-col gap-1.5">
-              {TOC.map((t, i) => (
+              {toc.map((t, i) => (
                 <li key={t.id}>
                   <a
                     href={`#${t.id}`}

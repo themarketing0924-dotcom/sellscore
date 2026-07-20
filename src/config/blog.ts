@@ -23,6 +23,26 @@ export const BLOG_CATEGORIES: BlogCategory[] = [
   { id: 'benchmark', label: '업종별 벤치마크' },
 ];
 
+// ── 아티클 본문 구조 ──
+// 글마다 이 구조로 데이터만 채우면 BlogPostPage가 자동으로 렌더링한다
+// (배너·요약박스·목차·체크리스트·FAQ·CTA·관련글은 공용, 본문만 글마다 다름).
+// body 문단 안에서 **강조할 구절**은 굵게 렌더링된다.
+
+export interface BlogSectionVisual {
+  /** table: 비교표 / bars: 막대그래프(수평) — 둘 다 이미지 파일 없이 데이터로 렌더링한다 */
+  kind: 'table' | 'bars';
+  caption?: string;
+  table?: { headers: string[]; rows: string[][] };
+  bars?: { label: string; value: number; valueLabel?: string }[]; // value: 0~100
+}
+
+export interface BlogSection {
+  id: string;
+  heading: string;
+  body: string[];
+  visual?: BlogSectionVisual;
+}
+
 export interface BlogPost {
   slug: string;
   category: string;
@@ -31,6 +51,11 @@ export interface BlogPost {
   date: string;
   readMinutes: number;
   hasArticle?: boolean;
+  /** AEO(답변엔진 최적화)용 핵심 요약 박스 불릿 */
+  summary?: string[];
+  sections?: BlogSection[];
+  checklist?: string[];
+  faq?: { q: string; a: string }[];
 }
 
 export const BLOG_POSTS: BlogPost[] = [
@@ -42,6 +67,72 @@ export const BLOG_POSTS: BlogPost[] = [
     date: '2026-07-08',
     readMinutes: 7,
     hasArticle: true,
+    summary: [
+      '트래픽과 전환은 별개의 문제입니다.',
+      '매출이 안 나는 이유는 대부분 오퍼·신뢰·결제 단계 셋 중 하나입니다.',
+      '어디가 문제인지는 사이트를 진단해보면 10초 안에 알 수 있습니다.',
+    ],
+    sections: [
+      {
+        id: 'why',
+        heading: '왜 방문은 있는데 수익이 없을까',
+        body: [
+          '온라인 부업으로 사이트나 스마트스토어, 블로그를 운영하시는 분들이 가장 많이 하는 착각이 "트래픽만 늘리면 매출도 따라온다"는 것입니다. 하지만 방문자 수와 전환율은 완전히 다른 지표입니다. 사람들이 들어오긴 하는데 사지 않는다면, 문제는 유입이 아니라 **페이지 안에서 설득이 끊기는 지점**에 있습니다.',
+        ],
+        visual: {
+          kind: 'bars',
+          caption: '방문자 100명 중 실제로 결제까지 가는 비율 — 단계별 이탈',
+          bars: [
+            { label: '방문', value: 100, valueLabel: '100명' },
+            { label: '상품/오퍼 확인', value: 62, valueLabel: '62명' },
+            { label: '신뢰 신호 확인', value: 31, valueLabel: '31명' },
+            { label: '결제 시도', value: 9, valueLabel: '9명' },
+            { label: '결제 완료', value: 3, valueLabel: '3명' },
+          ],
+        },
+      },
+      {
+        id: 'reason-1',
+        heading: '1. 오퍼가 명확하지 않다',
+        body: [
+          '"이걸 사면 정확히 무엇을 얻는지"가 3초 안에 전달되지 않으면 방문자는 그대로 이탈합니다. 특히 부업으로 시작한 사이트는 상품 설명에 공을 들이는 대신, 정작 가장 중요한 "왜 지금 이걸 사야 하는지"는 비어있는 경우가 많습니다.',
+        ],
+      },
+      {
+        id: 'reason-2',
+        heading: '2. 신뢰 신호가 없다',
+        body: [
+          '후기, 실적, 환불 보장 같은 신뢰 신호가 없으면 아무리 좋은 상품이라도 결제 직전에 망설이게 됩니다. 특히 개인이 운영하는 부업 사이트는 브랜드 신뢰가 낮기 때문에 이 부분을 더 신경 써야 합니다.',
+        ],
+      },
+      {
+        id: 'reason-3',
+        heading: '3. 결제 단계가 복잡하다',
+        body: [
+          '결제 버튼을 누르기까지 클릭이 많거나, 회원가입을 먼저 요구하면 그 사이에 방문자는 이탈합니다. 결제까지 가는 경로는 짧고 단순할수록 좋습니다.',
+        ],
+      },
+    ],
+    checklist: [
+      '헤드라인만 보고 3초 안에 "뭘 파는지" 알 수 있는가',
+      '후기나 실적 같은 신뢰 신호가 CTA 근처에 있는가',
+      '결제까지 3클릭 이내로 끝나는가',
+      '가격이 비교 기준(앵커) 없이 단독으로만 표시되어 있진 않은가',
+    ],
+    faq: [
+      {
+        q: '방문자는 늘었는데 왜 매출은 그대로일까요?',
+        a: '트래픽과 전환은 완전히 다른 문제입니다. 유입 채널을 아무리 늘려도 페이지 안에서 설득이 끊기면 매출로 이어지지 않습니다.',
+      },
+      {
+        q: '부업 사이트도 진단이 필요한가요?',
+        a: '네. 오히려 예산과 시간이 적은 부업일수록 어디를 먼저 고쳐야 하는지 우선순위를 아는 게 더 중요합니다.',
+      },
+      {
+        q: '지금 바로 확인할 수 있는 방법이 있나요?',
+        a: '세일즈스코어에 URL을 입력하면 10초 안에 설득 전환 지수와 병목 지점을 확인할 수 있습니다.',
+      },
+    ],
   },
   {
     slug: 'side-hustle-first-3-months',
