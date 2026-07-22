@@ -614,6 +614,40 @@ export function ResultScreen({
           ))}
         </div>
 
+        {/* 언락 사다리 진입점 — 주 동선(무료 회원가입) + 부 동선(급한 분은 바로 결제) */}
+        {!signedUp && !paidUnlocked && (
+          <motion.div
+            className="rounded-3xl border border-[#0064ff]/25 bg-[#0064ff]/[0.06] p-6 sm:p-7 mb-9 text-center"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <IconBadge name="unlock" tint="blue" />
+            <p className="text-white text-[17px] sm:text-[19px] font-black mt-4 mb-1.5 leading-snug">
+              무료 회원가입하고 {SIGNUP_UNLOCK_COUNT}개 프롬프트를 더 받으세요
+            </p>
+            <p className="text-white/50 text-[13px] mb-6">카드 등록 없이, 30초면 가입 완료</p>
+            <button
+              onClick={() => setAuthOpen(true)}
+              className="w-full max-w-sm mx-auto h-[50px] rounded-lg font-bold text-[15px] bg-white text-black border-none cursor-pointer transition-transform active:scale-[0.98] hover:brightness-95 mb-4"
+            >
+              무료 회원가입하기 →
+            </button>
+            <div className="flex items-center gap-3 max-w-sm mx-auto mb-3">
+              <span className="flex-1 h-px bg-white/10" />
+              <span className="text-white/30 text-[11px] font-medium">또는</span>
+              <span className="flex-1 h-px bg-white/10" />
+            </div>
+            <a
+              href="#payment-cta"
+              className="text-white/50 text-[12.5px] font-semibold no-underline hover:text-white/80 transition-colors"
+            >
+              성격 급하신 분은 지금 결제하고 전체 리포트를 한 번에 받아보세요 →
+            </a>
+          </motion.div>
+        )}
+
         {/* 단계 2 — 회원가입 시 오픈 (리드 수집) */}
         <div className="flex items-center justify-between mb-4 gap-3">
           <p className="text-white/60 text-[13px] tracking-[0.1em] uppercase font-bold">
@@ -636,6 +670,7 @@ export function ResultScreen({
               index={FREE_COUNT + i}
               open={signedUp}
               onLockedClick={() => setAuthOpen(true)}
+              lockCaption="잠김 · 무료 회원가입 후 열람"
             />
           ))}
         </div>
@@ -662,6 +697,7 @@ export function ResultScreen({
               index={FREE_COUNT + SIGNUP_UNLOCK_COUNT + i}
               open={referred}
               onLockedClick={openShare}
+              lockCaption="잠김 · 공유하면 열림"
             />
           ))}
         </div>
@@ -684,6 +720,7 @@ export function ResultScreen({
         {/* ── 결제 CTA ── */}
         {!paidUnlocked && (
           <motion.div
+            id="payment-cta"
             className="relative rounded-3xl p-[1px] mb-14 overflow-hidden"
             style={{
               background:
@@ -907,11 +944,13 @@ function PromptCard({
   index,
   open,
   onLockedClick,
+  lockCaption = '잠김 · 결제 후 열람',
 }: {
   framework: FrameworkResult;
   index: number;
   open: boolean;
   onLockedClick?: () => void;
+  lockCaption?: string;
 }) {
   const [copied, setCopied] = useState(false);
 
@@ -1012,7 +1051,7 @@ function PromptCard({
           >
             <Icon name="lock" size={36} className="text-white" />
           </div>
-          <span className="text-white text-[14px] font-bold">잠김 · 결제 후 열람</span>
+          <span className="text-white text-[14px] font-bold">{lockCaption}</span>
         </button>
       )}
     </motion.div>
