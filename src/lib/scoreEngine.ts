@@ -90,21 +90,38 @@ export interface TrafficInfra {
   missingCount: number;
 }
 
-/** SEO·기술 최적화 점수 1개 항목 — 하드체크 사실에 공식 출처를 붙인 것 */
+export type ChecklistCategory = 'site' | 'content' | 'image' | 'video';
+
+export const CHECKLIST_CATEGORY_LABEL: Record<ChecklistCategory, string> = {
+  site: '① 사이트·기술 구조',
+  content: '② 텍스트·콘텐츠',
+  image: '③ 이미지 최적화',
+  video: '④ 동영상 최적화',
+};
+
+/** SEO·기술 최적화 점수 1개 항목 — 하드체크 사실에 공식 가이드 근거를 붙인 것 */
 export interface TechSeoScoreItem {
   id: string;
   label: string;
+  category: ChecklistCategory;
   source: string;
   sourceUrl?: string;
+  /** 구글/네이버 공식 가이드 핵심 설명 2~3줄 */
+  guideline: string;
+  goodExample?: string;
+  badExample?: string;
   status: 'pass' | 'warn' | 'fail';
   points: number;
+  maxPoints: number;
 }
 
-/** "AI 판단"과 분리된, 구글·네이버 공식 가이드 기준 객관적 점수 */
+/** "AI 판단"과 분리된, 구글·네이버 공식 가이드 체크리스트 기준 객관적 점수 */
 export interface TechSeoScore {
   score: number;
   grade: 'S' | 'A' | 'B' | 'C' | 'D';
   items: TechSeoScoreItem[];
+  /** 지금까지 구현된 카테고리 — 나머지는 순차적으로 추가된다 */
+  implementedCategories: ChecklistCategory[];
 }
 
 export interface DiagnosisReport {

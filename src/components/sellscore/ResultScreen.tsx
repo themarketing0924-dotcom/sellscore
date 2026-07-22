@@ -299,7 +299,8 @@ export function ResultScreen({
               SEO·기술 최적화 점수
             </p>
             <p className="text-white/35 text-[12px] mb-6 text-center sm:text-left">
-              AI의 판단이 아니라 구글·네이버 공식 가이드 기준 + PageSpeed 실측을 가중합산한 객관적 점수입니다
+              AI의 주관적 판단이 아니라 구글·네이버 공식 가이드 체크리스트를 그대로 채점한 객관적 점수입니다
+              {report.techSeoScore.implementedCategories.length < 4 && ' (현재 ① 사이트·기술 구조 카테고리만 적용, 나머지는 순차 추가 예정)'}
             </p>
 
             <div className="flex items-end gap-3 mb-7">
@@ -326,36 +327,37 @@ export function ResultScreen({
                     <motion.div
                       className={`h-full rounded-full ${TECH_ITEM_BAR[item.status]}`}
                       initial={{ width: 0 }}
-                      whileInView={{ width: `${item.points}%` }}
+                      whileInView={{ width: `${(item.points / item.maxPoints) * 100}%` }}
                       transition={{ duration: 0.7, delay: i * 0.04, ease: 'easeOut' }}
                       viewport={{ once: true }}
                     />
                   </div>
-                  <div className="w-[34px] shrink-0 text-right text-[13px] font-bold text-white tabular-nums">
-                    {item.points}
+                  <div className="w-[46px] shrink-0 text-right text-[12.5px] font-bold text-white tabular-nums">
+                    {item.points}/{item.maxPoints}
                   </div>
                 </div>
               ))}
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {report.hardChecks.map((c) => {
-                const item = report.techSeoScore!.items.find((i) => i.id === c.id);
+            <div className="grid grid-cols-1 gap-3">
+              {report.techSeoScore.items.map((item) => {
+                const c = report.hardChecks!.find((h) => h.id === item.id);
                 return (
                   <div
-                    key={c.id}
-                    className="flex items-start gap-3 rounded-2xl border border-white/[0.06] bg-white/[0.02] p-4"
+                    key={item.id}
+                    className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-4 sm:p-5"
                   >
-                    <span
-                      className={`shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-[13px] font-black ${HARD_CHECK_STYLE[c.status].badge}`}
-                    >
-                      {HARD_CHECK_STYLE[c.status].glyph}
-                    </span>
-                    <div>
-                      <p className="text-white text-[14px] font-bold mb-0.5">{c.label}</p>
-                      {item && (
-                        <p className="text-white/35 text-[11px] font-semibold mb-1">
-                          출처: {item.sourceUrl ? (
+                    <div className="flex items-start gap-3 mb-2.5">
+                      <span
+                        className={`shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-[13px] font-black ${HARD_CHECK_STYLE[item.status].badge}`}
+                      >
+                        {HARD_CHECK_STYLE[item.status].glyph}
+                      </span>
+                      <div className="min-w-0">
+                        <p className="text-white text-[14px] font-bold mb-0.5">{item.label}</p>
+                        <p className="text-white/35 text-[11px] font-semibold">
+                          출처:{' '}
+                          {item.sourceUrl ? (
                             <a
                               href={item.sourceUrl}
                               target="_blank"
@@ -368,9 +370,36 @@ export function ResultScreen({
                             item.source
                           )}
                         </p>
-                      )}
-                      <p className="text-white/55 text-[12.5px] leading-relaxed font-medium">{c.detail}</p>
+                      </div>
                     </div>
+
+                    {c && (
+                      <p className="text-white/55 text-[12.5px] leading-relaxed font-medium mb-2.5">{c.detail}</p>
+                    )}
+
+                    {item.guideline && (
+                      <div className="rounded-xl bg-white/[0.03] border border-white/[0.06] p-3 mb-2">
+                        <p className="text-white/40 text-[10.5px] tracking-[0.08em] uppercase font-bold mb-1">
+                          공식 가이드
+                        </p>
+                        <p className="text-white/65 text-[12px] leading-relaxed">{item.guideline}</p>
+                      </div>
+                    )}
+
+                    {(item.goodExample || item.badExample) && (
+                      <div className="flex flex-col gap-1.5">
+                        {item.badExample && (
+                          <p className="text-rose-300/80 text-[11.5px] leading-relaxed font-mono">
+                            ✕ {item.badExample}
+                          </p>
+                        )}
+                        {item.goodExample && (
+                          <p className="text-emerald-300/80 text-[11.5px] leading-relaxed font-mono">
+                            ✓ {item.goodExample}
+                          </p>
+                        )}
+                      </div>
+                    )}
                   </div>
                 );
               })}

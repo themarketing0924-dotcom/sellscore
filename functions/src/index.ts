@@ -362,6 +362,14 @@ interface PageContent {
   googleVerified: boolean;
   snsChannels: string[];
   hasContactChannel: boolean;
+  // ── ① 사이트·기술 구조 체크리스트용 신호 ──
+  mixedContentCount: number;
+  hasSitemap: boolean;
+  robotsBlocksAll: boolean;
+  hasWebsiteSchema: boolean;
+  hasBreadcrumbSchema: boolean;
+  /** 내부 링크 중 쿼리스트링·해시 남용 없이 설명적인 경로 비율 (0~1), 표본 없으면 null */
+  descriptiveUrlRatio: number | null;
 }
 
 // 링크 href의 호스트로 SNS/채널 종류를 식별한다
@@ -377,6 +385,71 @@ const SNS_HOSTS: Record<string, string> = {
   'x.com': 'X(트위터)',
   'twitter.com': 'X(트위터)',
 };
+
+// JSON-LD 스크립트를 전부 파싱해서 등장하는 모든 @type을 모은다.
+// 값이 객체 하나일 수도, 배열일 수도, @graph로 감싸져 있을 수도 있어 재귀적으로 훑는다.
+function collectJsonLdTypes(html: string): Set<string> {
+  const types = new Set<string>();
+  const $ = cheerio.load(html);
+  $('script[type="application/ld+json"]').each((_, el) => {
+    const raw = $(el).contents().text();
+    if (!raw || !raw.trim()) return;
+    let data: unknown;
+    try {
+      data = JSON.parse(raw);
+    } catch {
+      return;
+    }
+    const visit = (node: unknown) => {
+      if (Array.isArray(node)) {
+        node.forEach(visit);
+        return;
+      }
+      if (node && typeof node === 'object') {
+        const obj = node as Record<string, unknown>;
+        const t = obj['@type'];
+        if (typeof t === 'string') types.add(t);
+        else if (Array.isArray(t)) t.forEach((x) => typeof x === 'string' && types.add(x));
+        if (Array.isArray(obj['@graph'])) (obj['@graph'] as unknown[]).forEach(visit);
+      }
+    };
+    visit(data);
+  });
+  return types;
+}
+
+// 내부 링크 href를 표본으로 뽑아 "설명적 URL"인지 휴리스틱으로 판단한다.
+// 쿼리스트링에 id/세션 같은 파라미터만 잔뜩 붙어있거나 경로가 숫자·해시로만
+// 이루어지면 설명적이지 않다고 본다. 표본이 없으면 null(판단 불가).
+function computeDescriptiveUrlRatio($: cheerio.CheerioAPI, normalizedUrl: string): number | null {
+  const origin = new URL(normalizedUrl).origin;
+  const samples = new Set<string>();
+  $('a[href]').each((_, el) => {
+    const href = ($(el).attr('href') || '').trim();
+    if (!href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:')) return;
+    try {
+      const abs = new URL(href, normalizedUrl);
+      if (abs.origin !== origin) return;
+      samples.add(abs.pathname + abs.search);
+    } catch {
+      /* 무시 */
+    }
+  });
+  if (samples.size === 0) return null;
+
+  let descriptive = 0;
+  for (const path of samples) {
+    const [pathname, search] = path.split('?');
+    const segments = pathname.split('/').filter(Boolean);
+    const lastSegment = segments[segments.length - 1] || '';
+    // 마지막 경로가 순수 숫자/해시만이거나(예: /p/8823), 물음표 뒤 파라미터가
+    // 3개를 넘어가면(추적/세션 파라미터 남용 가능성) 설명적이지 않다고 본다.
+    const isNumericOnly = /^[0-9a-f]{6,}$/i.test(lastSegment) || /^\d+$/.test(lastSegment);
+    const paramCount = search ? search.split('&').filter(Boolean).length : 0;
+    if (!isNumericOnly && paramCount <= 2) descriptive += 1;
+  }
+  return descriptive / samples.size;
+}
 
 function parseHtml(html: string, normalizedUrl: string, domain: string): PageContent {
   const $ = cheerio.load(html);
@@ -417,6 +490,17 @@ function parseHtml(html: string, normalizedUrl: string, domain: string): PageCon
   const hasContactChannel =
     $('a[href^="tel:"]').length > 0 || $('a[href^="mailto:"]').length > 0 || html.includes('pf.kakao.com');
 
+  // ── ① 사이트·기술 구조 신규 신호 ──
+  const jsonLdTypes = collectJsonLdTypes(html);
+  const hasWebsiteSchema = jsonLdTypes.has('WebSite');
+  const hasBreadcrumbSchema = jsonLdTypes.has('BreadcrumbList');
+  // 이 페이지가 이미 https로 로드됐다는 전제하에, 그 안에서 http://로 직접
+  // 불러오는 리소스(이미지·스크립트·스타일시트)가 있으면 혼합 콘텐츠다.
+  const mixedContentCount =
+    (html.match(/\ssrc=["']http:\/\//gi) || []).length +
+    (html.match(/<link[^>]+rel=["']stylesheet["'][^>]+href=["']http:\/\//gi) || []).length;
+  const descriptiveUrlRatio = computeDescriptiveUrlRatio($, normalizedUrl);
+
   $('script, style, noscript, svg').remove();
   const bodyText = $('body').text().replace(/\s+/g, ' ').trim().slice(0, 6000);
 
@@ -440,6 +524,12 @@ function parseHtml(html: string, normalizedUrl: string, domain: string): PageCon
     googleVerified,
     snsChannels: Array.from(snsChannels),
     hasContactChannel,
+    mixedContentCount,
+    hasSitemap: false, // extractPageContent에서 별도 요청 후 덮어씀
+    robotsBlocksAll: false, // extractPageContent에서 별도 요청 후 덮어씀
+    hasWebsiteSchema,
+    hasBreadcrumbSchema,
+    descriptiveUrlRatio,
   };
 }
 
@@ -508,7 +598,24 @@ async function extractPageContent(rawUrl: string): Promise<PageContent> {
     );
   }
 
-  return page;
+  // 3단계: robots.txt / sitemap.xml — 홈페이지가 아니라 도메인 루트 기준이라 별도 요청.
+  // 둘 다 없거나 실패해도 전체 진단을 막지 않는다(있는 게 좋을 뿐 필수는 아님).
+  const origin = new URL(normalizedUrl).origin;
+  const [robotsResult, sitemapResult] = await Promise.allSettled([
+    fetch(`${origin}/robots.txt`, { signal: AbortSignal.timeout(6000) }),
+    fetch(`${origin}/sitemap.xml`, { signal: AbortSignal.timeout(6000), method: 'HEAD' }),
+  ]);
+
+  let robotsBlocksAll = false;
+  if (robotsResult.status === 'fulfilled' && robotsResult.value.ok) {
+    const robotsTxt = await robotsResult.value.text();
+    // User-agent: * 아래에 Disallow: / 만 있으면 사이트 전체 차단으로 본다.
+    robotsBlocksAll = /user-agent:\s*\*[\s\S]{0,80}?disallow:\s*\/\s*(\n|$)/i.test(robotsTxt);
+  }
+
+  const hasSitemap = sitemapResult.status === 'fulfilled' && sitemapResult.value.ok;
+
+  return { ...page, robotsBlocksAll, hasSitemap };
 }
 
 // ── Claude 프롬프트 ──
@@ -606,6 +713,9 @@ function gradeFromScore(score: number): 'S' | 'A' | 'B' | 'C' | 'D' {
 }
 
 // ── 하드체크 (LLM 판단 없이 마크업 사실만으로 채점) ──
+// 구글/네이버 공식 가이드를 20~30개 체크리스트로 만들어 각 항목에 배점을
+// 매기는 게 목표. 1단계는 ① 사이트·기술 구조(35점) — 나머지 ②콘텐츠(30)
+// ③이미지(25) ④동영상(10)은 이후 단계에서 추가한다.
 
 interface HardCheckItem {
   id: string;
@@ -761,6 +871,54 @@ function buildHardChecks(page: PageContent): HardCheckItem[] {
         }
   );
 
+  checks.push(
+    page.mixedContentCount === 0
+      ? { id: 'https', label: 'HTTPS 혼합 콘텐츠 없음', status: 'pass', detail: '모든 리소스가 안전하게(HTTPS) 로드됩니다.' }
+      : {
+          id: 'https',
+          label: 'HTTPS 혼합 콘텐츠 없음',
+          status: 'warn',
+          detail: `http://로 직접 불러오는 리소스가 ${page.mixedContentCount}개 있어 브라우저가 "안전하지 않음" 경고를 표시할 수 있습니다.`,
+        }
+  );
+
+  checks.push(
+    page.hasSitemap
+      ? { id: 'sitemap', label: 'XML 사이트맵', status: 'pass', detail: '/sitemap.xml이 정상적으로 제공됩니다.' }
+      : { id: 'sitemap', label: 'XML 사이트맵', status: 'warn', detail: '/sitemap.xml을 찾지 못해 구글에 새 페이지를 알리기 어렵습니다.' }
+  );
+
+  checks.push(
+    page.robotsBlocksAll
+      ? { id: 'robots', label: 'robots.txt 크롤링 허용', status: 'fail', detail: 'robots.txt가 사이트 전체(Disallow: /)를 차단하고 있습니다.' }
+      : { id: 'robots', label: 'robots.txt 크롤링 허용', status: 'pass', detail: '검색엔진의 크롤링을 막고 있지 않습니다.' }
+  );
+
+  checks.push(
+    page.hasWebsiteSchema
+      ? { id: 'website_schema', label: '사이트 이름 구조화 데이터', status: 'pass', detail: 'WebSite 구조화 데이터가 있어 검색결과에 정확한 사이트명이 표시될 수 있습니다.' }
+      : { id: 'website_schema', label: '사이트 이름 구조화 데이터', status: 'warn', detail: 'WebSite 구조화 데이터가 없어 구글이 임의로 사이트 이름을 추정합니다.' }
+  );
+
+  checks.push(
+    page.hasBreadcrumbSchema
+      ? { id: 'breadcrumb_schema', label: '탐색경로(breadcrumb) 구조화 데이터', status: 'pass', detail: '검색결과에 URL 대신 탐색경로가 표시될 수 있습니다.' }
+      : { id: 'breadcrumb_schema', label: '탐색경로(breadcrumb) 구조화 데이터', status: 'warn', detail: 'breadcrumb 구조화 데이터가 없어 검색결과에 긴 URL이 그대로 노출됩니다.' }
+  );
+
+  if (page.descriptiveUrlRatio === null) {
+    checks.push({ id: 'url_structure', label: 'URL 구조', status: 'warn', detail: '내부 링크 표본을 찾지 못해 URL 구조를 판단할 수 없습니다.' });
+  } else if (page.descriptiveUrlRatio >= 0.7) {
+    checks.push({ id: 'url_structure', label: 'URL 구조', status: 'pass', detail: '대부분의 내부 링크가 의미를 알 수 있는 경로로 되어 있습니다.' });
+  } else {
+    checks.push({
+      id: 'url_structure',
+      label: 'URL 구조',
+      status: 'warn',
+      detail: `내부 링크 중 ${Math.round((1 - page.descriptiveUrlRatio) * 100)}%가 숫자·파라미터 위주라 사람과 검색엔진이 내용을 짐작하기 어렵습니다.`,
+    });
+  }
+
   return checks;
 }
 
@@ -816,80 +974,198 @@ function buildTrafficInfra(page: PageContent): TrafficInfra {
 // 기준의 객관적 점수. 하드체크 사실(마크업)과 PageSpeed 공식 실측을
 // 가중합산해서 하나의 숫자로 만든다 — 근거(출처)를 항목마다 명시한다.
 
-const HARD_CHECK_SOURCES: Record<string, { source: string; sourceUrl?: string }> = {
-  h1: { source: '구글 Search Essentials', sourceUrl: 'https://developers.google.com/search/docs/essentials' },
-  canonical: { source: '구글 Search Essentials', sourceUrl: 'https://developers.google.com/search/docs/essentials' },
-  og: { source: 'OG 프로토콜 (카카오·페이스북 공유 표준)', sourceUrl: 'https://ogp.me/' },
+type ChecklistCategory = 'site' | 'content' | 'image' | 'video';
+
+interface ChecklistItemMeta {
+  category: ChecklistCategory;
+  /** 이 항목의 만점 — 카테고리 배점(①사이트 35 / ②콘텐츠 30 / ③이미지 25 / ④동영상 10) 안에서 분배 */
+  maxPoints: number;
+  source: string;
+  sourceUrl?: string;
+  /** 구글/네이버 공식 가이드 핵심 설명 2~3줄 — 고객이 "진짜 가이드에 근거했구나"를 느끼는 부분 */
+  guideline: string;
+  goodExample?: string;
+  badExample?: string;
+}
+
+// ① 사이트·기술 구조 — 35점. 배점 합: 3+3+2+2+2+2+2+2+1.5+1.5+3+3+3+3+3 = 35
+const CHECKLIST_META: Record<string, ChecklistItemMeta> = {
+  h1: {
+    category: 'site',
+    maxPoints: 3,
+    source: '구글 Search Essentials',
+    sourceUrl: 'https://developers.google.com/search/docs/essentials',
+    guideline:
+      '검색엔진이 페이지의 핵심 주제를 파악하는 가장 중요한 단서가 H1 제목입니다. 한 페이지에 H1이 여러 개거나 없으면 주제가 무엇인지 모호해집니다.',
+    goodExample: '<h1>암호화폐 세금 신고 대행 서비스</h1> (페이지당 정확히 1개)',
+    badExample: 'H1이 아예 없거나, 로고·배너 문구까지 전부 H1로 되어 있는 경우',
+  },
+  canonical: {
+    category: 'site',
+    maxPoints: 3,
+    source: '구글 Search Essentials',
+    sourceUrl: 'https://developers.google.com/search/docs/essentials',
+    guideline:
+      '동일한 콘텐츠에 여러 URL(www 유무, http/https 등)로 접근 가능하면 canonical 태그로 대표 URL을 명시해야 검색 점수가 여러 URL로 분산되지 않습니다.',
+    goodExample: '<link rel="canonical" href="https://example.com/page" />',
+    badExample: 'canonical 태그가 없어 http/https, www/non-www 버전이 각각 별개 페이지로 색인됨',
+  },
+  og: {
+    category: 'site',
+    maxPoints: 2,
+    source: 'OG 프로토콜 (카카오톡·페이스북 공유 표준)',
+    sourceUrl: 'https://ogp.me/',
+    guideline:
+      'og:title, og:description, og:image이 없으면 카카오톡·인스타그램 등에 링크를 공유했을 때 미리보기가 깨지거나 아예 안 뜹니다.',
+  },
   viewport: {
+    category: 'site',
+    maxPoints: 2,
     source: '구글 모바일 친화성 가이드',
     sourceUrl: 'https://developers.google.com/search/docs/appearance/mobile-friendly',
+    guideline: 'viewport 메타 태그가 없으면 모바일에서 레이아웃이 깨지고, 구글은 모바일 우선으로 색인합니다.',
+    goodExample: '<meta name="viewport" content="width=device-width, initial-scale=1">',
   },
-  favicon: { source: '구글 Search Essentials', sourceUrl: 'https://developers.google.com/search/docs/essentials' },
-  analytics: { source: '마케팅 인프라 기본 요건' },
-  naver: { source: '네이버 서치어드바이저 가이드', sourceUrl: 'https://searchadvisor.naver.com/guide' },
+  favicon: {
+    category: 'site',
+    maxPoints: 2,
+    source: '구글 Search Essentials — 파비콘 가이드라인',
+    sourceUrl: 'https://developers.google.com/search/docs/appearance/favicon-in-search',
+    guideline:
+      '"파비콘은 정사각형(가로세로 비율 1:1)이어야 하며 크기는 8x8픽셀 이상이어야 합니다" — 구글 공식 가이드 원문. 검색결과 목록에서 사이트를 빠르게 식별하는 데 쓰입니다.',
+  },
+  analytics: {
+    category: 'site',
+    maxPoints: 2,
+    source: '마케팅 인프라 기본 요건',
+    guideline: '방문자 분석 도구가 없으면 몇 명이 들어와서 무엇을 했는지 전혀 알 수 없어, 어떤 개선이 효과 있었는지도 측정할 수 없습니다.',
+  },
+  naver: {
+    category: 'site',
+    maxPoints: 2,
+    source: '네이버 서치어드바이저 가이드',
+    sourceUrl: 'https://searchadvisor.naver.com/guide',
+    guideline: '네이버 서치어드바이저에 등록해야 네이버 검색 노출 현황을 확인하고 색인 요청을 직접 할 수 있습니다.',
+  },
   google: {
+    category: 'site',
+    maxPoints: 2,
     source: '구글 Search Console 가이드',
     sourceUrl: 'https://search.google.com/search-console/about',
+    guideline: '구글 서치콘솔에 등록해야 실제 검색 노출·클릭 데이터를 확인하고, URL 검사·재크롤링 요청을 할 수 있습니다.',
   },
-  sns: { source: '마케팅 인프라 기본 요건' },
-  contact: { source: '전환 UX 기본 요건' },
+  sns: { category: 'site', maxPoints: 1.5, source: '마케팅 인프라 기본 요건', guideline: '연결된 SNS·채널이 없으면 사이트 밖에서의 신뢰 신호가 부족합니다.' },
+  contact: {
+    category: 'site',
+    maxPoints: 1.5,
+    source: '전환 UX 기본 요건',
+    guideline: '전화·이메일·카카오채널처럼 즉시 연락 가능한 채널이 없으면 방문자가 문의 없이 이탈합니다.',
+  },
+  https: {
+    category: 'site',
+    maxPoints: 3,
+    source: '구글 Search Essentials — 기술 요구사항',
+    sourceUrl: 'https://developers.google.com/search/docs/essentials/technical',
+    guideline:
+      'HTTPS 페이지 안에서 이미지·스크립트를 http://로 직접 불러오면(혼합 콘텐츠) 브라우저가 보안 경고를 띄우고, 신뢰도와 접근성 점수가 함께 떨어집니다.',
+  },
+  sitemap: {
+    category: 'site',
+    maxPoints: 3,
+    source: '구글 Search Essentials — 사이트맵 가이드',
+    sourceUrl: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap',
+    guideline: '"Google에 변경사항을 계속 알리려면 사이트맵을 제출하는 것이 좋습니다" — 구글 공식 가이드 원문. 새 페이지를 구글이 더 빨리 찾게 해줍니다.',
+  },
+  robots: {
+    category: 'site',
+    maxPoints: 3,
+    source: '구글 Search Essentials — 크롤링 제어',
+    sourceUrl: 'https://developers.google.com/search/docs/crawling-indexing/robots/intro',
+    guideline: '홈페이지가 robots.txt로 차단되어 Google에서 콘텐츠에 액세스할 수 없으면 사이트 이름도, 검색 노출도 아예 생성될 수 없습니다.',
+    badExample: 'User-agent: *\nDisallow: / (사이트 전체를 검색엔진에서 숨기는 설정 — 실수로 넣는 경우가 많음)',
+  },
+  website_schema: {
+    category: 'site',
+    maxPoints: 3,
+    source: '구글 Search Essentials — 사이트 이름 가이드',
+    sourceUrl: 'https://developers.google.com/search/docs/appearance/site-names',
+    guideline:
+      '홈페이지에 구조화된 WebSite 데이터를 추가하면 검색결과에 표시되는 "사이트 이름"을 직접 지정할 수 있습니다. 없으면 구글이 title 태그 등에서 임의로 추정합니다.',
+    goodExample: '{"@context":"https://schema.org","@type":"WebSite","name":"세일즈스코어","url":"https://example.com/"}',
+  },
+  breadcrumb_schema: {
+    category: 'site',
+    maxPoints: 2,
+    source: '구글 검색 시각적 요소 갤러리',
+    sourceUrl: 'https://developers.google.com/search/docs/appearance/structured-data/breadcrumb',
+    guideline: '구조화된 탐색경로(breadcrumb) 데이터를 지정하면 검색결과에 긴 URL 대신 "홈 > 카테고리 > 페이지" 형태의 탐색경로가 표시됩니다.',
+  },
+  url_structure: {
+    category: 'site',
+    maxPoints: 3,
+    source: '구글 Search Essentials — 사이트 구성 가이드',
+    sourceUrl: 'https://developers.google.com/search/docs/crawling-indexing/url-structure',
+    guideline: '설명적인 URL은 사용자와 검색엔진 모두 페이지 내용을 예측하기 쉽게 합니다. 의미 없는 숫자·세션ID로만 이루어진 URL은 지양해야 합니다.',
+    goodExample: 'example.com/guide/crypto-tax-filing',
+    badExample: 'example.com/page?id=8823&sess=a91f2&ref=x',
+  },
 };
 
 interface TechSeoScoreItem {
   id: string;
   label: string;
+  category: ChecklistCategory;
   source: string;
   sourceUrl?: string;
+  guideline: string;
+  goodExample?: string;
+  badExample?: string;
   status: 'pass' | 'warn' | 'fail';
   points: number;
+  maxPoints: number;
 }
 
 interface TechSeoScore {
   score: number;
   grade: 'S' | 'A' | 'B' | 'C' | 'D';
   items: TechSeoScoreItem[];
+  /** 현재까지 구현된 카테고리 — 나머지는 순차적으로 추가된다 */
+  implementedCategories: ChecklistCategory[];
 }
 
-function statusPoints(status: 'pass' | 'warn' | 'fail'): number {
-  return status === 'pass' ? 100 : status === 'warn' ? 50 : 0;
+function earnedPoints(status: 'pass' | 'warn' | 'fail', maxPoints: number): number {
+  if (status === 'pass') return maxPoints;
+  if (status === 'warn') return maxPoints * 0.5;
+  return 0;
 }
 
-function buildTechSeoScore(
-  hardChecks: HardCheckItem[],
-  performance: PerformanceSnapshot | null
-): TechSeoScore {
+// PSI 실측(성능/접근성/권장사항)은 이미 별도의 performance 카드로 보여주고 있어
+// 여기서는 섞지 않는다 — 이 점수는 순수하게 "구글/네이버 공식 체크리스트를
+// 몇 점 만점 중 몇 점 이행했는지"만 나타낸다.
+function buildTechSeoScore(hardChecks: HardCheckItem[]): TechSeoScore {
   const items: TechSeoScoreItem[] = hardChecks.map((c) => {
-    const meta = HARD_CHECK_SOURCES[c.id] ?? { source: '공식 가이드 기준' };
+    const meta = CHECKLIST_META[c.id];
+    const maxPoints = meta?.maxPoints ?? 0;
     return {
       id: c.id,
       label: c.label,
-      source: meta.source,
-      sourceUrl: meta.sourceUrl,
+      category: meta?.category ?? 'site',
+      source: meta?.source ?? '공식 가이드 기준',
+      sourceUrl: meta?.sourceUrl,
+      guideline: meta?.guideline ?? '',
+      goodExample: meta?.goodExample,
+      badExample: meta?.badExample,
       status: c.status,
-      points: statusPoints(c.status),
+      points: earnedPoints(c.status, maxPoints),
+      maxPoints,
     };
   });
 
-  const hardCheckAvg = items.reduce((sum, i) => sum + i.points, 0) / items.length;
+  const earned = items.reduce((sum, i) => sum + i.points, 0);
+  const max = items.reduce((sum, i) => sum + i.maxPoints, 0);
+  const score = max > 0 ? Math.round((earned / max) * 100) : 0;
 
-  // PSI 실측이 있으면 구글 공식 점수(SEO/접근성/권장사항)까지 가중합산,
-  // 실측이 없으면(측정 실패) 하드체크만으로 채점한다.
-  const hasPsi =
-    performance &&
-    performance.seoScore != null &&
-    performance.accessibilityScore != null &&
-    performance.bestPracticesScore != null;
-
-  const score = hasPsi
-    ? Math.round(
-        0.4 * hardCheckAvg +
-          0.3 * performance!.seoScore! +
-          0.15 * performance!.accessibilityScore! +
-          0.15 * performance!.bestPracticesScore!
-      )
-    : Math.round(hardCheckAvg);
-
-  return { score, grade: gradeFromScore(score), items };
+  return { score, grade: gradeFromScore(score), items, implementedCategories: ['site'] };
 }
 
 // ── Cloud Function ──
@@ -1064,7 +1340,7 @@ export const analyzeSite = onCall(
     const hardChecks = buildHardChecks(page);
     const officialLinks = buildOfficialLinks(page);
     const trafficInfra = buildTrafficInfra(page);
-    const techSeoScore = buildTechSeoScore(hardChecks, performance);
+    const techSeoScore = buildTechSeoScore(hardChecks);
 
     const reportPayload = {
       domain: page.domain,
