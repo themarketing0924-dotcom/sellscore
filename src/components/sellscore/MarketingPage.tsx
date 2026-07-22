@@ -40,7 +40,7 @@ const PAIN_POINTS: { icon: IconName; title: string; desc: ReactNode }[] = [
     desc: (
       <>
         홈페이지를 제작한 뒤 무엇이 개선됐는지 숫자와 객관적인 기준으로 설명하기 어렵습니다.
-        SellScore를 활용하면 <Em>진단 전후 점수와 수정 항목</Em>을 고객에게 명확하게 제시할 수 있습니다.
+        Salesscore를 활용하면 <Em>진단 전후 점수와 수정 항목</Em>을 고객에게 명확하게 제시할 수 있습니다.
       </>
     ),
   },
@@ -73,7 +73,7 @@ const DELIVERABLES: { icon: IconName; title: string; desc: ReactNode }[] = [
     desc: (
       <>
         어떤 문구와 구조가 고객의 행동을 막고 있는지 구체적으로 설명합니다.{' '}
-        <Em>공개된 웹 접근성·검색 품질 가이드와 SellScore 평가 기준</Em>을 바탕으로 판단 근거를
+        <Em>공개된 웹 접근성·검색 품질 가이드와 Salesscore 평가 기준</Em>을 바탕으로 판단 근거를
         함께 제공합니다.
       </>
     ),
@@ -186,13 +186,14 @@ const PAID_INCLUDES = [
 
 const FAQ: { q: string; a: ReactNode }[] = [
   {
-    q: 'SellScore 점수를 어떻게 믿을 수 있나요?',
+    q: 'Salesscore 점수를 어떻게 믿을 수 있나요?',
     a: (
       <>
-        SellScore는 설득, 카피, 사용자 경험, 검색 최적화, 접근성, 신뢰 요소를 분리해
-        평가합니다. 각 항목의 평가 기준과 배점을 적용하며, 점수와 함께{' '}
-        <Em>감점 이유와 수정 방향</Em>을 제공합니다. 자세한 채점 방식은 방법론 페이지에서 확인할
-        수 있습니다.
+        Salesscore는 AI에게 즉흥적으로 판단을 맡기지 않습니다. 설득, 카피, 사용자 경험, 검색
+        최적화, 접근성, 신뢰 요소 각각에 대해 <Em>공개된 웹 접근성·검색 품질 가이드와 자체 배점
+        기준</Em>을 적용해 항목별로 평가합니다. 동일한 사이트, 동일한 조건이라면 일관된 점수가
+        나오도록 설계되어 있습니다. 다만 Google, 네이버, W3C의 공식 인증이나 제휴를 받은
+        서비스는 아니라는 점을 분명히 말씀드립니다.
       </>
     ),
   },
@@ -200,9 +201,9 @@ const FAQ: { q: string; a: ReactNode }[] = [
     q: '제 사이트가 아니라 고객사 사이트도 진단할 수 있나요?',
     a: (
       <>
-        네. 공개적으로 접속 가능한 사이트라면 고객사 사이트도 진단할 수 있습니다. 다만{' '}
-        <Em>분석 결과를 외부에 공개하거나 영업 자료로 사용</Em>할 때는 사이트 소유자와의 계약 및
-        관련 권한을 확인해 주세요.
+        네, 가능합니다. 에이전시나 대행사, 프리랜서 디자이너분들이 고객사 사이트 주소를 입력해
+        진단을 진행하는 경우가 많습니다. 다만 해당 사이트를 진단하고{' '}
+        <Em>그 결과를 활용하는 것에 대해 고객사의 동의</Em>를 받아두시는 것을 권장합니다.
       </>
     ),
   },
@@ -210,8 +211,9 @@ const FAQ: { q: string; a: ReactNode }[] = [
     q: '결제하면 결과를 바로 확인할 수 있나요?',
     a: (
       <>
-        결제 완료 후 <Em>전체 분석 리포트를 바로</Em> 확인할 수 있도록 제공됩니다. 사이트 규모와
-        분석 상태에 따라 세부 분석 완료 시간에는 차이가 있을 수 있습니다.
+        네, 결제가 완료되면 곧바로 전체 리포트가 열립니다.{' '}
+        <Em>세부 항목별 점수, 감점 위치와 근거, 교체 가능한 카피, AI 개발 도구에 붙여넣을 수정
+        지시문</Em>까지 별도의 대기 시간 없이 바로 확인할 수 있습니다.
       </>
     ),
   },
@@ -219,8 +221,9 @@ const FAQ: { q: string; a: ReactNode }[] = [
     q: '리포트를 받은 뒤 사이트를 수정하면 어떻게 되나요?',
     a: (
       <>
-        제공된 수정 방향과 지시문을 활용해 사이트를 수정한 뒤 다시 진단할 수 있습니다.{' '}
-        <Em>수정 전후 점수를 비교</Em>하면 어떤 항목이 개선됐고 어떤 문제가 남았는지 확인할 수
+        제공된 수정 지시문을 <Em>Claude Code, Cursor, ChatGPT</Em> 등 사용 중인 AI 도구에
+        붙여넣어 수정한 뒤, 같은 사이트 주소로 다시 진단을 요청하시면 됩니다. 수정 전과 수정
+        후의 점수를 나란히 비교해 어떤 항목이 개선됐고 어떤 문제가 아직 남아 있는지 확인할 수
         있습니다.
       </>
     ),
@@ -229,9 +232,9 @@ const FAQ: { q: string; a: ReactNode }[] = [
     q: '무료 진단만 받아도 도움이 되나요?',
     a: (
       <>
-        무료 진단만으로도 <Em>종합 점수, SEO·기술 최적화 점수, 핵심 문제</Em>를 확인할 수
-        있습니다. 세부 감점 근거, 전체 수정 문구, 실행 지시문이 필요하다면 전체 리포트를 선택할
-        수 있습니다.
+        네, 무료 진단만으로도 <Em>종합 설득 전환 점수와 SEO·기술 최적화 점수, 가장 큰 핵심
+        문제와 기본 개선 방향</Em>까지 확인할 수 있습니다. 다만 교체 가능한 카피 문구나 AI
+        도구용 수정 지시문처럼 바로 실행에 옮길 수 있는 세부 내용은 전체 리포트에서 제공됩니다.
       </>
     ),
   },
@@ -239,8 +242,8 @@ const FAQ: { q: string; a: ReactNode }[] = [
     q: '무료 진단에 카드 등록이 필요한가요?',
     a: (
       <>
-        아니요. 무료 진단을 시작할 때 <Em>카드 등록을 요구하지 않습니다</Em>. 무료 결과를 먼저
-        확인한 뒤 필요할 때만 전체 리포트를 선택할 수 있습니다.
+        아니요, 필요하지 않습니다. 사이트 주소와 몇 가지 기본 정보만 입력하면{' '}
+        <Em>카드 등록 없이 무료 진단 결과</Em>를 확인할 수 있습니다.
       </>
     ),
   },
@@ -248,9 +251,9 @@ const FAQ: { q: string; a: ReactNode }[] = [
     q: '에이전시·대행사도 쓸 수 있나요?',
     a: (
       <>
-        네. 여러 고객사의 사이트를 반복적으로 진단하고 수정 전후 결과를 관리해야 하는 웹
-        제작사·마케팅 대행사·프리랜서에게 적합합니다. <Em>다중 사이트 관리가 필요</Em>하시면
-        별도로 문의해 주세요.
+        네, 오히려 에이전시나 대행사에서 활용도가 높습니다. 홈페이지 제작이나 리뉴얼 후 무엇이
+        개선됐는지 숫자와 근거로 설명하기 어려운 경우,{' '}
+        <Em>진단 전후 점수와 수정 항목을 고객에게 명확한 자료</Em>로 제시할 수 있습니다.
       </>
     ),
   },
@@ -309,7 +312,7 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
           >
             10초 만에
             <br />
-            <span className="gradient-text-animated">이 사이트가 안 팔리는 이유</span>를
+            <span className="gradient-text-animated">당신의 사이트가 안 팔리는 이유</span>를
             <br />
             보여드립니다
           </h1>
@@ -357,7 +360,7 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
             ))}
           </div>
           <p className="text-white/30 text-[11.5px] max-w-md mx-auto mb-10 leading-relaxed">
-            공개된 웹 접근성·검색 품질 가이드와 SellScore 자체 평가 기준을 함께 적용합니다.
+            공개된 웹 접근성·검색 품질 가이드와 Salesscore 자체 평가 기준을 함께 적용합니다.
           </p>
         </motion.div>
       </section>
@@ -376,7 +379,7 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
         sub={
           <>
             방문자는 들어오는데 문의와 결제가 일어나지 않는 이유를 감으로 찾고 계시지는 않나요?
-            SellScore는 <Em>카피, 설득 구조, 사용자 경험, 검색 노출, 신뢰 요소</Em>를 함께 분석해
+            Salesscore는 <Em>카피, 설득 구조, 사용자 경험, 검색 노출, 신뢰 요소</Em>를 함께 분석해
             매출을 막는 문제부터 찾아냅니다.
           </>
         }
@@ -452,7 +455,7 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
         }
         sub={
           <>
-            설명만 보고 판단하지 마세요. SellScore가 어떤 문제를 찾고, 어떤 근거를 제시하며,
+            설명만 보고 판단하지 마세요. Salesscore가 어떤 문제를 찾고, 어떤 근거를 제시하며,
             무엇부터 수정하라고 안내하는지 <Em>실제 분석 화면</Em>에서 확인해 보세요.
           </>
         }
@@ -544,7 +547,7 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
         eyebrow="이 점수를 믿을 수 있나요"
         heading={
           <>
-            감이 아니라, <span className="gradient-text-static">공개된 기준과 일관된 배점</span>으로
+            추측이 아니라, <span className="gradient-text-static">공개된 기준과 일관된 배점</span>으로
             평가합니다
           </>
         }
@@ -557,7 +560,7 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
           transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
         >
           <p className="text-[#86868b] text-[15px] sm:text-[16px] leading-relaxed font-medium">
-            SellScore는 단순히 AI에게 사이트가 좋은지 물어보고 임의의 점수를 보여주는 서비스가
+            Salesscore는 단순히 AI에게 사이트가 좋은지 물어보고 임의의 점수를 보여주는 서비스가
             아닙니다. 설득, 카피, 사용자 경험, 검색 최적화, 접근성, 신뢰 요소를 각각 분리해
             평가하고 항목별 판단 기준과 배점을 적용합니다. 어떤 기준으로 점수가 계산되는지
             공개하며, 동일한 분석 조건에서는 <Em>일관된 평가 결과</Em>가 나오도록 설계했습니다.
@@ -595,8 +598,8 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
             채점 원리 보러가기 →
           </Link>
           <p className="text-white/25 text-[11px] max-w-md mx-auto mt-6 leading-relaxed">
-            SellScore는 Google, 네이버, W3C와 제휴하거나 공식 인증을 받은 서비스가 아닙니다.
-            공개된 가이드와 SellScore 자체 분석 기준을 바탕으로 진단 결과를 제공합니다.
+            Salesscore는 Google, 네이버, W3C와 제휴하거나 공식 인증을 받은 서비스가 아닙니다.
+            공개된 가이드와 Salesscore 자체 분석 기준을 바탕으로 진단 결과를 제공합니다.
           </p>
         </motion.div>
       </Section>
