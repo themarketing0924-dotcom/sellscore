@@ -370,6 +370,16 @@ interface PageContent {
   hasBreadcrumbSchema: boolean;
   /** 내부 링크 중 쿼리스트링·해시 남용 없이 설명적인 경로 비율 (0~1), 표본 없으면 null */
   descriptiveUrlRatio: number | null;
+  // ── ② 텍스트·콘텐츠 체크리스트용 신호 ──
+  htmlLang: string | null;
+  subHeadingCount: number;
+  paragraphCount: number;
+  internalLinkCount: number;
+  hasDateMeta: boolean;
+  h1Text: string;
+  hasFaqSchema: boolean;
+  hasArticleSchema: boolean;
+  hasReviewSchema: boolean;
 }
 
 // 링크 href의 호스트로 SNS/채널 종류를 식별한다
@@ -501,6 +511,37 @@ function parseHtml(html: string, normalizedUrl: string, domain: string): PageCon
     (html.match(/<link[^>]+rel=["']stylesheet["'][^>]+href=["']http:\/\//gi) || []).length;
   const descriptiveUrlRatio = computeDescriptiveUrlRatio($, normalizedUrl);
 
+  // ── ② 텍스트·콘텐츠 신호 ──
+  const htmlLang = ($('html').attr('lang') || '').trim() || null;
+  const subHeadingCount = $('h2, h3, h4, h5, h6').length;
+  const paragraphCount = $('p').filter((_, el) => $(el).text().trim().length > 10).length;
+  const origin2 = (() => { try { return new URL(normalizedUrl).origin; } catch { return ''; } })();
+  const internalLinkCount = (() => {
+    const seen = new Set<string>();
+    $('a[href]').each((_, el) => {
+      const href = ($(el).attr('href') || '').trim();
+      if (!href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:')) return;
+      try {
+        const abs = new URL(href, normalizedUrl);
+        if (abs.origin === origin2) seen.add(abs.pathname);
+      } catch { /* 무시 */ }
+    });
+    return seen.size;
+  })();
+  const hasDateMeta =
+    $('meta[property="article:published_time"]').length > 0 ||
+    $('meta[property="article:modified_time"]').length > 0 ||
+    $('time[datetime]').length > 0 ||
+    /"datePublished"\s*:/.test(html);
+  const h1Text = $('h1').first().text().trim();
+  const hasFaqSchema = jsonLdTypes.has('FAQPage');
+  const hasArticleSchema =
+    jsonLdTypes.has('Article') ||
+    jsonLdTypes.has('BlogPosting') ||
+    jsonLdTypes.has('NewsArticle') ||
+    jsonLdTypes.has('TechArticle');
+  const hasReviewSchema = jsonLdTypes.has('Review') || jsonLdTypes.has('AggregateRating');
+
   $('script, style, noscript, svg').remove();
   const bodyText = $('body').text().replace(/\s+/g, ' ').trim().slice(0, 6000);
 
@@ -530,6 +571,15 @@ function parseHtml(html: string, normalizedUrl: string, domain: string): PageCon
     hasWebsiteSchema,
     hasBreadcrumbSchema,
     descriptiveUrlRatio,
+    htmlLang,
+    subHeadingCount,
+    paragraphCount,
+    internalLinkCount,
+    hasDateMeta,
+    h1Text,
+    hasFaqSchema,
+    hasArticleSchema,
+    hasReviewSchema,
   };
 }
 
@@ -919,6 +969,109 @@ function buildHardChecks(page: PageContent): HardCheckItem[] {
     });
   }
 
+  // ── ② 텍스트·콘텐츠 체크리스트 ─────────────────────────────────────────
+
+  // title_length: 30~60자 → pass, 1~29 또는 61~80 → warn, 없거나 81+ → fail
+  const titleLen = page.title.length;
+  if (titleLen >= 30 && titleLen <= 60) {
+    checks.push({ id: 'title_length', label: 'title 길이 최적화', status: 'pass', detail: `title이 ${titleLen}자로 권장 범위(30~60자)에 있습니다.` });
+  } else if (titleLen > 0 && titleLen <= 80) {
+    checks.push({ id: 'title_length', label: 'title 길이 최적화', status: 'warn', detail: `title이 ${titleLen}자입니다. 30~60자가 검색결과에 잘리지 않는 권장 범위입니다.` });
+  } else {
+    checks.push({ id: 'title_length', label: 'title 길이 최적화', status: 'fail', detail: titleLen === 0 ? 'title 태그가 없습니다.' : `title이 ${titleLen}자로 너무 길어 검색결과에서 잘립니다.` });
+  }
+
+  // meta_desc_length: 80~160자 → pass, 있지만 범위 외 → warn, 없음 → fail
+  const descLen = page.metaDescription.length;
+  if (descLen >= 80 && descLen <= 160) {
+    checks.push({ id: 'meta_desc_length', label: 'meta description 분량', status: 'pass', detail: `설명이 ${descLen}자로 검색 스니펫 표시에 적합합니다.` });
+  } else if (descLen > 0) {
+    checks.push({ id: 'meta_desc_length', label: 'meta description 분량', status: 'warn', detail: `설명이 ${descLen}자입니다. 80~160자가 검색결과 스니펫에 잘리지 않는 범위입니다.` });
+  } else {
+    checks.push({ id: 'meta_desc_length', label: 'meta description 분량', status: 'fail', detail: 'meta description이 없어 구글이 본문에서 임의로 발췌합니다.' });
+  }
+
+  // h_hierarchy: H2+ 2개 이상 → pass, 1개 → warn, 0개 → fail
+  if (page.subHeadingCount >= 2) {
+    checks.push({ id: 'h_hierarchy', label: '헤딩 계층 구조(H2+)', status: 'pass', detail: `H2 이상 소제목이 ${page.subHeadingCount}개 있어 콘텐츠 구조가 잘 잡혀 있습니다.` });
+  } else if (page.subHeadingCount === 1) {
+    checks.push({ id: 'h_hierarchy', label: '헤딩 계층 구조(H2+)', status: 'warn', detail: 'H2 이상 소제목이 1개뿐입니다. 주요 섹션마다 H2를 추가하면 구조가 명확해집니다.' });
+  } else {
+    checks.push({ id: 'h_hierarchy', label: '헤딩 계층 구조(H2+)', status: 'fail', detail: 'H2 이상의 소제목이 없습니다. H1만으로는 페이지 내 구조를 파악하기 어렵습니다.' });
+  }
+
+  // content_length: 1000자+ → pass, 300~999 → warn, 300 미만 → fail
+  const bodyLen = page.bodyText.length;
+  if (bodyLen >= 1000) {
+    checks.push({ id: 'content_length', label: '본문 텍스트 충분성', status: 'pass', detail: `본문 텍스트가 ${bodyLen.toLocaleString()}자 이상으로 충분합니다.` });
+  } else if (bodyLen >= 300) {
+    checks.push({ id: 'content_length', label: '본문 텍스트 충분성', status: 'warn', detail: `본문이 ${bodyLen}자입니다. 1,000자 이상의 실질적인 콘텐츠를 권장합니다.` });
+  } else {
+    checks.push({ id: 'content_length', label: '본문 텍스트 충분성', status: 'fail', detail: `본문 텍스트가 ${bodyLen}자로 너무 적습니다. 콘텐츠 품질이 낮다고 판단될 수 있습니다.` });
+  }
+
+  // lang_attr: html[lang] 있음 → pass, 없음 → warn
+  checks.push(
+    page.htmlLang
+      ? { id: 'lang_attr', label: '언어(lang) 속성', status: 'pass', detail: `html 태그에 언어가 "${page.htmlLang}"으로 명시되어 있습니다.` }
+      : { id: 'lang_attr', label: '언어(lang) 속성', status: 'warn', detail: 'html 태그에 lang 속성이 없어 검색엔진이 언어를 추정해야 합니다.' }
+  );
+
+  // faq_schema: FAQPage JSON-LD → pass, 없음 → warn
+  checks.push(
+    page.hasFaqSchema
+      ? { id: 'faq_schema', label: 'FAQ 구조화 데이터', status: 'pass', detail: 'FAQPage 구조화 데이터가 있어 검색결과에 질문·답변이 직접 표시될 수 있습니다.' }
+      : { id: 'faq_schema', label: 'FAQ 구조화 데이터', status: 'warn', detail: 'FAQ 구조화 데이터가 없습니다. 추가하면 검색결과 노출 면적이 늘어납니다.' }
+  );
+
+  // article_schema: Article 계열 JSON-LD → pass, 없음 → warn
+  checks.push(
+    page.hasArticleSchema
+      ? { id: 'article_schema', label: '아티클 구조화 데이터', status: 'pass', detail: 'Article/BlogPosting 구조화 데이터가 있어 구글 뉴스·검색에서 더 잘 표시될 수 있습니다.' }
+      : { id: 'article_schema', label: '아티클 구조화 데이터', status: 'warn', detail: '아티클 구조화 데이터가 없습니다. 블로그·뉴스 페이지라면 BlogPosting 마크업을 추가하세요.' }
+  );
+
+  // internal_links: 5개+ → pass, 2~4개 → warn, 0~1개 → fail
+  if (page.internalLinkCount >= 5) {
+    checks.push({ id: 'internal_links', label: '내부 링크 연결', status: 'pass', detail: `${page.internalLinkCount}개의 내부 링크가 있어 크롤러가 사이트 전체를 탐색하기 쉽습니다.` });
+  } else if (page.internalLinkCount >= 2) {
+    checks.push({ id: 'internal_links', label: '내부 링크 연결', status: 'warn', detail: `내부 링크가 ${page.internalLinkCount}개입니다. 관련 페이지로 5개 이상 연결하는 것을 권장합니다.` });
+  } else {
+    checks.push({ id: 'internal_links', label: '내부 링크 연결', status: 'fail', detail: `내부 링크가 ${page.internalLinkCount}개뿐입니다. 연관 페이지 링크가 없으면 크롤러가 사이트를 충분히 탐색하기 어렵습니다.` });
+  }
+
+  // content_freshness: 날짜 메타 → pass, 없음 → warn
+  checks.push(
+    page.hasDateMeta
+      ? { id: 'content_freshness', label: '콘텐츠 날짜 표시', status: 'pass', detail: '발행일 또는 수정일이 마크업에 명시되어 있습니다.' }
+      : { id: 'content_freshness', label: '콘텐츠 날짜 표시', status: 'warn', detail: '발행일·수정일 메타데이터가 없어 검색엔진이 콘텐츠 신선도를 판단하기 어렵습니다.' }
+  );
+
+  // h1_descriptive: H1 텍스트 10자+ → pass, 1~9자 → warn, 없음 → warn(h1 항목과 겹침 방지)
+  if (page.h1Text.length >= 10) {
+    checks.push({ id: 'h1_descriptive', label: 'H1 내용의 충분성', status: 'pass', detail: `H1 "${page.h1Text.slice(0, 30)}…"이 충분히 설명적입니다.` });
+  } else if (page.h1Text.length > 0) {
+    checks.push({ id: 'h1_descriptive', label: 'H1 내용의 충분성', status: 'warn', detail: `H1이 "${page.h1Text}"으로 너무 짧습니다. 핵심 키워드를 포함한 설명적인 제목을 사용하세요.` });
+  } else {
+    checks.push({ id: 'h1_descriptive', label: 'H1 내용의 충분성', status: 'warn', detail: 'H1이 없어 페이지 주제를 판단하기 어렵습니다.' });
+  }
+
+  // paragraph_structure: p 태그 5개+ → pass, 2~4개 → warn, 0~1개 → fail
+  if (page.paragraphCount >= 5) {
+    checks.push({ id: 'paragraph_structure', label: '단락(p) 구조', status: 'pass', detail: `의미 있는 단락이 ${page.paragraphCount}개로 콘텐츠가 잘 구조화되어 있습니다.` });
+  } else if (page.paragraphCount >= 2) {
+    checks.push({ id: 'paragraph_structure', label: '단락(p) 구조', status: 'warn', detail: `단락이 ${page.paragraphCount}개입니다. 5개 이상의 단락으로 나누면 가독성과 SEO가 개선됩니다.` });
+  } else {
+    checks.push({ id: 'paragraph_structure', label: '단락(p) 구조', status: 'fail', detail: '본문이 단락으로 나뉘어 있지 않습니다. <p> 태그를 사용해 내용을 분리하세요.' });
+  }
+
+  // review_schema: Review/AggregateRating JSON-LD → pass, 없음 → warn
+  checks.push(
+    page.hasReviewSchema
+      ? { id: 'review_schema', label: '리뷰·평점 구조화 데이터', status: 'pass', detail: 'Review/AggregateRating 구조화 데이터가 있어 검색결과에 별점이 표시될 수 있습니다.' }
+      : { id: 'review_schema', label: '리뷰·평점 구조화 데이터', status: 'warn', detail: '리뷰·평점 구조화 데이터가 없습니다. 추가하면 검색결과 클릭률이 높아집니다.' }
+  );
+
   return checks;
 }
 
@@ -1109,6 +1262,128 @@ const CHECKLIST_META: Record<string, ChecklistItemMeta> = {
     goodExample: 'example.com/guide/crypto-tax-filing',
     badExample: 'example.com/page?id=8823&sess=a91f2&ref=x',
   },
+
+  // ── ② 텍스트·콘텐츠 (30점) ─────────────────────────────────────────────
+  title_length: {
+    category: 'content',
+    maxPoints: 3,
+    source: '구글 Search Essentials — title 가이드',
+    sourceUrl: 'https://developers.google.com/search/docs/appearance/title-link',
+    guideline:
+      '"제목은 페이지의 주제를 정확하게 설명해야 합니다." — 구글 공식 가이드. 30~60자가 검색결과에 잘 표시되는 권장 범위입니다. 너무 짧으면 정보가 부족하고, 너무 길면 검색결과에서 잘립니다.',
+    goodExample: '암호화폐 세금 신고 대행 서비스 | 크립토택스 (32자)',
+    badExample: '홈 (2자) 또는 150자짜리 키워드 나열 제목',
+  },
+  meta_desc_length: {
+    category: 'content',
+    maxPoints: 3,
+    source: '구글 Search Essentials — 스니펫 가이드',
+    sourceUrl: 'https://developers.google.com/search/docs/appearance/snippet',
+    guideline:
+      '"검색결과 스니펫은 보통 한두 문장입니다." — 구글 공식 가이드. 80~160자가 검색결과 스니펫에 잘리지 않고 표시되는 범위입니다. 없으면 구글이 본문에서 임의로 발췌합니다.',
+    goodExample: '국내 최초 AI 기반 암호화폐 세금 자동 계산. 빗썸·업비트·코인원 전 거래소 연동, 5분 신고서 자동 완성. (73자)',
+    badExample: 'meta description이 없거나 "홈페이지입니다" 수준의 10자 이하 설명',
+  },
+  h_hierarchy: {
+    category: 'content',
+    maxPoints: 2,
+    source: '구글 Search Essentials — 콘텐츠 구조 가이드',
+    sourceUrl: 'https://developers.google.com/search/docs/fundamentals/seo-starter-guide',
+    guideline:
+      'H1 아래에 H2, H3로 내용을 계층적으로 구분하면 검색엔진이 페이지 구조를 파악하기 쉽고, 사용자가 원하는 부분으로 빠르게 이동할 수 있습니다.',
+    goodExample: 'H1: 서비스 소개 → H2: 주요 기능 → H3: 세부 기능 설명',
+    badExample: 'H1 하나만 있고 나머지 소제목이 전부 <div> 또는 <p>로 처리된 경우',
+  },
+  content_length: {
+    category: 'content',
+    maxPoints: 3,
+    source: '네이버 서치어드바이저 웹마스터 가이드',
+    sourceUrl: 'https://searchadvisor.naver.com/guide/seo-basic-site',
+    guideline:
+      '"콘텐츠의 양이 적으면 문서 품질이 낮다고 판단할 수 있습니다" — 네이버 공식 가이드 원문. 실질적인 정보가 담긴 본문 1,000자 이상이 권장 기준입니다.',
+    goodExample: '서비스 설명·작동 원리·요금·FAQ 등 실질 정보가 포함된 1,000자+ 본문',
+    badExample: '헤드라인과 버튼만 있는 200자 미만 랜딩페이지',
+  },
+  lang_attr: {
+    category: 'content',
+    maxPoints: 2,
+    source: '구글 Search Essentials — 국제화 가이드',
+    sourceUrl: 'https://developers.google.com/search/docs/specialty/international/localization',
+    guideline:
+      '"각 언어 버전의 URL에 hreflang을 사용하여 Google에 언어·지역 타겟팅을 알려주세요." — 구글 공식 가이드. html lang 속성은 접근성과 검색엔진 언어 감지 모두에 영향을 줍니다.',
+    goodExample: '<html lang="ko"> 또는 <html lang="ko-KR">',
+    badExample: '<html> (lang 속성 없음)',
+  },
+  faq_schema: {
+    category: 'content',
+    maxPoints: 3,
+    source: '구글 리치 결과 가이드 — FAQPage',
+    sourceUrl: 'https://developers.google.com/search/docs/appearance/structured-data/faqpage',
+    guideline:
+      '"FAQPage 마크업을 올바르게 구현하면 검색결과에 질문과 답변이 직접 표시될 수 있습니다." — 구글 공식 가이드 원문. 검색결과에서 차지하는 공간이 늘어나 클릭률이 높아집니다.',
+    goodExample: '{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"...","acceptedAnswer":{...}}]}',
+    badExample: 'FAQ 섹션은 있지만 JSON-LD 마크업이 없어 검색결과에 리치 스니펫이 표시되지 않는 경우',
+  },
+  article_schema: {
+    category: 'content',
+    maxPoints: 2,
+    source: '구글 리치 결과 가이드 — Article',
+    sourceUrl: 'https://developers.google.com/search/docs/appearance/structured-data/article',
+    guideline:
+      '"Article 구조화 데이터를 추가하면 기사·블로그 콘텐츠가 Google 검색, 구글 뉴스, 어시스턴트에서 더 잘 표시될 수 있습니다." — 구글 공식 가이드 원문.',
+    goodExample: '{"@type":"BlogPosting","headline":"...","datePublished":"2026-07-01","author":{"@type":"Person","name":"..."}}',
+    badExample: '블로그 포스팅이 있지만 Article/BlogPosting 구조화 데이터 없이 일반 HTML만 있는 경우',
+  },
+  internal_links: {
+    category: 'content',
+    maxPoints: 3,
+    source: '구글 Search Essentials — 내부 링크 가이드',
+    sourceUrl: 'https://developers.google.com/search/docs/fundamentals/seo-starter-guide',
+    guideline:
+      '"다른 페이지로 이동하는 링크를 만드는 경우 앵커 텍스트를 사용해 페이지 내용을 설명하세요." — 구글 공식 가이드. 내부 링크가 충분해야 크롤러가 전체 사이트를 효율적으로 탐색합니다.',
+    goodExample: '서비스 페이지 → 가격 페이지 → FAQ → 블로그로 이어지는 5개 이상의 내부 링크',
+    badExample: '홈페이지에서 다른 페이지로 이동하는 링크가 1~2개뿐인 경우',
+  },
+  content_freshness: {
+    category: 'content',
+    maxPoints: 2,
+    source: '구글 검색 — 콘텐츠 신선도 가이드',
+    sourceUrl: 'https://developers.google.com/search/docs/appearance/structured-data/article',
+    guideline:
+      '발행일·수정일을 명확하게 표시하면 검색엔진이 콘텐츠의 신선도를 판단할 수 있어 최신 정보를 검색하는 쿼리에서 유리합니다. article:published_time 메타 태그나 JSON-LD datePublished 사용을 권장합니다.',
+    goodExample: '<meta property="article:published_time" content="2026-07-01"> 또는 JSON-LD datePublished',
+    badExample: '업데이트 날짜가 없어 오래된 정보인지 최신인지 검색엔진이 알 수 없는 경우',
+  },
+  h1_descriptive: {
+    category: 'content',
+    maxPoints: 2,
+    source: '구글 Search Essentials — 제목 태그 가이드',
+    sourceUrl: 'https://developers.google.com/search/docs/appearance/title-link',
+    guideline:
+      'H1은 페이지의 핵심 주제를 가장 잘 설명하는 문장이어야 합니다. 너무 짧거나("홈", "메인") 의미 없는 H1은 검색엔진과 사용자 모두에게 페이지 내용을 전달하지 못합니다.',
+    goodExample: '<h1>2026년 암호화폐 종합소득세 신고 자동화 서비스</h1>',
+    badExample: '<h1>홈</h1> 또는 <h1>Welcome</h1> 같은 10자 미만 H1',
+  },
+  paragraph_structure: {
+    category: 'content',
+    maxPoints: 3,
+    source: '구글 Search Essentials — 콘텐츠 품질 가이드',
+    sourceUrl: 'https://developers.google.com/search/docs/fundamentals/creating-helpful-content',
+    guideline:
+      '"사람을 위한 콘텐츠를 만드는 데 집중하세요." — 구글 공식 가이드. 본문이 <p> 단락으로 충분히 나뉘어 있어야 가독성이 높고, 검색엔진이 주요 정보 단위를 파악하기 쉽습니다.',
+    goodExample: '각 기능·혜택·단계마다 별도 <p> 단락으로 구분된 5개 이상의 단락',
+    badExample: '모든 텍스트를 단 하나의 <div> 또는 <p>에 몰아넣은 경우',
+  },
+  review_schema: {
+    category: 'content',
+    maxPoints: 2,
+    source: '구글 리치 결과 가이드 — Review snippet',
+    sourceUrl: 'https://developers.google.com/search/docs/appearance/structured-data/review-snippet',
+    guideline:
+      '"리뷰 스니펫은 고객의 전체 리뷰를 요약합니다." — 구글 공식 가이드. Review 또는 AggregateRating 구조화 데이터를 추가하면 검색결과에 별점이 표시되어 클릭률이 높아집니다.',
+    goodExample: '{"@type":"AggregateRating","ratingValue":"4.8","reviewCount":"234"}',
+    badExample: '후기/별점 섹션은 있지만 JSON-LD 마크업이 없어 검색결과에 별점이 표시되지 않는 경우',
+  },
 };
 
 interface TechSeoScoreItem {
@@ -1165,7 +1440,7 @@ function buildTechSeoScore(hardChecks: HardCheckItem[]): TechSeoScore {
   const max = items.reduce((sum, i) => sum + i.maxPoints, 0);
   const score = max > 0 ? Math.round((earned / max) * 100) : 0;
 
-  return { score, grade: gradeFromScore(score), items, implementedCategories: ['site'] };
+  return { score, grade: gradeFromScore(score), items, implementedCategories: ['site', 'content'] };
 }
 
 // ── Cloud Function ──
