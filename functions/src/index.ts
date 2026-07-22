@@ -1063,7 +1063,7 @@ const CHECKLIST_META: Record<string, ChecklistItemMeta> = {
   },
   https: {
     category: 'site',
-    maxPoints: 3,
+    maxPoints: 2,
     source: '구글 Search Essentials — 기술 요구사항',
     sourceUrl: 'https://developers.google.com/search/docs/essentials/technical',
     guideline:
@@ -1071,14 +1071,14 @@ const CHECKLIST_META: Record<string, ChecklistItemMeta> = {
   },
   sitemap: {
     category: 'site',
-    maxPoints: 3,
+    maxPoints: 2,
     source: '구글 Search Essentials — 사이트맵 가이드',
     sourceUrl: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap',
     guideline: '"Google에 변경사항을 계속 알리려면 사이트맵을 제출하는 것이 좋습니다" — 구글 공식 가이드 원문. 새 페이지를 구글이 더 빨리 찾게 해줍니다.',
   },
   robots: {
     category: 'site',
-    maxPoints: 3,
+    maxPoints: 2,
     source: '구글 Search Essentials — 크롤링 제어',
     sourceUrl: 'https://developers.google.com/search/docs/crawling-indexing/robots/intro',
     guideline: '홈페이지가 robots.txt로 차단되어 Google에서 콘텐츠에 액세스할 수 없으면 사이트 이름도, 검색 노출도 아예 생성될 수 없습니다.',
