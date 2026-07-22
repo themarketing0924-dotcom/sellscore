@@ -354,7 +354,7 @@ export function ResultScreen({
                         {HARD_CHECK_STYLE[item.status].glyph}
                       </span>
                       <div className="min-w-0">
-                        <p className="text-white text-[14px] font-bold mb-0.5">{item.label}</p>
+                        <p className="text-white text-[15px] font-bold mb-0.5">{item.label}</p>
                         <p className="text-white/35 text-[11px] font-semibold">
                           출처:{' '}
                           {item.sourceUrl ? (
@@ -374,7 +374,7 @@ export function ResultScreen({
                     </div>
 
                     {c && (
-                      <p className="text-white/55 text-[12.5px] leading-relaxed font-medium mb-2.5">{c.detail}</p>
+                      <p className="text-white/55 text-[13.5px] leading-relaxed font-medium mb-2.5">{c.detail}</p>
                     )}
 
                     {item.guideline && (
@@ -382,19 +382,19 @@ export function ResultScreen({
                         <p className="text-white/40 text-[10.5px] tracking-[0.08em] uppercase font-bold mb-1">
                           공식 가이드
                         </p>
-                        <p className="text-white/65 text-[12px] leading-relaxed">{item.guideline}</p>
+                        <p className="text-white/65 text-[13px] leading-relaxed">{item.guideline}</p>
                       </div>
                     )}
 
                     {(item.goodExample || item.badExample) && (
                       <div className="flex flex-col gap-1.5">
                         {item.badExample && (
-                          <p className="text-rose-300/80 text-[11.5px] leading-relaxed font-mono">
+                          <p className="text-rose-300/80 text-[12.5px] leading-relaxed font-mono">
                             ✕ {item.badExample}
                           </p>
                         )}
                         {item.goodExample && (
-                          <p className="text-emerald-300/80 text-[11.5px] leading-relaxed font-mono">
+                          <p className="text-emerald-300/80 text-[12.5px] leading-relaxed font-mono">
                             ✓ {item.goodExample}
                           </p>
                         )}
@@ -533,7 +533,7 @@ export function ResultScreen({
                       </span>
                     </p>
                     <p className="text-white/70 text-[15px] leading-relaxed mb-1.5 font-medium">{f.narrative}</p>
-                    <p className="text-emerald-300/70 text-[13px] font-mono font-semibold">
+                    <p className="text-emerald-300/70 text-[14px] font-mono font-semibold">
                       → <strong className="font-bold">{f.technique}</strong> 기법이 적용되어 있습니다
                     </p>
                   </div>
@@ -541,7 +541,7 @@ export function ResultScreen({
               </motion.div>
             ))
           ) : (
-            <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-5 text-white/50 text-[13px]">
+            <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-5 text-white/50 text-[14px]">
               아직 뚜렷한 강점보다는 개선 여지가 더 많은 사이트입니다. 아래 위험 요소부터 먼저
               확인해주세요.
             </div>
@@ -574,7 +574,7 @@ export function ResultScreen({
                     </span>
                   </p>
                   <p className="text-white/70 text-[15px] leading-relaxed mb-1.5 font-semibold">{f.flaw}</p>
-                  <p className="text-rose-300/80 text-[13px] leading-relaxed font-medium">⚠ {f.narrative}</p>
+                  <p className="text-rose-300/80 text-[14px] leading-relaxed font-medium">⚠ {f.narrative}</p>
                 </div>
               </div>
             </motion.div>
@@ -627,7 +627,7 @@ export function ResultScreen({
             <p className="text-white text-[17px] sm:text-[19px] font-black mt-4 mb-1.5 leading-snug">
               무료 회원가입하고 {SIGNUP_UNLOCK_COUNT}개 프롬프트를 더 받으세요
             </p>
-            <p className="text-white/50 text-[13px] mb-6">카드 등록 없이, 30초면 가입 완료</p>
+            <p className="text-white/50 text-[14px] mb-6">카드 등록 없이, 30초면 가입 완료</p>
             <button
               onClick={() => setAuthOpen(true)}
               className="w-full max-w-sm mx-auto h-[50px] rounded-lg font-bold text-[15px] bg-white text-black border-none cursor-pointer transition-transform active:scale-[0.98] hover:brightness-95 mb-4"
@@ -989,28 +989,28 @@ function PromptCard({
       </div>
 
       <div className={open ? '' : 'blur-sm select-none pointer-events-none'}>
-        <p className="text-white/75 text-[15px] leading-relaxed mb-2 font-medium">{framework.currentState}</p>
-        <p className="text-white/50 text-[14px] mb-1">
+        <p className="text-white/75 text-[16px] leading-relaxed mb-2 font-medium">{framework.currentState}</p>
+        <p className="text-white/50 text-[15px] mb-1">
           근거: <strong className="text-white/70 font-semibold">{framework.evidence}</strong>
         </p>
         {framework.master && (
-          <p className="text-[#7bd6ff]/70 text-[12.5px] leading-relaxed mb-4">
+          <p className="text-[#7bd6ff]/70 text-[13.5px] leading-relaxed mb-4">
             📖 {framework.master.name}
             {framework.master.book && ` · 『${framework.master.book}』`} — {framework.master.theory}
           </p>
         )}
         {!framework.master && <div className="mb-4" />}
         <div className="bg-white/[0.04] rounded-2xl p-4">
-          <p className="text-rose-300/90 text-[14px] mb-3 font-bold">결함: {framework.flaw}</p>
-          <p className="text-white/60 text-[14px] mb-1 font-medium">
+          <p className="text-rose-300/90 text-[15px] mb-3 font-bold">결함: {framework.flaw}</p>
+          <p className="text-white/60 text-[15px] mb-1 font-medium">
             현재 → <span className="text-white/90 font-bold">{framework.fixPrompt.current}</span>
           </p>
-          <p className="text-white/60 text-[14px] mb-3 font-medium">
+          <p className="text-white/60 text-[15px] mb-3 font-medium">
             목표 → <span className="text-emerald-300 font-bold">{framework.fixPrompt.target}</span>
           </p>
           <ul className="flex flex-col gap-1.5 mb-3">
             {framework.fixPrompt.alternatives.map((alt) => (
-              <li key={alt} className="text-white/55 text-[13px] font-medium pl-3 relative">
+              <li key={alt} className="text-white/55 text-[14px] font-medium pl-3 relative">
                 <span className="absolute left-0">·</span>
                 {alt}
               </li>
@@ -1032,7 +1032,7 @@ function PromptCard({
               {copied ? '복사됨' : '복사하기'}
             </button>
           </div>
-          <p className="text-white/60 text-[13px] font-mono bg-black/40 border border-white/[0.06] rounded-lg p-3.5 leading-relaxed whitespace-pre-line">
+          <p className="text-white/60 text-[14px] font-mono bg-black/40 border border-white/[0.06] rounded-lg p-3.5 leading-relaxed whitespace-pre-line">
             {framework.fixPrompt.copyPasteInstruction}
           </p>
         </div>

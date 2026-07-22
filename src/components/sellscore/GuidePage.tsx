@@ -15,7 +15,7 @@ const REPORT_CONTENTS: { icon: IconName; title: string; desc: ReactNode }[] = [
     title: '설득 전환 지수 100점 채점표',
     desc: (
       <>
-        10개 프레임워크 점수를 <Em>막대·레이더 차트</Em>로 한눈에 보여드립니다.
+        12개 프레임워크 점수를 <Em>막대·레이더 차트</Em>로 한눈에 보여드립니다.
       </>
     ),
   },
