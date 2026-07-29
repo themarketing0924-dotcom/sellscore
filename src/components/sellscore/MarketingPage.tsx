@@ -376,11 +376,11 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
             <span className="gradient-text-animated">트래픽 유입도 구매전환도 없다면?</span>
           </motion.h1>
 
-          <p className="mx-auto mb-8 max-w-2xl text-[18px] sm:text-[22px] font-medium leading-[1.48] sm:leading-[1.58] tracking-[-0.01em] text-[#8d8d93]">
+          <p className="mx-auto mb-8 max-w-2xl text-[18px] sm:text-[22px] font-medium leading-[1.38] sm:leading-[1.48] text-[#8d8d93]">
             <span className="block">광고를 해도 문의와 결제가 늘지 않는다면,</span>
-            <span className="block mt-2 sm:mt-3">문제는 방문자 수가 아니라 <Em>사이트의 설득 구조</Em>일 수 있습니다.</span>
-            <span className="block mt-2 sm:mt-3">사이트 주소를 입력하면 고객이 어디에서 이탈하는지,</span>
-            <span className="block mt-2 sm:mt-3">무엇부터 고쳐야 하는지 <Em>우선순위대로</Em> 확인할 수 있습니다.</span>
+            <span className="block">문제는 방문자 수가 아니라 <Em>사이트의 설득 구조</Em>일 수 있습니다.</span>
+            <span className="block">사이트 주소를 입력하면 고객이 어디에서 이탈하는지,</span>
+            <span className="block">무엇부터 고쳐야 하는지 <Em>우선순위대로</Em> 확인할 수 있습니다.</span>
           </p>
 
           <motion.div
