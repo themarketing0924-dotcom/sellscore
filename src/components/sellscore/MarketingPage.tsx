@@ -86,19 +86,26 @@ const SCORE_AXES: {
 
 const PRICE_COMPARISON_ROWS = [
   {
-    label: 'A사',
-    type: '고가 에이전시형',
-    price: '150만~800만원+',
+    label: 'SEO/AEO 전문 에이전시',
+    type: '컨설팅 견적형',
+    price: '100만~200만원',
+    note: '공개 가격 기준: 기본 SEO/AEO 컨설팅 100만원, 심층 컨설팅 200만원',
+    features: ['SEO·AEO 전략 진단', '전문가 분석 중심', '사이트 수정·실행은 별도 범위 가능'],
   },
   {
-    label: 'B사',
-    type: '중가 진단/구독형',
-    price: '19,900원~29.9만원/월 또는 20~150만원',
+    label: 'XEO·GEO 관리 서비스',
+    type: '월 구독·대행형',
+    price: '월 30만~200만원+',
+    note: '공개 가격 기준: XEO 분석 월 30만원부터, XEO 컨설팅 월 50만원부터, GEO 최적화 월 200만원부터',
+    features: ['매월 비용 누적', '장기 운영 전제', '초기 테스트 비용 부담'],
   },
   {
-    label: '우리회사',
+    label: '세일즈스코어',
     type: '자동화 진단형',
-    price: '12,900원 / 49,000원 / 99,000원',
+    price: '12,900원부터',
+    note: '비싼 컨설팅 전에 SEO·AEO·GEO와 세일즈 구조 문제를 먼저 확인하는 방식',
+    features: ['44개 항목 자동 진단', '검색 최적화+세일즈 전환 동시 분석', 'AI 수정 지시문 제공'],
+    highlight: true,
   },
 ];
 
@@ -376,7 +383,7 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
             <span className="gradient-text-animated">트래픽 유입도 구매전환도 없다면?</span>
           </motion.h1>
 
-          <p className="mx-auto mb-8 max-w-2xl text-[18px] sm:text-[22px] font-medium leading-[1.28] sm:leading-[1.38] text-[#8d8d93]">
+          <p className="mx-auto mb-8 max-w-2xl text-[18px] sm:text-[22px] font-medium leading-[1.08] sm:leading-[1.18] text-[#8d8d93]">
             <span className="block">광고를 해도 문의와 결제가 늘지 않는다면,</span>
             <span className="block">문제는 방문자 수가 아니라 <Em>사이트의 설득 구조</Em>일 수 있습니다.</span>
             <span className="block">사이트 주소를 입력하면 고객이 어디에서 이탈하는지,</span>
@@ -559,35 +566,43 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
         }
         sub={
           <>
-            같은 고민을 해결하는 시장 대안들의 공개 가격을 보면, Salesscore가 왜 합리적인지 바로 보입니다.
+            SEO·AEO·GEO 시장의 공개 가격과 비교하면, Salesscore의 비용 경쟁력이 바로 보입니다.
           </>
         }
       >
-        <div className="max-w-4xl mx-auto rounded-3xl border border-white/12 overflow-hidden bg-white/[0.02]">
-          <div className="hidden md:grid grid-cols-[1fr_1.2fr_1.6fr] bg-white/[0.06] px-6 py-4 text-white/55 text-[11px] font-bold tracking-[0.1em] uppercase">
-            <span>구분</span>
-            <span className="text-center">방식</span>
-            <span className="text-right">가격대</span>
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-5xl mx-auto">
           {PRICE_COMPARISON_ROWS.map((row) => (
             <div
               key={row.label}
-              className="grid grid-cols-1 md:grid-cols-[1fr_1.2fr_1.6fr] gap-3 md:gap-0 px-4 sm:px-6 py-4 sm:py-5 border-t border-white/10"
+              className={`relative rounded-2xl border p-5 sm:p-6 text-left bg-white/[0.045] ${
+                row.highlight
+                  ? 'border-[#d7ff00]/70 shadow-[0_0_0_1px_rgba(215,255,0,0.18),0_22px_70px_rgba(0,0,0,0.42)]'
+                  : 'border-white/[0.12]'
+              }`}
             >
-              <div className="text-white font-bold text-[14px] sm:text-[15px] leading-snug flex items-center">
-                {row.label}
-              </div>
-              <div className="rounded-2xl md:rounded-none border md:border-0 border-white/10 bg-white/[0.02] md:bg-transparent px-4 py-3 md:px-0 md:py-0 text-white/70 text-[13px] leading-relaxed md:text-center md:flex md:items-center md:justify-center">
-                {row.type}
-              </div>
-              <div className="rounded-2xl md:rounded-none border border-[#0064ff]/30 bg-[#0064ff]/8 px-4 py-3 md:px-0 md:py-0 text-white text-[13px] leading-relaxed font-semibold md:text-right md:flex md:items-center md:justify-end">
-                {row.price}
-              </div>
+              {row.highlight && (
+                <span className="absolute right-4 top-4 rounded-full border border-[#d7ff00]/50 px-2.5 py-1 text-[10px] font-bold text-[#d7ff00]">
+                  가장 저렴
+                </span>
+              )}
+              <p className="text-white/55 text-[12px] font-bold mb-3">{row.label}</p>
+              <h3 className="text-white font-bold text-[20px] sm:text-[22px] tracking-tight mb-2">{row.type}</h3>
+              <p className={`font-black tracking-tight mb-3 ${row.highlight ? 'text-[#d7ff00] text-[30px] sm:text-[34px]' : 'text-white text-[26px] sm:text-[28px]'}`}>{row.price}</p>
+              <p className="text-white/45 text-[12px] leading-[1.45] mb-5">{row.note}</p>
+              <div className="h-px bg-white/10 mb-5" />
+              <ul className="flex flex-col gap-2.5">
+                {row.features.map((feature) => (
+                  <li key={feature} className="flex items-start gap-2 text-white/70 text-[12px] leading-snug">
+                    <Icon name="check" size={12} className={row.highlight ? 'text-[#d7ff00] mt-0.5 shrink-0' : 'text-[#7bd6ff] mt-0.5 shrink-0'} />
+                    {feature}
+                  </li>
+                ))}
+              </ul>
             </div>
           ))}
         </div>
         <p className="text-white/35 text-[12px] leading-relaxed max-w-4xl mx-auto mt-5">
-          세일즈 구조와 검색 최적화를 따로 맡기면 보통 수십만~수백만원이 듭니다. Salesscore는 공개 가이드와 검증된 프레임워크를 자동화해, 그 과정을 훨씬 낮은 비용으로 제공합니다.
+          SEO/AEO 컨설팅과 세일즈 구조 진단을 따로 맡기면 보통 수십만~수백만원이 듭니다. Salesscore는 공개 가이드와 검증된 프레임워크를 자동화해, 훨씬 낮은 비용으로 먼저 문제를 확인하게 해줍니다.
         </p>
       </Section>
 
