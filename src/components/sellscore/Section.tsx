@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import type { ReactNode } from 'react';
 import { Icon } from './Icon';
+import { VideoBackground } from './VideoBackground';
 import type { ComponentProps } from 'react';
 
 // ============================================================
@@ -36,6 +37,12 @@ export function Section({
   children,
   align = 'center',
   icon,
+  bgVideo,
+  bgVideoBlur = 18,
+  bgVideoSpeed = 0.6,
+  bgImage,
+  tightEyebrow = false,
+  headingSize = 'default',
 }: {
   eyebrow: string;
   heading: ReactNode;
@@ -44,12 +51,41 @@ export function Section({
   align?: 'center' | 'left';
   /** 애플 "강력한 개인정보 보호" 섹션처럼 헤드라인 위에 중앙 아이콘을 둔다 */
   icon?: ComponentProps<typeof Icon>['name'];
+  /** 섹션 전체에 은은하게 깔리는 블러 처리된 배경 영상 (텍스트가 박힌 영상도 블러로 무늬처럼만 보이게) */
+  bgVideo?: string;
+  bgVideoBlur?: number;
+  bgVideoSpeed?: number;
+  /** 정적 배경 이미지 — bgVideo와 동시에 쓰지 않는다(영상이 우선) */
+  bgImage?: string;
+  /** eyebrow-헤드라인 간격을 좁힌다 — 페이지 최상단에 바로 오는 Section 등 일부에서만 opt-in */
+  tightEyebrow?: boolean;
+  /** 페이지의 대표 타이틀 역할을 하는 Section(예: 요금제 상단)에 히어로급 크기(66px, font-black)를 준다 */
+  headingSize?: 'default' | 'hero';
 }) {
   const isCenter = align === 'center';
+  const isHero = headingSize === 'hero';
   return (
-    <section className="relative px-6 py-28 sm:py-36 md:py-48">
+    <section className="relative px-6 py-28 sm:py-36 md:py-48 overflow-hidden">
+      {bgVideo && (
+        <VideoBackground videoUrl={bgVideo} overlay="strong" blur={bgVideoBlur} speed={bgVideoSpeed} />
+      )}
+      {!bgVideo && bgImage && (
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: `url(${bgImage})` }}
+          />
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                'linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.75) 55%, #000 100%)',
+            }}
+          />
+        </div>
+      )}
       <motion.div
-        className={`mb-16 sm:mb-20 max-w-2xl ${isCenter ? 'text-center mx-auto' : 'text-left'}`}
+        className={`relative z-10 mb-16 sm:mb-20 max-w-2xl ${isCenter ? 'text-center mx-auto' : 'text-left'}`}
         initial={{ opacity: 0, y: 60 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
@@ -60,22 +96,26 @@ export function Section({
             <Icon name={icon} size={26} className="text-[#7bd6ff]" />
           </div>
         )}
-        <p className="text-[#7bd6ff]/70 text-[13px] tracking-[0.25em] uppercase mb-4 font-extrabold">
+        <p
+          className={`text-[#7bd6ff]/70 text-[13px] tracking-[0.25em] uppercase font-extrabold ${tightEyebrow ? 'mb-1' : 'mb-4'}`}
+        >
           {eyebrow}
         </p>
         <h2
-          className="text-white font-bold tracking-tight leading-[1.12] mb-5"
-          style={{ fontSize: 'clamp(30px, 6.2vw, 58px)' }}
+          className={`text-white tracking-tight leading-[1.15] mb-5 ${isHero ? 'font-black' : 'font-bold'}`}
+          style={{ fontSize: isHero ? 'clamp(32px, 6.8vw, 66px)' : 'clamp(30px, 6.2vw, 58px)' }}
         >
           {heading}
         </h2>
         {sub && (
-          <p className="text-[#86868b] text-[17px] sm:text-[19px] leading-[1.7] max-w-lg mx-auto font-medium">
+          <p
+            className={`text-[#86868b] leading-[1.55] sm:leading-[1.7] max-w-lg mx-auto font-medium ${isHero ? 'text-[18px] sm:text-[21px]' : 'text-[17px] sm:text-[19px]'}`}
+          >
             {sub}
           </p>
         )}
       </motion.div>
-      {children}
+      <div className="relative z-10">{children}</div>
     </section>
   );
 }

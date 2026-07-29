@@ -116,74 +116,101 @@ export function SiteNavbar() {
       {/* 모바일 드롭다운 메뉴 */}
       <AnimatePresence>
         {menuOpen && (
-          <motion.div
-            className="lg:hidden fixed top-14 left-0 right-0 z-40 bg-black/95 backdrop-blur-xl border-b border-white/10"
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.2 }}
-          >
-            <div className="flex flex-col px-6 py-4">
-              {NAV_LINKS.map((link) => {
-                const active = location.pathname === link.to;
-                return (
-                  <Link
-                    key={link.to}
-                    to={link.to}
+          <>
+            <motion.button
+              aria-label="메뉴 닫기"
+              className="lg:hidden fixed inset-0 top-14 z-40 border-none bg-black/50 backdrop-blur-[2px] cursor-default"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              onClick={closeMenu}
+            />
+            <motion.aside
+              className="lg:hidden fixed top-14 right-0 bottom-0 z-50 w-[min(82vw,320px)] bg-black/96 backdrop-blur-xl border-l border-white/10 shadow-[-20px_0_60px_rgba(0,0,0,0.45)]"
+              initial={{ opacity: 0, x: 24 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 24 }}
+              transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <div className="h-full flex flex-col px-5 py-5 overflow-y-auto">
+                <div className="flex items-center justify-between mb-5">
+                  <span className="text-white/45 text-[11px] font-semibold tracking-[0.2em] uppercase">Menu</span>
+                  <button
                     onClick={closeMenu}
-                    className="py-3.5 border-b border-white/[0.06] last:border-none no-underline text-[15px] font-medium"
-                    style={{ color: active ? '#fff' : 'rgba(255,255,255,0.75)' }}
+                    className="w-9 h-9 rounded-full bg-white/[0.06] border border-white/10 text-white/80 flex items-center justify-center cursor-pointer"
+                    aria-label="메뉴 닫기"
                   >
-                    {link.label}
-                  </Link>
-                );
-              })}
+                    ×
+                  </button>
+                </div>
 
-              <div className="pt-4 flex flex-col gap-2.5">
-                <Link
-                  to="/diagnose"
-                  onClick={closeMenu}
-                  className="w-full h-11 rounded-full text-white text-[14px] font-semibold no-underline flex items-center justify-center"
-                  style={{
-                    background: 'linear-gradient(135deg, #0064ff, #4f8bff)',
-                    boxShadow: '0 4px 14px -4px rgba(0,100,255,0.55)',
-                  }}
-                >
-                  무료 진단
-                </Link>
-                {user ? (
-                  <>
-                    <Link
-                      to="/diagnose/history"
-                      onClick={closeMenu}
-                      className="w-full h-11 rounded-full bg-white/10 text-white/85 text-[14px] font-medium border-none cursor-pointer flex items-center justify-center no-underline"
-                    >
-                      내 진단 내역
-                    </Link>
+                <div className="flex flex-col gap-1.5">
+                  {NAV_LINKS.map((link) => {
+                    const active = location.pathname === link.to;
+                    return (
+                      <Link
+                        key={link.to}
+                        to={link.to}
+                        onClick={closeMenu}
+                        className="py-3.5 px-2 rounded-xl border border-transparent no-underline text-[15px] font-medium"
+                        style={{
+                          color: active ? '#fff' : 'rgba(255,255,255,0.72)',
+                          background: active ? 'rgba(255,255,255,0.06)' : 'transparent',
+                        }}
+                      >
+                        {link.label}
+                      </Link>
+                    );
+                  })}
+                </div>
+
+                <div className="mt-auto pt-5 flex flex-col gap-2.5">
+                  <Link
+                    to="/diagnose"
+                    onClick={closeMenu}
+                    className="w-full h-11 rounded-full text-white text-[14px] font-semibold no-underline flex items-center justify-center"
+                    style={{
+                      background: 'linear-gradient(135deg, #0064ff, #4f8bff)',
+                      boxShadow: '0 4px 14px -4px rgba(0,100,255,0.55)',
+                    }}
+                  >
+                    무료 진단
+                  </Link>
+                  {user ? (
+                    <>
+                      <Link
+                        to="/diagnose/history"
+                        onClick={closeMenu}
+                        className="w-full h-11 rounded-full bg-white/10 text-white/85 text-[14px] font-medium border-none cursor-pointer flex items-center justify-center no-underline"
+                      >
+                        내 진단 내역
+                      </Link>
+                      <button
+                        onClick={() => {
+                          signOut();
+                          closeMenu();
+                        }}
+                        className="w-full h-11 rounded-full bg-white/10 text-white/85 text-[14px] font-medium border-none cursor-pointer"
+                      >
+                        로그아웃
+                      </button>
+                    </>
+                  ) : (
                     <button
                       onClick={() => {
-                        signOut();
+                        setAuthOpen(true);
                         closeMenu();
                       }}
                       className="w-full h-11 rounded-full bg-white/10 text-white/85 text-[14px] font-medium border-none cursor-pointer"
                     >
-                      로그아웃
+                      로그인
                     </button>
-                  </>
-                ) : (
-                  <button
-                    onClick={() => {
-                      setAuthOpen(true);
-                      closeMenu();
-                    }}
-                    className="w-full h-11 rounded-full bg-white/10 text-white/85 text-[14px] font-medium border-none cursor-pointer"
-                  >
-                    로그인
-                  </button>
-                )}
+                  )}
+                </div>
               </div>
-            </div>
-          </motion.div>
+            </motion.aside>
+          </>
         )}
       </AnimatePresence>
 

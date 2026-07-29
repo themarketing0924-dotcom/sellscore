@@ -4,9 +4,9 @@
 
 export const BRAND = {
   name: '세일즈스코어',
-  nameEn: 'SellScore',
+  nameEn: 'Salesscore',
   tagline: '당신 사이트, 팔리는 구조입니까?',
-  subTagline: '10초 안에 설득 전환 지수를 확인하세요',
+  subTagline: '1분 안에 설득 전환 지수를 확인하세요',
   ctaLabel: '무료로 진단받기',
   footerNote: '이 진단은 AI 기반 참고 자료이며, 실제 전환율은 다양한 요인에 영향을 받습니다.',
 };
@@ -196,17 +196,24 @@ export const MARKETING_MASTERS: MarketingMaster[] = [
 ];
 
 export const LOADING_MESSAGES = [
-  '10명의 마케팅 대가가 당신의 사이트를 검토하고 있습니다...',
+  '12명의 마케팅 대가가 당신의 사이트를 검토하고 있습니다...',
   '설득 전환 지수를 계산하는 중입니다...',
   '카피 / 디자인 / SEO 기준으로 대조하는 중입니다...',
 ];
 
 // ── 가격 ──
 
+// ── 재진단 무제한 기간 (일) — standard/pro 결제 시 해당 도메인에 적용 ──
+// functions/src/index.ts의 REDIAGNOSIS_WINDOW_DAYS와 값을 반드시 맞출 것.
+export const REDIAGNOSIS_WINDOW_DAYS: Record<string, number> = {
+  'sellscore-standard': 30,
+  'sellscore-pro': 90,
+};
+
 export const PRICING = {
-  report: { id: 'sellscore-report', name: '세일즈스코어 전체 리포트', price: 9900 },
-  subscription: { id: 'sellscore-subscription', name: '세일즈스코어 구독 (월간 무제한 진단)', price: 19900 },
-  agency: { id: 'sellscore-agency', name: '세일즈스코어 에이전시 (다중 사이트 + 화이트라벨)', price: 79000 },
+  report: { id: 'sellscore-report', name: '세일즈스코어 라이트 리포트', price: 12900 },
+  standard: { id: 'sellscore-standard', name: '세일즈스코어 전체 리포트 + 30일 무제한 재진단', price: 49000 },
+  pro: { id: 'sellscore-pro', name: '세일즈스코어 프로 + 90일 무제한 재진단', price: 99000 },
 };
 
 export interface PricingTier {
@@ -223,44 +230,40 @@ export interface PricingTier {
 export const PRICING_TIERS: PricingTier[] = [
   {
     id: PRICING.report.id,
-    label: '리포트 1회',
+    label: '라이트',
     price: PRICING.report.price,
     unit: '1회',
-    description: '지금 이 사이트가 왜 안 팔리는지 12개 프레임워크로 전체 진단',
+    description: '지금 이 사이트가 왜 안 팔리는지 한 번만 확인하고 싶다면',
     features: [
-      '12개 프레임워크 전체 상세 진단',
-      'Before/After 수정 프롬프트',
+      '12개 프레임워크 전체 Before/After 수정 지시문',
       '실행 우선순위 로드맵',
-      '개선 후 30일 내 재진단 무료',
     ],
     cta: 'free-start',
   },
   {
-    id: PRICING.subscription.id,
-    label: '구독',
-    price: PRICING.subscription.price,
-    unit: '월',
-    description: '월 30회까지 재진단 + 개선 전후 점수 변화 추적 대시보드',
+    id: PRICING.standard.id,
+    label: '추천',
+    price: PRICING.standard.price,
+    unit: '1회',
+    description: '고치고, 다시 확인하고, 점수가 오를 때까지',
     features: [
-      '월 30회 재진단',
-      '개선 전/후 점수 추적 대시보드',
-      '리포트 전체 무제한 열람',
-      '신규 프레임워크 우선 반영',
+      '12개 프레임워크 전체 Before/After 수정 지시문',
+      '이 사이트 30일간 무제한 재진단',
+      '수정 후 점수 변화 바로 확인',
     ],
     cta: 'toss',
     popular: true,
   },
   {
-    id: PRICING.agency.id,
-    label: '에이전시',
-    price: PRICING.agency.price,
-    unit: '월',
-    description: '여러 클라이언트 사이트를 동시에 관리하는 에이전시 · 프리랜서용',
+    id: PRICING.pro.id,
+    label: '프로',
+    price: PRICING.pro.price,
+    unit: '1회',
+    description: '여러 차례 다듬어서 확실하게 끝내고 싶다면',
     features: [
-      '사이트 다중 등록 및 관리',
-      '화이트라벨 PDF 리포트',
-      '클라이언트 공유 링크',
-      '구독 티어 모든 기능 포함',
+      '12개 프레임워크 전체 Before/After 수정 지시문',
+      '이 사이트 90일간 무제한 재진단',
+      '1:1 문의 우선 응답',
     ],
     cta: 'toss',
   },

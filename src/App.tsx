@@ -14,6 +14,7 @@ import { HistoryPage } from './components/sellscore/HistoryPage';
 import { SavedReportPage } from './components/sellscore/SavedReportPage';
 import { PrivacyPolicyPage } from './components/sellscore/PrivacyPolicyPage';
 import { TermsPage } from './components/sellscore/TermsPage';
+import { AboutPage } from './components/sellscore/AboutPage';
 import { NotFoundPage } from './components/sellscore/NotFoundPage';
 
 export default function App() {
@@ -34,6 +35,7 @@ export default function App() {
             <Route path="/payment/fail" element={<PaymentFailPage />} />
             <Route path="/blog" element={<BlogPage />} />
             <Route path="/blog/:slug" element={<BlogPostPage />} />
+            <Route path="/about" element={<AboutPage />} />
             <Route path="/privacy" element={<PrivacyPolicyPage />} />
             <Route path="/terms" element={<TermsPage />} />
             <Route path="*" element={<NotFoundPage />} />

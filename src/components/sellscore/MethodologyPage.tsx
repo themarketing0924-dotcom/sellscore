@@ -112,17 +112,17 @@ export function MethodologyPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          <p className="text-white/45 text-[12px] tracking-[0.3em] uppercase mb-6 font-semibold">
+          <p className="text-[#7bd6ff]/70 text-[13px] tracking-[0.25em] uppercase mb-4 font-extrabold">
             채점 원리
           </p>
           <h1
-            className="text-white font-black leading-[1.1] tracking-[-0.04em] mb-6"
+            className="text-white font-black tracking-tight leading-[1.15] mb-5"
             style={{ fontSize: 'clamp(32px, 6.8vw, 66px)' }}
           >
             <span className="block mx-auto max-w-[8em]">설득 전환 지수는</span>
             <span className="block gradient-text-static">어떻게 계산되나요?</span>
           </h1>
-          <p className="text-white/60 text-[18px] sm:text-[21px] leading-[1.7] max-w-lg mx-auto mb-8">
+          <p className="text-[#86868b] text-[18px] sm:text-[21px] leading-[1.55] sm:leading-[1.7] max-w-lg mx-auto mb-8 font-medium">
             핵심 채점 로직은 공개하지 않지만, <Em>어떤 기준으로 어떤 단계를 거쳐</Em> 점수가
             나오는지는 전부 투명하게 보여드립니다.
           </p>
@@ -226,44 +226,53 @@ export function MethodologyPage() {
           </>
         }
       >
-        <div className="max-w-5xl mx-auto rounded-3xl border border-white/15 overflow-hidden">
-          <div className="hidden sm:grid grid-cols-[1fr_1.3fr_auto] gap-4 px-6 py-3 bg-white/[0.06] text-white/50 text-[11px] font-semibold tracking-[0.08em] uppercase divide-x divide-white/10">
+        <div className="max-w-5xl mx-auto rounded-3xl border border-white/15 overflow-hidden bg-white/[0.02]">
+          <div className="hidden md:grid grid-cols-[1.15fr_1.8fr_minmax(150px,0.9fr)] gap-4 px-6 py-4 bg-white/[0.06] text-white/50 text-[11px] font-semibold tracking-[0.08em] uppercase divide-x divide-white/10">
             <span>프레임워크</span>
             <span className="pl-4">측정 초점</span>
             <span className="text-right pl-4">상대 비중</span>
           </div>
-          {weightedItems.map((w, i) => (
-            <motion.div
-              key={w.name}
-              className="grid grid-cols-1 sm:grid-cols-[1fr_1.3fr_auto] gap-1.5 sm:gap-0 px-0 py-0 border-t border-white/15 sm:divide-x sm:divide-white/10 items-stretch"
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: i * 0.03 }}
-            >
-              <span className="text-white text-[13px] font-bold flex items-center gap-2 px-6 py-4">
-                <span
-                  className="w-2 h-2 rounded-full shrink-0"
-                  style={{ background: SEGMENT_COLORS[i % SEGMENT_COLORS.length] }}
-                />
-                {w.name}
-              </span>
-              <span className="text-white/50 text-[12px] leading-relaxed flex items-center px-6 py-4">
-                {w.focus}
-              </span>
-              <span className="flex items-center sm:justify-end px-6 py-4">
-                <span className="w-20 h-1.5 rounded-full bg-white/[0.06] overflow-hidden">
+          {weightedItems.map((w, i) => {
+            const relativePct = Math.round((w.weight / 10) * 100);
+            return (
+              <motion.div
+                key={w.name}
+                className="grid grid-cols-1 md:grid-cols-[1.15fr_1.8fr_minmax(150px,0.9fr)] gap-3 md:gap-0 px-4 sm:px-6 py-5 border-t border-white/15 md:divide-x md:divide-white/10 items-stretch"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: i * 0.03 }}
+              >
+                <div className="flex items-center gap-2.5 md:px-0">
                   <span
-                    className="block h-full rounded-full"
-                    style={{
-                      width: `${(w.weight / 12) * 100}%`,
-                      background: SEGMENT_COLORS[i % SEGMENT_COLORS.length],
-                    }}
+                    className="w-2.5 h-2.5 rounded-full shrink-0"
+                    style={{ background: SEGMENT_COLORS[i % SEGMENT_COLORS.length] }}
                   />
-                </span>
-              </span>
-            </motion.div>
-          ))}
+                  <span className="text-white text-[14px] font-bold leading-snug">{w.name}</span>
+                </div>
+                <div className="text-white/60 text-[13px] leading-relaxed md:px-4 flex items-start md:items-center">
+                  {w.focus}
+                </div>
+                <div className="flex flex-col gap-2 md:items-end md:px-4">
+                  <div className="flex items-center justify-between md:justify-end gap-3 w-full">
+                    <span className="text-white/45 text-[11px] font-semibold uppercase tracking-[0.08em] md:hidden">
+                      상대 비중
+                    </span>
+                    <span className="text-white/75 text-[12px] font-bold tabular-nums">{relativePct}%</span>
+                  </div>
+                  <span className="w-full md:w-32 h-2 rounded-full bg-white/[0.06] overflow-hidden">
+                    <span
+                      className="block h-full rounded-full"
+                      style={{
+                        width: `${(w.weight / 10) * 100}%`,
+                        background: SEGMENT_COLORS[i % SEGMENT_COLORS.length],
+                      }}
+                    />
+                  </span>
+                </div>
+              </motion.div>
+            );
+          })}
         </div>
       </Section>
 

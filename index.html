@@ -2,27 +2,37 @@
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
+    <!-- 옛 기본 도메인(*.web.app) → salesscore.cloud 자동 이동은 여기 있었으나 제거함.
+         네이버 공식 SEO 가이드가 "자바스크립트/meta refresh 리다이렉트는 검색로봇이
+         인식하지 않고, 탐지 회피용 부적절한 리다이렉트는 스팸 정책 위반 사례"라고
+         명시함 — canonical 태그만으로 대표 URL을 알리는 쪽이 더 안전하다. 실제
+         HTTP 301은 Firebase Hosting이 두 도메인에 동일 정적 파일을 서빙하는 구조상
+         Cloud Function 기반 host-aware 프록시가 별도로 필요함(추후 과제). -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="canonical" href="https://sellscore-app.web.app/" />
+    <!-- 구글 검색·디스커버에서 이미지가 고화질 대형 썸네일로, 스니펫도 길이 제한 없이 노출되도록 허용 -->
+    <meta name="robots" content="max-image-preview:large, max-snippet:-1" />
+    <link rel="icon" type="image/png" href="/Remove_background_from_image-1785253908286-removebg-preview.png" />
+    <link rel="apple-touch-icon" href="/Remove_background_from_image-1785253908286-removebg-preview.png" />
+    <link rel="canonical" href="https://salesscore.cloud/" />
     <title>세일즈스코어 — 당신 사이트, 팔리는 구조입니까?</title>
-    <meta name="description" content="10초 만에 우리 사이트의 설득 전환 지수를 무료로 진단하고, Claude Code·Cursor·GPT에 바로 붙여넣는 실행 프롬프트를 받아보세요. 지금 바로 진단해보세요." />
+    <meta name="description" content="1분 안에 우리 사이트의 설득 전환 지수를 무료로 진단하고, Claude Code·Cursor·GPT에 바로 붙여넣는 실행 프롬프트를 받아보세요. 지금 바로 진단해보세요." />
 
     <!-- Open Graph (카카오톡 · 페이스북 · 카카오스토리 링크 미리보기) -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="세일즈스코어" />
-    <meta property="og:url" content="https://sellscore-app.web.app/" />
+    <meta property="og:url" content="https://salesscore.cloud/" />
     <meta property="og:title" content="세일즈스코어 — 당신 사이트, 팔리는 구조입니까?" />
-    <meta property="og:description" content="10초 만에 우리 사이트의 설득 전환 지수를 무료로 진단하고, 실행 프롬프트를 바로 받아보세요." />
-    <meta property="og:image" content="https://sellscore-app.web.app/og-banner.png" />
+    <meta property="og:description" content="1분 안에 우리 사이트의 설득 전환 지수를 무료로 진단하고, 실행 프롬프트를 바로 받아보세요." />
+    <meta property="og:image" content="https://salesscore.cloud/og-banner.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="세일즈스코어 — 사이트 설득 전환 지수 진단" />
 
     <!-- Twitter/X 카드 -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="세일즈스코어 — 당신 사이트, 팔리는 구조입니까?" />
-    <meta name="twitter:description" content="10초 만에 우리 사이트의 설득 전환 지수를 무료로 진단하세요." />
-    <meta name="twitter:image" content="https://sellscore-app.web.app/og-banner.png" />
+    <meta name="twitter:description" content="1분 안에 우리 사이트의 설득 전환 지수를 무료로 진단하세요." />
+    <meta name="twitter:image" content="https://salesscore.cloud/og-banner.png" />
 
     <!-- Google Fonts: Space Mono + Anton SC -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -44,10 +54,10 @@
       "@context": "https://schema.org",
       "@type": "WebSite",
       "name": "세일즈스코어",
-      "url": "https://sellscore-app.web.app/",
+      "url": "https://salesscore.cloud/",
       "potentialAction": {
         "@type": "SearchAction",
-        "target": "https://sellscore-app.web.app/diagnose?q={search_term_string}",
+        "target": "https://salesscore.cloud/diagnose?q={search_term_string}",
         "query-input": "required name=search_term_string"
       }
     }
@@ -57,10 +67,14 @@
       "@context": "https://schema.org",
       "@type": "Organization",
       "name": "세일즈스코어",
-      "url": "https://sellscore-app.web.app/",
-      "logo": "https://sellscore-app.web.app/favicon.svg"
+      "url": "https://salesscore.cloud/",
+      "logo": "https://salesscore.cloud/Remove_background_from_image-1785253908286-removebg-preview.png"
     }
     </script>
+
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9120046288749137"
+     crossorigin="anonymous"></script>
   </head>
   <body>
     <div id="root"></div>

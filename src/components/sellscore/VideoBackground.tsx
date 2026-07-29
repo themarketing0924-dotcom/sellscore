@@ -20,6 +20,8 @@ interface VideoBackgroundProps {
   poster?: string;
   /** 재생 속도 배율 (1 = 원본 속도, 0.5 = 절반 속도로 슬로우) */
   speed?: number;
+  /** px 단위 블러 — 텍스트가 박힌 영상을 은은한 질감으로만 쓸 때 (원본 텍스트를 알아볼 수 없게) */
+  blur?: number;
 }
 
 const OVERLAY_STYLE: Record<NonNullable<VideoBackgroundProps['overlay']>, string> = {
@@ -34,6 +36,7 @@ export function VideoBackground({
   overlay = 'soft',
   poster,
   speed = 1,
+  blur = 0,
 }: VideoBackgroundProps) {
   const [errored, setErrored] = useState(false);
   const useAurora = variant === 'aurora' || !videoUrl || errored;
@@ -52,6 +55,7 @@ export function VideoBackground({
           src={videoUrl}
           poster={poster}
           className="absolute inset-0 w-full h-full object-cover"
+          style={blur ? { filter: `blur(${blur}px)`, transform: 'scale(1.15)' } : undefined}
           autoPlay
           muted
           loop

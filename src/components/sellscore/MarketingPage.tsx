@@ -1,6 +1,5 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { TRUST_BADGES } from '../../config/sellscore';
 import { Icon, IconBadge } from './Icon';
 import { VideoBackground } from './VideoBackground';
 import { Section, HeadlineLine, Em, FaqAccordion } from './Section';
@@ -53,6 +52,53 @@ const PAIN_POINTS: { icon: IconName; title: string; desc: ReactNode }[] = [
         <Em>무엇을 요청해야 하는지</Em> 알고 맡기면 불필요한 수정 비용과 시간을 줄일 수 있습니다.
       </>
     ),
+  },
+];
+
+const SCORE_AXES: {
+  icon: IconName;
+  title: string;
+  desc: ReactNode;
+  bullets: string[];
+}[] = [
+  {
+    icon: 'chart',
+    title: '세일즈 최적화 점수',
+    desc: (
+      <>
+        랜딩페이지가 방문자를 <Em>3초 안에 붙잡고</Em>, 신뢰를 만들고, 행동으로 이끄는지 봅니다.
+      </>
+    ),
+    bullets: ['후킹력', '카피 구조', 'CTA 흐름', '신뢰 신호', '리드/구매 전환'],
+  },
+  {
+    icon: 'search',
+    title: '검색 최적화 점수',
+    desc: (
+      <>
+        구글·네이버·AEO·GEO에서 <Em>발견되고 읽히는 구조</Em>인지 봅니다. 콘텐츠와 기술 요소를
+        함께 평가합니다.
+      </>
+    ),
+    bullets: ['title/meta', 'H1/H2 구조', '이미지·영상 최적화', '색인/크롤링', '내부링크/구조화 데이터'],
+  },
+];
+
+const PRICE_COMPARISON_ROWS = [
+  {
+    label: 'A사',
+    type: '고가 에이전시형',
+    price: '150만~800만원+',
+  },
+  {
+    label: 'B사',
+    type: '중가 진단/구독형',
+    price: '19,900원~29.9만원/월 또는 20~150만원',
+  },
+  {
+    label: '우리회사',
+    type: '자동화 진단형',
+    price: '12,900원 / 49,000원 / 99,000원',
   },
 ];
 
@@ -165,6 +211,16 @@ const TRUST_POINTS: { icon: IconName; title: string; desc: ReactNode }[] = [
       </>
     ),
   },
+  {
+    icon: 'shield',
+    title: '도메인 안전 진단 포함',
+    desc: (
+      <>
+        Google Safe Browsing으로 피싱·악성코드 블랙리스트 등재 여부를{' '}
+        <Em>실시간으로 함께 조회</Em>합니다.
+      </>
+    ),
+  },
 ];
 
 const FREE_INCLUDES = [
@@ -270,9 +326,9 @@ const FAQ: { q: string; a: ReactNode }[] = [
 
 export function MarketingPage({ onStart }: MarketingPageProps) {
   useSeo({
-    title: '세일즈스코어 — 당신 사이트, 팔리는 구조입니까?',
+    title: '세일즈스코어 — 세일즈 최적화와 검색 최적화를 동시에 점수화',
     description:
-      '10초 만에 우리 사이트의 설득 전환 지수를 무료로 진단하고, Claude Code·Cursor·GPT에 바로 붙여넣는 실행 프롬프트를 받아보세요.',
+      'AI 배워 사이트는 만들었는데 트래픽 유입도 구매전환도 없다면? 세일즈 구조와 검색 최적화를 함께 점수화하고 수정 프롬프트까지 받아보세요.',
     path: '/',
   });
 
@@ -280,7 +336,7 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
     <div className="relative">
       {/* ══════════ HERO ══════════ */}
       <section className="relative min-h-[100dvh] flex flex-col items-center justify-center px-6 overflow-hidden text-center pt-14">
-        <VideoBackground variant="aurora" overlay="strong" />
+        <VideoBackground videoUrl="/marketing-hero-bg.mp4" overlay="strong" speed={0.5} />
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
@@ -306,25 +362,29 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
             전문 컨설팅 수준의 사이트 분석을 무료로 시작하세요
           </motion.span>
 
-          <h1
-            className="text-white font-bold tracking-tight leading-[1.1] mb-6"
-            style={{ fontSize: 'clamp(32px, 6.8vw, 66px)' }}
+          <motion.h1
+            className="text-white font-black tracking-tight leading-[1.15] mb-5"
+            style={{
+              fontSize: 'clamp(32px, 6.8vw, 66px)',
+              filter: 'drop-shadow(0 20px 28px rgba(0,100,255,0.28))',
+            }}
+            animate={{ y: [0, -10, 0] }}
+            transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
           >
-            10초 만에
+            AI 배워 사이트는 만들었는데,
             <br />
-            <span className="gradient-text-animated">당신의 사이트가 안 팔리는 이유</span>를
-            <br />
-            보여드립니다
-          </h1>
+            <span className="gradient-text-animated">트래픽 유입도 구매전환도 없다면?</span>
+          </motion.h1>
 
-          <p className="text-[#86868b] text-[18px] sm:text-[21px] font-medium mb-11 max-w-xl mx-auto leading-[1.7]">
-            광고를 해도 문의와 결제가 늘지 않는다면, 문제는 방문자 수가 아니라{' '}
-            <Em>사이트의 설득 구조</Em>일 수 있습니다. 사이트 주소를 입력하면 고객이 어디에서
-            이탈하는지, 무엇부터 고쳐야 하는지 우선순위대로 확인할 수 있습니다.
+          <p className="mx-auto mb-8 max-w-2xl text-[18px] sm:text-[22px] font-medium leading-[1.48] sm:leading-[1.58] tracking-[-0.01em] text-[#8d8d93]">
+            <span className="block">광고를 해도 문의와 결제가 늘지 않는다면,</span>
+            <span className="block mt-2 sm:mt-3">문제는 방문자 수가 아니라 <Em>사이트의 설득 구조</Em>일 수 있습니다.</span>
+            <span className="block mt-2 sm:mt-3">사이트 주소를 입력하면 고객이 어디에서 이탈하는지,</span>
+            <span className="block mt-2 sm:mt-3">무엇부터 고쳐야 하는지 <Em>우선순위대로</Em> 확인할 수 있습니다.</span>
           </p>
 
           <motion.div
-            className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10"
+            className="flex flex-col items-center justify-center mb-6"
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.6 }}
@@ -339,29 +399,23 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
             >
               무료로 내 사이트 진단받기 →
             </button>
-            <span className="text-white/35 text-[12px] font-medium">
-              카드 등록 없이 · 빠른 결과 확인 · 수정 방향까지 제공
-            </span>
           </motion.div>
 
-          <div className="flex flex-wrap items-center justify-center gap-3 mb-4">
-            {TRUST_BADGES.map((badge, i) => (
-              <span
-                key={badge}
-                className="text-white/85 text-[12px] sm:text-[13px] font-semibold flex items-center gap-1.5 bg-white/[0.07] border border-white/[0.14] rounded-full pl-2 pr-3.5 py-1.5"
+          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 md:gap-10">
+            {['카드 등록 없이', '빠른 결과 확인', '수정 방향까지 제공'].map((item) => (
+              <div
+                key={item}
+                className="flex items-center gap-2 md:gap-2.5 bg-[#0064ff]/12 border border-[#0064ff]/35 rounded-2xl pl-2.5 pr-4 py-2 md:pl-3.5 md:pr-6 md:py-3"
               >
-                <Icon
-                  name={(['shield', 'search', 'check'] as const)[i % 3]}
-                  size={13}
-                  className="text-[#7bb4ff]"
-                />
-                {badge}
-              </span>
+                <span className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-[#0064ff] flex items-center justify-center shrink-0">
+                  <Icon name="check" size={11} className="text-white" />
+                </span>
+                <span className="text-white/90 text-[12.5px] sm:text-[13px] md:text-[15px] font-semibold whitespace-nowrap">
+                  {item}
+                </span>
+              </div>
             ))}
           </div>
-          <p className="text-white/30 text-[11.5px] max-w-md mx-auto mb-10 leading-relaxed">
-            공개된 웹 접근성·검색 품질 가이드와 Salesscore 자체 평가 기준을 함께 적용합니다.
-          </p>
         </motion.div>
       </section>
 
@@ -370,9 +424,9 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
         eyebrow="이런 고민 있으신가요"
         heading={
           <>
-            <HeadlineLine>사이트는 있는데,</HeadlineLine>
+            <HeadlineLine>사이트를 만들었는데,</HeadlineLine>
             <span className="block mx-auto max-w-[11em]">
-              <span className="gradient-text-static">무엇을 고쳐야 매출이 오르는지</span> 모르겠다면
+              <span className="gradient-text-static">무엇을 고쳐야 매출(구매전환)이 오르는지</span> 모르겠다면
             </span>
           </>
         }
@@ -424,25 +478,119 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
           </>
         }
       >
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-3xl mx-auto">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 sm:gap-5 max-w-[420px] sm:max-w-3xl mx-auto">
           {DELIVERABLES.map((d, i) => (
             <motion.div
               key={d.title}
-              className="border border-white/[0.18] rounded-3xl p-7 sm:p-9 bg-white/[0.04] text-left transition-colors hover:border-white/30 hover:bg-white/[0.06]"
+              className="border border-white/[0.18] rounded-3xl p-4 sm:p-9 bg-white/[0.04] text-left transition-colors hover:border-white/30 hover:bg-white/[0.06]"
               initial={{ opacity: 0, y: 60 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 1.0, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
             >
-              <IconBadge name={d.icon} tint="blue" />
-              <p className="text-white font-bold text-[17px] sm:text-[18px] mt-5 mb-2.5 tracking-tight">
+              <div className="origin-top-left scale-90 sm:scale-100">
+                <IconBadge name={d.icon} tint="blue" />
+              </div>
+              <p className="text-white font-bold text-[14px] sm:text-[18px] mt-4 mb-2 tracking-tight leading-tight">
                 {d.title}
               </p>
-              <p className="text-[#86868b] text-[14px] sm:text-[15px] leading-relaxed font-medium">{d.desc}</p>
+              <p className="text-[#86868b] text-[12px] sm:text-[15px] leading-[1.5] sm:leading-relaxed font-medium line-clamp-4 sm:line-clamp-none">
+                {d.desc}
+              </p>
             </motion.div>
           ))}
         </div>
       </Section>
+
+      {/* ══════════ 두 가지 점수 ══════════ */}
+      <Section
+        eyebrow="점수 구조"
+        heading={
+          <>
+            Salesscore는 <span className="gradient-text-static">두 축</span>으로 봅니다
+          </>
+        }
+        sub={
+          <>
+            하나는 <Em>세일즈 구조</Em>, 다른 하나는 <Em>검색 구조</Em>입니다. 사이트가 팔리기
+            위해 필요한 두 가지를 따로 보지 않고 함께 점수화합니다.
+          </>
+        }
+      >
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 max-w-5xl mx-auto">
+          {SCORE_AXES.map((axis, i) => (
+            <motion.div
+              key={axis.title}
+              className="rounded-3xl border border-white/[0.14] bg-white/[0.03] p-6 sm:p-8 text-left"
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <IconBadge name={axis.icon} tint="blue" />
+              <p className="text-white font-bold text-[18px] sm:text-[20px] mt-5 mb-2 tracking-tight">
+                {axis.title}
+              </p>
+              <p className="text-[#a0a0a8] text-[14px] sm:text-[15px] leading-relaxed font-medium mb-5">
+                {axis.desc}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {axis.bullets.map((bullet) => (
+                  <span
+                    key={bullet}
+                    className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-white/75 text-[12px] font-semibold"
+                  >
+                    {bullet}
+                  </span>
+                ))}
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </Section>
+
+      {/* ══════════ 가격 비교 ══════════ */}
+      <Section
+        eyebrow="가격 비교"
+        heading={
+          <>
+            이 문제를 따로 맡기면 <span className="gradient-text-static">보통 얼마 들까요?</span>
+          </>
+        }
+        sub={
+          <>
+            같은 고민을 해결하는 시장 대안들의 공개 가격을 보면, Salesscore가 왜 합리적인지 바로 보입니다.
+          </>
+        }
+      >
+        <div className="max-w-4xl mx-auto rounded-3xl border border-white/12 overflow-hidden bg-white/[0.02]">
+          <div className="hidden md:grid grid-cols-[1fr_1.2fr_1.6fr] bg-white/[0.06] px-6 py-4 text-white/55 text-[11px] font-bold tracking-[0.1em] uppercase">
+            <span>구분</span>
+            <span className="text-center">방식</span>
+            <span className="text-right">가격대</span>
+          </div>
+          {PRICE_COMPARISON_ROWS.map((row) => (
+            <div
+              key={row.label}
+              className="grid grid-cols-1 md:grid-cols-[1fr_1.2fr_1.6fr] gap-3 md:gap-0 px-4 sm:px-6 py-4 sm:py-5 border-t border-white/10"
+            >
+              <div className="text-white font-bold text-[14px] sm:text-[15px] leading-snug flex items-center">
+                {row.label}
+              </div>
+              <div className="rounded-2xl md:rounded-none border md:border-0 border-white/10 bg-white/[0.02] md:bg-transparent px-4 py-3 md:px-0 md:py-0 text-white/70 text-[13px] leading-relaxed md:text-center md:flex md:items-center md:justify-center">
+                {row.type}
+              </div>
+              <div className="rounded-2xl md:rounded-none border border-[#0064ff]/30 bg-[#0064ff]/8 px-4 py-3 md:px-0 md:py-0 text-white text-[13px] leading-relaxed font-semibold md:text-right md:flex md:items-center md:justify-end">
+                {row.price}
+              </div>
+            </div>
+          ))}
+        </div>
+        <p className="text-white/35 text-[12px] leading-relaxed max-w-4xl mx-auto mt-5">
+          세일즈 구조와 검색 최적화를 따로 맡기면 보통 수십만~수백만원이 듭니다. Salesscore는 공개 가이드와 검증된 프레임워크를 자동화해, 그 과정을 훨씬 낮은 비용으로 제공합니다.
+        </p>
+      </Section>
+
 
       {/* ══════════ 샘플 리포트 미리보기 ══════════ */}
       <Section
@@ -535,7 +683,7 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
               <div className="flex items-center justify-center mb-5">
                 <IconBadge name={s.icon} tint="blue" size="sm" />
               </div>
-              <p className="text-white font-bold text-[16px] sm:text-[17px] mb-2 tracking-tight">{s.title}</p>
+              <p className="text-white font-bold text-[17px] sm:text-[18px] mb-2 tracking-tight">{s.title}</p>
               <p className="text-[#86868b] text-[14px] sm:text-[15px] leading-relaxed font-medium">{s.desc}</p>
             </motion.div>
           ))}
@@ -551,23 +699,16 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
             평가합니다
           </>
         }
-      >
-        <motion.div
-          className="max-w-2xl mx-auto text-center mb-10"
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-        >
-          <p className="text-[#86868b] text-[15px] sm:text-[16px] leading-relaxed font-medium">
+        sub={
+          <>
             Salesscore는 단순히 AI에게 사이트가 좋은지 물어보고 임의의 점수를 보여주는 서비스가
             아닙니다. 설득, 카피, 사용자 경험, 검색 최적화, 접근성, 신뢰 요소를 각각 분리해
             평가하고 항목별 판단 기준과 배점을 적용합니다. 어떤 기준으로 점수가 계산되는지
             공개하며, 동일한 분석 조건에서는 <Em>일관된 평가 결과</Em>가 나오도록 설계했습니다.
-          </p>
-        </motion.div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 max-w-4xl mx-auto mb-12">
+          </>
+        }
+      >
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-5xl mx-auto mb-12">
           {TRUST_POINTS.map((t, i) => (
             <motion.div
               key={t.title}
@@ -578,8 +719,8 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
               transition={{ duration: 0.8, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
             >
               <IconBadge name={t.icon} tint="blue" size="sm" />
-              <p className="text-white font-bold text-[15px] mt-4 mb-2 tracking-tight">{t.title}</p>
-              <p className="text-[#86868b] text-[13.5px] leading-relaxed font-medium">{t.desc}</p>
+              <p className="text-white font-bold text-[17px] sm:text-[18px] mt-4 mb-2 tracking-tight">{t.title}</p>
+              <p className="text-[#86868b] text-[14px] sm:text-[15px] leading-relaxed font-medium">{t.desc}</p>
             </motion.div>
           ))}
         </div>
@@ -692,7 +833,7 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
       </Section>
 
       {/* ══════════ FINAL CTA ══════════ */}
-      <section className="relative px-6 py-28 text-center overflow-hidden">
+      <section className="relative px-6 py-28 sm:py-36 md:py-48 text-center overflow-hidden">
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
@@ -707,17 +848,17 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
           transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
         >
           <h2
-            className="text-white font-bold tracking-tight mb-6"
+            className="text-white font-bold tracking-tight leading-[1.12] mb-6"
             style={{ fontSize: 'clamp(26px, 5vw, 44px)' }}
           >
-            <span className="block mx-auto max-w-[7em]">지금 내 사이트에서</span>
+            <span className="block">지금 당신의 사이트에서</span>
             <span className="block">
-              <span className="gradient-text-static">매출을 막고 있는 문제</span>부터 확인해
-              보세요
+              <span className="gradient-text-static">매출(구매전환)을 막고 있는</span>
             </span>
+            <span className="block">문제부터 확인해 보세요</span>
           </h2>
-          <p className="text-[#86868b] text-[15px] sm:text-[16px] max-w-lg mx-auto mb-9 leading-relaxed">
-            광고비를 더 쓰기 전에, 사이트를 다시 만들기 전에, 무엇을 먼저 고쳐야 하는지
+          <p className="text-[#86868b] text-[17px] sm:text-[19px] leading-[1.55] sm:leading-[1.7] max-w-lg mx-auto mb-9 font-medium">
+            광고비를 더 쓰기 전에, 사이트를 다시 만들기 전에, <Em>무엇을 먼저 고쳐야 하는지</Em>{' '}
             확인하세요. 카드 등록 없이 무료로 시작할 수 있습니다.
           </p>
           <button
