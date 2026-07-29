@@ -109,7 +109,7 @@ export function Section({
         </h2>
         {sub && (
           <p
-            className={`text-[#86868b] leading-[1.55] sm:leading-[1.7] max-w-lg mx-auto font-medium ${isHero ? 'text-[18px] sm:text-[21px]' : 'text-[17px] sm:text-[19px]'}`}
+            className={`text-[#86868b] leading-[1.35] sm:leading-[1.5] max-w-lg mx-auto font-medium ${isHero ? 'text-[18px] sm:text-[21px]' : 'text-[17px] sm:text-[19px]'}`}
           >
             {sub}
           </p>

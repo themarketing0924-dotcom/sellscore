@@ -376,7 +376,7 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
             <span className="gradient-text-animated">트래픽 유입도 구매전환도 없다면?</span>
           </motion.h1>
 
-          <p className="mx-auto mb-8 max-w-2xl text-[18px] sm:text-[22px] font-medium leading-[1.38] sm:leading-[1.48] text-[#8d8d93]">
+          <p className="mx-auto mb-8 max-w-2xl text-[18px] sm:text-[22px] font-medium leading-[1.28] sm:leading-[1.38] text-[#8d8d93]">
             <span className="block">광고를 해도 문의와 결제가 늘지 않는다면,</span>
             <span className="block">문제는 방문자 수가 아니라 <Em>사이트의 설득 구조</Em>일 수 있습니다.</span>
             <span className="block">사이트 주소를 입력하면 고객이 어디에서 이탈하는지,</span>
@@ -424,9 +424,9 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
         eyebrow="이런 고민 있으신가요"
         heading={
           <>
-            <HeadlineLine>사이트를 만들었는데,</HeadlineLine>
+            <HeadlineLine>사이트는 만들었는데,</HeadlineLine>
             <span className="block mx-auto max-w-[11em]">
-              <span className="gradient-text-static">무엇을 고쳐야 매출(구매전환)이 오르는지</span> 모르겠다면
+              <span className="gradient-text-static">왜 문의와 결제가 안 나는지</span> 모르겠다면
             </span>
           </>
         }
