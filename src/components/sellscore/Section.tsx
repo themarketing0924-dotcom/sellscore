@@ -43,6 +43,7 @@ export function Section({
   bgImage,
   tightEyebrow = false,
   headingSize = 'default',
+  tossMotion = false,
 }: {
   eyebrow: string;
   heading: ReactNode;
@@ -61,6 +62,8 @@ export function Section({
   tightEyebrow?: boolean;
   /** 페이지의 대표 타이틀 역할을 하는 Section(예: 요금제 상단)에 히어로급 크기(66px, font-black)를 준다 */
   headingSize?: 'default' | 'hero';
+  /** 토스식 섹션 진입 모션: 홈 랜딩 섹션처럼 부드럽게 뜨는 효과가 필요할 때만 켠다 */
+  tossMotion?: boolean;
 }) {
   const isCenter = align === 'center';
   const isHero = headingSize === 'hero';
@@ -86,10 +89,10 @@ export function Section({
       )}
       <motion.div
         className={`relative z-10 mb-16 sm:mb-20 max-w-2xl ${isCenter ? 'text-center mx-auto' : 'text-left'}`}
-        initial={{ opacity: 0, y: 60 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
+        initial={tossMotion ? { opacity: 0, y: 72, scale: 0.985, filter: 'blur(10px)' } : { opacity: 0, y: 60 }}
+        whileInView={tossMotion ? { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' } : { opacity: 1, y: 0 }}
+        viewport={tossMotion ? { once: true, amount: 0.32 } : { once: true }}
+        transition={{ duration: tossMotion ? 0.95 : 1.0, ease: [0.16, 1, 0.3, 1] }}
       >
         {icon && (
           <div className="w-14 h-14 rounded-2xl bg-[#0064ff]/10 border border-[#0064ff]/20 flex items-center justify-center mx-auto mb-6">

@@ -428,6 +428,7 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
 
       {/* ══════════ PAIN POINTS ══════════ (삼각형: 넓게 시작해 좁게 마무리) */}
       <Section
+        tossMotion
         eyebrow="이런 고민 있으신가요"
         heading={
           <>
@@ -467,6 +468,7 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
 
       {/* ══════════ WHAT YOU GET ══════════ */}
       <Section
+        tossMotion
         eyebrow="무엇을 받게 되나요"
         heading={
           <>
@@ -511,6 +513,7 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
 
       {/* ══════════ 두 가지 점수 ══════════ */}
       <Section
+        tossMotion
         eyebrow="점수 구조"
         heading={
           <>
@@ -558,6 +561,7 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
 
       {/* ══════════ 가격 비교 ══════════ */}
       <Section
+        tossMotion
         eyebrow="가격 비교"
         heading={
           <>
@@ -571,14 +575,18 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
         }
       >
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-5xl mx-auto">
-          {PRICE_COMPARISON_ROWS.map((row) => (
-            <div
+          {PRICE_COMPARISON_ROWS.map((row, i) => (
+            <motion.div
               key={row.label}
               className={`relative rounded-2xl border p-5 sm:p-6 text-left bg-white/[0.045] ${
                 row.highlight
                   ? 'border-[#d7ff00]/70 shadow-[0_0_0_1px_rgba(215,255,0,0.18),0_22px_70px_rgba(0,0,0,0.42)]'
                   : 'border-white/[0.12]'
               }`}
+              initial={{ opacity: 0, y: 34, scale: 0.985 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              viewport={{ once: true, amount: 0.28 }}
+              transition={{ duration: 0.7, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
             >
               {row.highlight && (
                 <span className="absolute right-4 top-4 rounded-full border border-[#d7ff00]/50 px-2.5 py-1 text-[10px] font-bold text-[#d7ff00]">
@@ -598,7 +606,7 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
                   </li>
                 ))}
               </ul>
-            </div>
+            </motion.div>
           ))}
         </div>
         <p className="text-white/35 text-[12px] leading-relaxed max-w-4xl mx-auto mt-5">
@@ -609,6 +617,7 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
 
       {/* ══════════ 샘플 리포트 미리보기 ══════════ */}
       <Section
+        tossMotion
         eyebrow="실제 결과 미리보기"
         heading={
           <>
@@ -672,6 +681,7 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
 
       {/* ══════════ HOW IT WORKS ══════════ */}
       <Section
+        tossMotion
         eyebrow="어떻게 진행되나요"
         heading={
           <>
@@ -707,6 +717,7 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
 
       {/* ══════════ 평가 기준과 신뢰 ══════════ (FAQ 직전, "이 점수 믿을 수 있나" 시점에 배치) */}
       <Section
+        tossMotion
         eyebrow="이 점수를 믿을 수 있나요"
         heading={
           <>
@@ -762,6 +773,7 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
 
       {/* ══════════ 무료 진단과 전체 리포트 비교 ══════════ */}
       <Section
+        tossMotion
         eyebrow="무료로 어디까지 확인할 수 있나요"
         heading={
           <>
@@ -836,6 +848,7 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
 
       {/* ══════════ FAQ ══════════ */}
       <Section
+        tossMotion
         eyebrow="자주 묻는 질문"
         heading={
           <>
