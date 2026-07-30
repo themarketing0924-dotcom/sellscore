@@ -62,25 +62,25 @@ const SCORE_AXES: {
   bullets: string[];
 }[] = [
   {
-    icon: 'chart',
-    title: '세일즈 최적화 점수',
-    desc: (
-      <>
-        랜딩페이지가 방문자를 <Em>3초 안에 붙잡고</Em>, 신뢰를 만들고, 행동으로 이끄는지 봅니다.
-      </>
-    ),
-    bullets: ['후킹력', '카피 구조', 'CTA 흐름', '신뢰 신호', '리드/구매 전환'],
-  },
-  {
     icon: 'search',
     title: '검색 최적화 점수',
     desc: (
       <>
-        구글·네이버·AEO·GEO에서 <Em>발견되고 읽히는 구조</Em>인지 봅니다. 콘텐츠와 기술 요소를
-        함께 평가합니다.
+        구글·네이버·AEO·GEO에서 <Em>검색 봇이 발견하고 이해할 수 있는 구조</Em>인지 봅니다.
+        콘텐츠와 기술 요소를 함께 평가합니다.
       </>
     ),
     bullets: ['title/meta', 'H1/H2 구조', '이미지·영상 최적화', '색인/크롤링', '내부링크/구조화 데이터'],
+  },
+  {
+    icon: 'chart',
+    title: '세일즈 최적화 점수',
+    desc: (
+      <>
+        클릭한 고객을 <Em>3초 안에 붙잡고</Em>, 신뢰를 만들고, 행동으로 이끄는 구조인지 봅니다.
+      </>
+    ),
+    bullets: ['후킹력', '카피 구조', 'CTA 흐름', '신뢰 신호', '리드/구매 전환'],
   },
 ];
 
@@ -523,13 +523,15 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
         eyebrow="점수 구조"
         heading={
           <>
-            Salesscore는 <span className="gradient-text-static">두 축</span>으로 봅니다
+            검색 봇에게는 <span className="gradient-text-static">발견되고</span>,
+            <span className="block">고객에게는 설득되어야 합니다</span>
           </>
         }
         sub={
           <>
-            하나는 <Em>세일즈 구조</Em>, 다른 하나는 <Em>검색 구조</Em>입니다. 사이트가 팔리기
-            위해 필요한 두 가지를 따로 보지 않고 함께 점수화합니다.
+            구글·네이버에 노출되려면 검색 봇이 이해할 수 있는 구조가 필요합니다. 하지만 클릭 이후에는
+            사람의 욕망, 불안, 신뢰, 행동 심리를 움직이는 <Em>세일즈 구조</Em>가 필요합니다.
+            Salesscore는 이 두 가지를 함께 진단해 유입과 전환을 막는 문제를 1분 안에 보여드립니다.
           </>
         }
       >
