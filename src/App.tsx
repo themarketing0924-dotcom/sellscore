@@ -15,6 +15,7 @@ import { SavedReportPage } from './components/sellscore/SavedReportPage';
 import { PrivacyPolicyPage } from './components/sellscore/PrivacyPolicyPage';
 import { TermsPage } from './components/sellscore/TermsPage';
 import { AboutPage } from './components/sellscore/AboutPage';
+import { VideoSalesPage } from './components/sellscore/VideoSalesPage';
 import { NotFoundPage } from './components/sellscore/NotFoundPage';
 
 export default function App() {
@@ -31,6 +32,7 @@ export default function App() {
             <Route path="/diagnose/report/:reportId" element={<SavedReportPage />} />
             <Route path="/methodology" element={<MethodologyPage />} />
             <Route path="/pricing" element={<PricingPage />} />
+            <Route path="/video" element={<VideoSalesPage />} />
             <Route path="/payment/success" element={<PaymentSuccessPage />} />
             <Route path="/payment/fail" element={<PaymentFailPage />} />
             <Route path="/blog" element={<BlogPage />} />
