@@ -105,14 +105,14 @@ export function Section({
           {eyebrow}
         </p>
         <h2
-          className={`text-white tracking-tight leading-[1.15] mb-5 ${isHero ? 'font-black' : 'font-bold'}`}
-          style={{ fontSize: isHero ? 'clamp(32px, 6.8vw, 66px)' : 'clamp(30px, 6.2vw, 58px)' }}
+          className={`text-white tracking-tight leading-[1.13] sm:leading-[1.15] mb-5 max-w-[9.8em] sm:max-w-none mx-auto text-balance ${isHero ? 'font-black' : 'font-bold'}`}
+          style={{ fontSize: isHero ? 'clamp(32px, 6.8vw, 66px)' : 'clamp(29px, 6.2vw, 58px)' }}
         >
           {heading}
         </h2>
         {sub && (
           <p
-            className={`text-[#86868b] leading-[1.35] sm:leading-[1.5] max-w-lg mx-auto font-medium ${isHero ? 'text-[18px] sm:text-[21px]' : 'text-[17px] sm:text-[19px]'}`}
+            className={`text-[#86868b] leading-[1.32] sm:leading-[1.5] max-w-[20.5em] sm:max-w-lg mx-auto font-medium text-balance ${isHero ? 'text-[18px] sm:text-[21px]' : 'text-[16px] sm:text-[19px]'}`}
           >
             {sub}
           </p>
