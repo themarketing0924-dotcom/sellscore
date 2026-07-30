@@ -105,6 +105,24 @@ const CONTENT_ASSETS = [
   },
 ];
 
+
+const SEO_CHECKLIST_ROWS = [
+  { name: 'title/meta', focus: '검색 결과에서 페이지 주제와 클릭 이유가 명확한지 봅니다.', weight: 95 },
+  { name: 'H1/H2 구조', focus: '검색 봇과 사람이 한눈에 이해하는 제목 계층인지 확인합니다.', weight: 90 },
+  { name: '본문 텍스트 충분성', focus: '검색 의도에 답할 만큼 정보량과 문단 구조가 있는지 봅니다.', weight: 88 },
+  { name: '내부링크 구조', focus: '중요한 페이지가 고립되지 않고 자연스럽게 연결되는지 확인합니다.', weight: 84 },
+  { name: 'sitemap.xml / robots.txt', focus: '수집 허용과 URL 발견 경로가 정리되어 있는지 점검합니다.', weight: 86 },
+  { name: 'canonical / URL 구조', focus: '중복 페이지와 대표 URL 신호가 정리되어 있는지 봅니다.', weight: 82 },
+  { name: '이미지 alt / 파일명', focus: '이미지가 장식이 아니라 검색 문맥 자산으로 읽히는지 확인합니다.', weight: 76 },
+  { name: '동영상 설명 / 썸네일', focus: '영상 주변 텍스트와 썸네일이 검색 신호를 주는지 봅니다.', weight: 74 },
+  { name: '구조화 데이터', focus: 'FAQ, Article, Breadcrumb, Organization 신호가 실제 내용과 맞는지 점검합니다.', weight: 80 },
+  { name: '모바일 / Core Web Vitals', focus: '모바일 화면과 로딩 경험이 검색 품질 기준을 해치지 않는지 확인합니다.', weight: 78 },
+  { name: '네이버 소유확인 / 검색 수집', focus: '한국 검색 환경에서 네이버가 사이트를 확인하고 수집할 수 있는지 봅니다.', weight: 72 },
+  { name: 'AEO/GEO 답변 적합성', focus: 'AI 답변에 인용될 만큼 문답 구조와 신뢰 신호가 명확한지 확인합니다.', weight: 85 },
+];
+
+const SEGMENT_COLORS = ['#0064ff', '#5b9bff', '#7bd6ff', '#a389ff', '#00c2a8'];
+
 export function SearchMethodologyPage() {
   useSeo({
     title: 'SEO AEO GEO 검색 최적화 원리 — 검색 봇과 AI가 읽는 구조 | 세일즈스코어',
@@ -277,6 +295,68 @@ export function SearchMethodologyPage() {
               </div>
               <p className="text-white/45 text-[12px] font-black tracking-[0.14em] mb-2">내부 기술</p>
               <p className="text-white/62 text-[14px] leading-relaxed font-medium">{asset.private}</p>
+            </motion.div>
+          ))}
+        </div>
+      </Section>
+
+      <Section
+        tossMotion
+        eyebrow="SEO 체크리스트"
+        heading={
+          <>
+            검색 최적화 항목마다 <span className="gradient-text-static">확인하는 기준</span>이 다릅니다
+          </>
+        }
+        sub={
+          <>
+            공개 가능한 체크 항목은 표로 보여드립니다. 다만 항목 간 가중치와 감점 보정 방식은
+            Salesscore Dual Engine™ 내부 로직으로 계산합니다.
+          </>
+        }
+      >
+        <div className="max-w-5xl mx-auto rounded-3xl border border-white/15 overflow-hidden bg-white/[0.02]">
+          <div className="hidden md:grid grid-cols-[1.15fr_1.8fr_minmax(150px,0.9fr)] gap-4 px-6 py-4 bg-white/[0.06] text-white/50 text-[11px] font-semibold tracking-[0.08em] uppercase divide-x divide-white/10">
+            <span>SEO 체크리스트</span>
+            <span className="pl-4">측정 초점</span>
+            <span className="text-right pl-4">중요도</span>
+          </div>
+          {SEO_CHECKLIST_ROWS.map((row, i) => (
+            <motion.div
+              key={row.name}
+              className="grid grid-cols-1 md:grid-cols-[1.15fr_1.8fr_minmax(150px,0.9fr)] gap-3 md:gap-0 px-4 sm:px-6 py-5 border-t border-white/15 md:divide-x md:divide-white/10 items-stretch"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: i * 0.03 }}
+            >
+              <div className="flex items-center gap-2.5 md:px-0">
+                <span
+                  className="w-2.5 h-2.5 rounded-full shrink-0"
+                  style={{ background: SEGMENT_COLORS[i % SEGMENT_COLORS.length] }}
+                />
+                <span className="text-white text-[14px] font-bold leading-snug">{row.name}</span>
+              </div>
+              <div className="text-white/60 text-[13px] leading-relaxed md:px-4 flex items-start md:items-center">
+                {row.focus}
+              </div>
+              <div className="flex flex-col gap-2 md:items-end md:px-4">
+                <div className="flex items-center justify-between md:justify-end gap-3 w-full">
+                  <span className="text-white/45 text-[11px] font-semibold uppercase tracking-[0.08em] md:hidden">
+                    중요도
+                  </span>
+                  <span className="text-white/75 text-[12px] font-bold tabular-nums">{row.weight}%</span>
+                </div>
+                <span className="w-full md:w-32 h-2 rounded-full bg-white/[0.06] overflow-hidden">
+                  <span
+                    className="block h-full rounded-full"
+                    style={{
+                      width: `${row.weight}%`,
+                      background: SEGMENT_COLORS[i % SEGMENT_COLORS.length],
+                    }}
+                  />
+                </span>
+              </div>
             </motion.div>
           ))}
         </div>
