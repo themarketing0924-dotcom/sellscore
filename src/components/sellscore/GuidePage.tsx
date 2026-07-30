@@ -88,7 +88,7 @@ const FUNNEL_STEPS: { title: string; desc: ReactNode }[] = [
     title: '1. 무료 진단',
     desc: (
       <>
-        URL과 질문 5개만 답하면 <Em>10초 안에</Em> 점수가 나옵니다.
+        URL과 질문 5개만 답하면 <Em>1분 안에</Em> 점수가 나옵니다.
       </>
     ),
   },
@@ -96,7 +96,7 @@ const FUNNEL_STEPS: { title: string; desc: ReactNode }[] = [
     title: '2. 리포트 잠금 해제',
     desc: (
       <>
-        <Em>9,900원</Em>으로 전체 진단과 수정 지시문을 받습니다.
+        <Em>12,900원</Em>부터 전체 진단과 수정 지시문을 받습니다.
       </>
     ),
   },
@@ -203,7 +203,7 @@ export function GuidePage() {
     <div>
       {/* ══════════ HERO ══════════ */}
       <section className="relative flex flex-col items-center px-6 pt-36 sm:pt-44 pb-16 sm:pb-20 overflow-hidden text-center">
-        <VideoBackground variant="aurora" overlay="strong" />
+        <VideoBackground videoUrl="/marketing-hero-bg.mp4" overlay="strong" speed={0.5} />
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
@@ -221,15 +221,18 @@ export function GuidePage() {
             무료 진단 가이드
           </p>
           <h1
-            className="text-white font-black leading-[1.1] tracking-[-0.04em] mb-6"
+            className="text-white font-black leading-[1.15] tracking-tight mb-5"
             style={{ fontSize: 'clamp(32px, 6.8vw, 66px)' }}
           >
-            변하지 않는 판매 전환 원리를
-            <br />
-            <span className="gradient-text-animated">내 사이트 기준</span>으로 확인하세요
+            <span className="block">변하지 않는</span>
+            <span className="block">판매 전환 원리를</span>
+            <span className="block">
+              <span className="gradient-text-animated">내 사이트 기준</span>으로
+            </span>
+            <span className="block">확인하세요</span>
           </h1>
-          <p className="text-white/60 text-[18px] sm:text-[21px] font-medium mb-11 max-w-xl mx-auto leading-[1.7]">
-            <Em>10명의 마케팅 대가</Em>가 검증해온 설득 원리를 한국 소상공인·1인 창업가 기준으로
+          <p className="text-[#86868b] text-[18px] sm:text-[21px] font-medium mb-11 max-w-xl mx-auto leading-[1.55] sm:leading-[1.7]">
+            <Em>12명의 마케팅 대가</Em>가 검증해온 설득 원리를 한국 소상공인·1인 창업가 기준으로
             재구성해, <Em>당신 사이트에 직접 대입한 점수와 실행 지시문</Em>으로 드립니다.
           </p>
           <button
@@ -257,7 +260,7 @@ export function GuidePage() {
           </>
         }
       >
-        <p className="text-white/60 text-[17px] sm:text-[19px] leading-[1.7] max-w-2xl mx-auto text-center">
+        <p className="text-white/60 text-[17px] sm:text-[19px] leading-[1.7] max-w-2xl mx-auto text-center mb-10">
           <span className="block">랜딩페이지도 만들고, 상세페이지도 채워봤지만</span>
           <span className="block">실제 문의와 결제로는 잘 이어지지 않는 경우가 많습니다.</span>
           <span className="block">
@@ -308,10 +311,11 @@ export function GuidePage() {
       {/* ══════════ 거장 원리 소개 (신뢰) ══════════ */}
       <Section
         icon="shield"
+        bgImage="/guide-trust-panel-bg.jpg"
         eyebrow="신뢰 증거"
         heading={
           <>
-            10명의 <span className="gradient-text-static">글로벌 마케터가 검증한</span>{' '}
+            12명의 <span className="gradient-text-static">글로벌 마케터가 검증한</span>{' '}
             프레임워크로 채점합니다
           </>
         }
@@ -453,8 +457,8 @@ export function GuidePage() {
           transition={{ duration: 0.6 }}
         >
           <h2
-            className="text-white font-bold tracking-[-0.03em] mb-8"
-            style={{ fontSize: 'clamp(24px, 5vw, 40px)' }}
+            className="text-white font-bold tracking-tight leading-[1.12] mb-8"
+            style={{ fontSize: 'clamp(26px, 5vw, 44px)' }}
           >
             <span className="block mx-auto max-w-[10em]">지금 필요한 건 더 많은 정보가 아니라,</span>
             <span className="block gradient-text-static">바로 팔리는 구조입니다</span>

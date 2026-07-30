@@ -284,15 +284,15 @@ export function PricingPage() {
           </>
         }
       >
-        <div className="max-w-5xl mx-auto px-2 sm:px-0 overflow-x-auto rounded-3xl border border-white/[0.18]">
+        <div className="max-w-5xl mx-auto px-2 sm:px-0 overflow-x-auto rounded-3xl border border-white/[0.16] bg-[#14151b]/70 shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_22px_70px_rgba(0,0,0,0.35)]">
           <table className="w-full border-collapse text-[12px] sm:text-[13px] min-w-[560px]">
             <thead>
-              <tr className="border-b border-white/20 bg-white/[0.03]">
-                <th className="text-left text-white/50 font-semibold py-3 pl-4 pr-3">항목</th>
-                <th className="text-center text-white/70 font-semibold py-3 px-2 w-[4.25rem] sm:w-20">무료</th>
-                <th className="text-center text-white/70 font-semibold py-3 px-2 w-[4.75rem] sm:w-24">라이트</th>
-                <th className="text-center text-[#7bd6ff] font-semibold py-3 px-2 w-[4.75rem] sm:w-24">추천</th>
-                <th className="text-center text-white/70 font-semibold py-3 px-2 pr-4 w-[4.75rem] sm:w-24">프로</th>
+              <tr className="border-b border-white/15 bg-white/[0.065]">
+                <th className="text-left text-white/55 font-bold py-4 pl-5 pr-3 tracking-[0.08em] uppercase">항목</th>
+                <th className="text-center text-white/70 font-bold py-4 px-2 w-[4.25rem] sm:w-20">무료</th>
+                <th className="text-center text-white/70 font-bold py-4 px-2 w-[4.75rem] sm:w-24">라이트</th>
+                <th className="text-center text-white font-bold py-4 px-2 w-[4.75rem] sm:w-24 bg-[#0064ff]/20 border-x border-[#0064ff]/25">추천</th>
+                <th className="text-center text-white/70 font-bold py-4 px-2 pr-5 w-[4.75rem] sm:w-24">프로</th>
               </tr>
             </thead>
             <tbody>
@@ -319,6 +319,50 @@ export function PricingPage() {
               ))}
             </tbody>
           </table>
+        </div>
+      </Section>
+
+
+      {/* ══════════ VIP 제작 의뢰 ══════════ */}
+      <Section
+        eyebrow="VIP 의뢰"
+        heading={
+          <>
+            직접 고치기 어렵다면, <span className="gradient-text-static">기획부터 제작까지</span>
+            <span className="block">맡기세요</span>
+          </>
+        }
+        sub={
+          <>
+            자동 진단은 문제를 찾는 도구입니다. 사이트 기획, 카피, 제작, SEO·AEO·GEO 세팅,
+            세일즈 전환 최적화까지 필요하다면 별도 VIP 의뢰로 진행할 수 있습니다.
+          </>
+        }
+      >
+        <div className="max-w-4xl mx-auto rounded-3xl border border-[#0064ff]/35 bg-[#0064ff]/[0.06] p-6 sm:p-8 text-left">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-6 items-center">
+            <div>
+              <p className="text-white font-bold text-[22px] sm:text-[28px] tracking-tight mb-3">
+                홈페이지 제작부터 검색·전환 최적화까지 한 번에
+              </p>
+              <p className="text-white/55 text-[14px] sm:text-[15px] leading-relaxed font-medium mb-5">
+                단순 제작이 아니라 Salesscore 진단 기준을 바탕으로 검색 봇에게 발견되고, 고객에게 설득되는 구조를 설계합니다.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {['사이트 기획', '랜딩 카피', '홈페이지 제작', 'SEO·AEO·GEO', '전환 CTA', '재진단 리포트'].map((item) => (
+                  <span key={item} className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-white/70 text-[12px] font-semibold">
+                    {item}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <Link
+              to="/consulting"
+              className="inline-flex h-14 px-8 rounded-full bg-[#0064ff] text-white font-bold items-center justify-center whitespace-nowrap no-underline hover:brightness-110"
+            >
+              VIP 제작 의뢰 보기 →
+            </Link>
+          </div>
         </div>
       </Section>
 
