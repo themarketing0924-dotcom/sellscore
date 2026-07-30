@@ -1,4 +1,5 @@
-import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { SiteNavbar } from './components/sellscore/SiteNavbar';
 import { SiteFooter } from './components/sellscore/SiteFooter';
 import { MarketingPage } from './components/sellscore/MarketingPage';
@@ -22,6 +23,7 @@ import { NotFoundPage } from './components/sellscore/NotFoundPage';
 export default function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <div className="min-h-[100dvh] bg-black flex flex-col">
         <SiteNavbar />
         <div className="flex-1">
@@ -54,4 +56,15 @@ export default function App() {
 function MarketingPageRoute() {
   const navigate = useNavigate();
   return <MarketingPage onStart={() => navigate('/diagnose')} />;
+}
+
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  }, [pathname]);
+
+  return null;
 }
