@@ -92,40 +92,66 @@ interface ComparisonGroup {
   rows: ComparisonRow[];
 }
 
-const allOpen = (labels: string[]): ComparisonRow[] =>
-  labels.map((label) => ({ label, free: '점수', report: 'O', standard: 'O', pro: 'O' }));
+const TOTAL_DIAGNOSTIC_ITEMS =
+  FRAMEWORK_LABELS.length + SITE_SEO_LABELS.length + CONTENT_SEO_LABELS.length + PSI_LABELS.length;
 
 const COMPARISON_GROUPS: ComparisonGroup[] = [
   {
-    category: '핵심 차이',
+    category: '진단 결과에서 바로 열리는 것',
     rows: [
-      { label: 'Before/After 수정 지시문 개수', free: '3개', report: '12개 전체', standard: '12개 전체', pro: '12개 전체' },
-      { label: '이 사이트 무제한 재진단', free: '×', report: '×', standard: `${REDIAGNOSIS_WINDOW_DAYS['sellscore-standard']}일간`, pro: `${REDIAGNOSIS_WINDOW_DAYS['sellscore-pro']}일간` },
-      { label: '1:1 문의 우선 응답', free: '×', report: '×', standard: '×', pro: 'O' },
-      { label: '리포트 CSV 다운로드 (회원가입 시)', free: '×', report: 'O', standard: 'O', pro: 'O' },
-      { label: '리포트 링크 공유', free: '×', report: 'O', standard: 'O', pro: 'O' },
+      { label: '종합 설득 전환 점수', free: 'O', report: 'O', standard: 'O', pro: 'O' },
+      { label: 'SEO·기술 최적화 점수', free: 'O', report: 'O', standard: 'O', pro: 'O' },
+      { label: '가장 큰 감점 원인', free: 'O', report: 'O', standard: 'O', pro: 'O' },
+      { label: '우선 확인해야 할 주요 감점 항목', free: 'O', report: 'O', standard: 'O', pro: 'O' },
+      { label: '기본 개선 방향', free: 'O', report: 'O', standard: 'O', pro: 'O' },
     ],
   },
   {
-    category: `카피라이터가 하던 일 — 설득·카피·UX 진단 ${FRAMEWORK_LABELS.length}개 (점수·감점 요인은 전체 공개)`,
-    rows: allOpen(FRAMEWORK_LABELS),
+    category: 'AI 수정 지시문 언락 범위',
+    rows: [
+      { label: '가장 시급한 수정 지시문', free: '3개', report: '12개 전체', standard: '12개 전체', pro: '12개 전체' },
+      { label: '회원가입 추가 수정 지시문', free: '+2개', report: '포함', standard: '포함', pro: '포함' },
+      { label: '추천 공유 추가 수정 지시문', free: '+2개', report: '포함', standard: '포함', pro: '포함' },
+      { label: '결제 후 남은 잠금 지시문', free: '잠김', report: '전체 해제', standard: '전체 해제', pro: '전체 해제' },
+      { label: 'Before/After 교체 문구', free: '일부', report: '전체', standard: '전체', pro: '전체' },
+      { label: 'Claude·Cursor·GPT용 복사 지시문', free: '일부', report: '전체', standard: '전체', pro: '전체' },
+      { label: '실행 우선순위 로드맵', free: '기본', report: '전체', standard: '전체', pro: '전체' },
+    ],
   },
   {
-    category: `SEO 엔지니어가 하던 일 — 기술 SEO ${SITE_SEO_LABELS.length}개 (구글·네이버 공식 가이드 기준, 전체 무료 공개)`,
-    rows: allOpen(SITE_SEO_LABELS),
+    category: '재진단과 개선 확인',
+    rows: [
+      { label: '동일 사이트 재진단', free: '월 3회', report: '별도 결제', standard: `${REDIAGNOSIS_WINDOW_DAYS['sellscore-standard']}일 무제한`, pro: `${REDIAGNOSIS_WINDOW_DAYS['sellscore-pro']}일 무제한` },
+      { label: '수정 후 점수 변화 확인', free: '기본', report: '1회 기준', standard: '30일간 반복', pro: '90일간 반복' },
+      { label: '같은 도메인 전체 리포트 자동 오픈', free: '×', report: '×', standard: 'O', pro: 'O' },
+    ],
   },
   {
-    category: `SEO 엔지니어가 하던 일 — 콘텐츠 SEO ${CONTENT_SEO_LABELS.length}개 (전체 무료 공개)`,
-    rows: allOpen(CONTENT_SEO_LABELS),
+    category: '저장·공유·다운로드',
+    rows: [
+      { label: '리포트 계정 저장', free: '회원가입 시', report: 'O', standard: 'O', pro: 'O' },
+      { label: '리포트 CSV 다운로드', free: '회원가입 시', report: 'O', standard: 'O', pro: 'O' },
+      { label: '리포트 링크 공유', free: '회원가입 시', report: 'O', standard: 'O', pro: 'O' },
+      { label: '고객사 설명용 점수 근거', free: '기본', report: '상세', standard: '상세', pro: '상세' },
+    ],
   },
   {
-    category: `SEO 엔지니어가 하던 일 — Google PageSpeed 실측 ${PSI_LABELS.length}종 (전체 무료 공개)`,
-    rows: allOpen(PSI_LABELS),
+    category: `세일즈·검색 진단 항목 ${TOTAL_DIAGNOSTIC_ITEMS}개`,
+    rows: [
+      { label: `설득·카피·UX 프레임워크 ${FRAMEWORK_LABELS.length}개`, free: '점수', report: '점수+지시문', standard: '점수+지시문', pro: '점수+지시문' },
+      { label: `기술 SEO 항목 ${SITE_SEO_LABELS.length}개`, free: '점수', report: '점수+근거', standard: '점수+근거', pro: '점수+근거' },
+      { label: `콘텐츠 SEO 항목 ${CONTENT_SEO_LABELS.length}개`, free: '점수', report: '점수+근거', standard: '점수+근거', pro: '점수+근거' },
+      { label: `Google PageSpeed 실측 ${PSI_LABELS.length}종`, free: '점수', report: '점수+근거', standard: '점수+근거', pro: '점수+근거' },
+    ],
+  },
+  {
+    category: '지원',
+    rows: [
+      { label: '1:1 문의 우선 응답', free: '×', report: '×', standard: '×', pro: 'O' },
+      { label: 'VIP 제작 의뢰 상담 연결', free: 'O', report: 'O', standard: 'O', pro: 'O' },
+    ],
   },
 ];
-
-const TOTAL_DIAGNOSTIC_ITEMS =
-  FRAMEWORK_LABELS.length + SITE_SEO_LABELS.length + CONTENT_SEO_LABELS.length + PSI_LABELS.length;
 
 const PRICING_FAQ = [
   {
@@ -279,8 +305,8 @@ export function PricingPage() {
         }
         sub={
           <>
-            점수와 감점 요인은 <Em>무료로도 전부 공개</Em>합니다. 유료 플랜은 이걸 실제로 고칠
-            수 있는 지시문과 재진단 기간을 줍니다.
+            무료는 핵심 점수와 일부 수정 지시문을 먼저 보여줍니다. 유료 플랜은 <Em>전체 수정 지시문,
+            재진단 기간, 우선 응답</Em>처럼 실제로 열리는 범위가 달라집니다.
           </>
         }
       >
