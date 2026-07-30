@@ -475,6 +475,9 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
       {/* ══════════ WHAT YOU GET ══════════ */}
       <Section
         tossMotion
+        bgVideo="/what-you-get-bg.mp4"
+        bgVideoBlur={22}
+        bgVideoSpeed={0.42}
         eyebrow="무엇을 받게 되나요"
         heading={
           <>
