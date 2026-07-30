@@ -438,9 +438,9 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
         eyebrow="이런 고민 있으신가요"
         heading={
           <>
-            <HeadlineLine>사이트는 만들었는데,</HeadlineLine>
+            <HeadlineLine>혹시 이런 문제로</HeadlineLine>
             <span className="block mx-auto max-w-[11em]">
-              <span className="gradient-text-static">왜 문의와 결제가 안 나는지</span> 모르겠다면
+              <span className="gradient-text-static">고민하고 계시지 않나요?</span>
             </span>
           </>
         }
