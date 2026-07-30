@@ -36,6 +36,7 @@ export default function App() {
             <Route path="/diagnose/report/:reportId" element={<SavedReportPage />} />
             <Route path="/methodology" element={<MethodologyPage />} />
             <Route path="/seo-aeo-geo" element={<SearchMethodologyPage />} />
+            <Route path="/search-methodology" element={<SearchMethodologyPage />} />
             <Route path="/pricing" element={<PricingPage />} />
             <Route path="/video" element={<VideoSalesPage />} />
             <Route path="/consulting" element={<ConsultingPage />} />

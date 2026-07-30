@@ -20,6 +20,7 @@ const STATIC_PAGES = [
   { path: '/diagnose', changefreq: 'monthly', priority: '0.9' },
   { path: '/methodology', changefreq: 'monthly', priority: '0.8' },
   { path: '/seo-aeo-geo', changefreq: 'monthly', priority: '0.8' },
+  { path: '/search-methodology', changefreq: 'monthly', priority: '0.8' },
   { path: '/pricing', changefreq: 'monthly', priority: '0.8' },
   { path: '/blog', changefreq: 'weekly', priority: '0.8' },
 ];
