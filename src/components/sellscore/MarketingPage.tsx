@@ -573,7 +573,7 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
         eyebrow="가격 비교"
         heading={
           <>
-            이 문제를 따로 맡기면 <span className="gradient-text-static">보통 얼마 들까요?</span>
+            이런 문제를 따로 맡기면 <span className="gradient-text-static">보통 얼마 들까요?</span>
           </>
         }
         sub={
