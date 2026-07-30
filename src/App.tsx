@@ -6,6 +6,7 @@ import { MarketingPage } from './components/sellscore/MarketingPage';
 import { GuidePage } from './components/sellscore/GuidePage';
 import { DiagnoseFlow } from './components/sellscore/DiagnoseFlow';
 import { MethodologyPage } from './components/sellscore/MethodologyPage';
+import { SearchMethodologyPage } from './components/sellscore/SearchMethodologyPage';
 import { PricingPage } from './components/sellscore/PricingPage';
 import { PaymentSuccessPage } from './components/sellscore/PaymentSuccessPage';
 import { PaymentFailPage } from './components/sellscore/PaymentFailPage';
@@ -34,6 +35,7 @@ export default function App() {
             <Route path="/diagnose/history" element={<HistoryPage />} />
             <Route path="/diagnose/report/:reportId" element={<SavedReportPage />} />
             <Route path="/methodology" element={<MethodologyPage />} />
+            <Route path="/seo-aeo-geo" element={<SearchMethodologyPage />} />
             <Route path="/pricing" element={<PricingPage />} />
             <Route path="/video" element={<VideoSalesPage />} />
             <Route path="/consulting" element={<ConsultingPage />} />

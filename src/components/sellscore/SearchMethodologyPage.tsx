@@ -1,0 +1,296 @@
+import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { Section, Em } from './Section';
+import { Icon, IconBadge } from './Icon';
+import { useSeo } from '../../hooks/useSeo';
+
+const SEARCH_AXES = [
+  {
+    title: 'SEO 기본 구조',
+    desc: '검색 결과에 노출되기 위한 제목, 설명, 헤딩, 색인, 링크 구조를 확인합니다.',
+    items: ['title/meta', 'H1/H2', 'sitemap', 'robots.txt'],
+  },
+  {
+    title: 'AEO 답변 구조',
+    desc: '질문형 검색과 AI 답변에서 바로 이해될 수 있도록 문답형 정보 구조를 봅니다.',
+    items: ['FAQ', '명확한 답변', '요약 문장', '문단 구조'],
+  },
+  {
+    title: 'GEO 신뢰 구조',
+    desc: '생성형 AI가 참고하기 좋은 출처성, 전문성, 일관된 주제 신호를 점검합니다.',
+    items: ['전문성', '출처성', '구조화 데이터', '브랜드 신호'],
+  },
+];
+
+const PUBLIC_CHECKS = [
+  '검색 봇이 읽을 수 있는 title/meta 구조',
+  '페이지마다 하나의 명확한 H1과 정리된 H2 흐름',
+  '이미지 alt, 영상 주변 텍스트, 콘텐츠 설명 신호',
+  'sitemap.xml, robots.txt, canonical 기본 연결',
+  '모바일 대응, 접근성, Core Web Vitals 실측 신호',
+  'FAQ·Article·Breadcrumb 등 구조화 데이터 활용 여부',
+];
+
+const PRIVATE_SIGNALS = [
+  '검색 신호와 세일즈 신호를 함께 해석하는 가중치',
+  'SEO/AEO/GEO 항목 간 충돌을 보정하는 우선순위 모델',
+  '업종·목적·고객 유형에 따라 감점 해석을 바꾸는 내부 기준',
+  'AI 수정 지시문으로 바꾸기 위한 문장 변환 로직',
+];
+
+const STANDARDS = [
+  {
+    name: 'Google Search Central',
+    desc: '크롤링, 색인, 제목, 링크, 구조화 데이터의 기본 기준을 참고합니다.',
+    url: 'https://developers.google.com/search/docs',
+  },
+  {
+    name: '네이버 서치어드바이저',
+    desc: '한국 검색 환경에서 수집·노출·사이트 구조 기준을 확인합니다.',
+    url: 'https://searchadvisor.naver.com/',
+  },
+  {
+    name: 'Bing Webmaster Guidelines',
+    desc: '빙 검색과 AI 검색 환경에서 필요한 품질·접근성 신호를 참고합니다.',
+    url: 'https://www.bing.com/webmasters/help/bing-webmaster-guidelines-30fba23a',
+  },
+];
+
+const PROCESS = [
+  ['1', '봇 접근성 확인', '검색 봇이 페이지를 발견하고 읽을 수 있는 기본 상태인지 확인합니다.'],
+  ['2', '검색 문맥 해석', '제목, 설명, 헤딩, 본문이 어떤 검색 의도를 가리키는지 분석합니다.'],
+  ['3', '답변 가능성 평가', '질문형 검색과 AI 답변에 쓰일 만큼 정보가 명확한지 봅니다.'],
+  ['4', '전환 구조 결합', '검색 유입 이후 고객이 행동으로 이어질 수 있는 세일즈 구조와 함께 해석합니다.'],
+];
+
+export function SearchMethodologyPage() {
+  useSeo({
+    title: 'SEO AEO GEO 검색 최적화 원리 — 검색 봇과 AI가 읽는 구조 | 세일즈스코어',
+    description:
+      '세일즈스코어가 SEO, AEO, GEO 관점에서 사이트 검색 최적화 점수를 계산하는 방식입니다. 공개 기준과 내부 알고리즘 범위를 분리해 설명합니다.',
+    path: '/seo-aeo-geo',
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      headline: 'SEO AEO GEO 검색 최적화 원리',
+      description:
+        '세일즈스코어가 검색 봇과 AI 답변 엔진이 이해할 수 있는 사이트 구조를 어떻게 평가하는지 설명합니다.',
+      author: { '@type': 'Organization', name: '세일즈스코어' },
+    },
+  });
+
+  return (
+    <main className="bg-black text-white overflow-hidden">
+      <section className="relative min-h-[100dvh] flex flex-col items-center justify-center px-6 pt-14 text-center overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_58%_42%_at_50%_18%,rgba(0,100,255,0.22),transparent_72%),radial-gradient(ellipse_42%_35%_at_82%_70%,rgba(123,214,255,0.1),transparent_70%)]" />
+        <motion.div
+          className="relative z-10 w-full max-w-3xl"
+          initial={{ opacity: 0, y: 52 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <p className="text-[#7bd6ff]/75 text-[13px] tracking-[0.24em] font-extrabold mb-5 uppercase">
+            SEO · AEO · GEO
+          </p>
+          <h1
+            className="text-white font-black tracking-tight leading-[1.13] mb-5 text-balance"
+            style={{ fontSize: 'clamp(32px, 6.8vw, 66px)' }}
+          >
+            검색 봇에게는 발견되고,
+            <span className="block gradient-text-static">AI에게는 인용되는 구조</span>
+          </h1>
+          <p className="text-[#86868b] text-[16px] sm:text-[21px] leading-[1.32] sm:leading-[1.5] max-w-2xl mx-auto font-medium mb-9 text-balance">
+            사람은 사이트를 보고 판단하지만, 검색 포털과 AI 답변 엔진은 먼저 구조를 읽습니다.
+            Salesscore는 <Em>SEO·AEO·GEO 검색 최적화</Em> 관점으로 사이트가 발견되고 이해될 수 있는지 점수화합니다.
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-2.5 mb-9">
+            {['검색 노출 구조', 'AI 답변 구조', '비공개 가중치 엔진'].map((item) => (
+              <span key={item} className="rounded-full border border-white/10 bg-white/[0.04] px-3.5 py-2 text-white/65 text-[12px] font-bold">
+                {item}
+              </span>
+            ))}
+          </div>
+          <Link
+            to="/diagnose"
+            className="inline-flex h-14 px-9 rounded-full bg-[#0064ff] text-white font-bold items-center justify-center no-underline hover:brightness-110"
+          >
+            내 사이트 검색 점수 확인하기 →
+          </Link>
+        </motion.div>
+      </section>
+
+      <Section
+        tossMotion
+        eyebrow="검색 최적화 원리"
+        heading={
+          <>
+            봇이 이해해야 <span className="gradient-text-static">사람에게 노출됩니다</span>
+          </>
+        }
+        sub={
+          <>
+            좋은 디자인만으로는 부족합니다. 제목, 설명, 헤딩, 링크, 이미지, 구조화 데이터가 정리되어야
+            검색 포털과 AI가 이 페이지를 어떤 주제의 답으로 볼지 판단할 수 있습니다.
+          </>
+        }
+      >
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-5xl mx-auto">
+          {SEARCH_AXES.map((axis, i) => (
+            <motion.div
+              key={axis.title}
+              className="rounded-3xl border border-white/[0.14] bg-white/[0.035] p-6 text-left"
+              initial={{ opacity: 0, y: 40, scale: 0.985 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <IconBadge name={i === 0 ? 'search' : i === 1 ? 'spark' : 'shield'} tint="blue" />
+              <p className="text-white font-bold text-[20px] mt-5 mb-2 tracking-tight">{axis.title}</p>
+              <p className="text-[#86868b] text-[14px] sm:text-[15px] leading-relaxed font-medium mb-5">{axis.desc}</p>
+              <div className="flex flex-wrap gap-2">
+                {axis.items.map((item) => (
+                  <span key={item} className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-white/65 text-[12px] font-semibold">
+                    {item}
+                  </span>
+                ))}
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </Section>
+
+      <Section
+        tossMotion
+        eyebrow="Salescore Dual Engine™"
+        heading={
+          <>
+            일부 기준은 공개하고,
+            <span className="block gradient-text-static">핵심 알고리즘은 보호합니다</span>
+          </>
+        }
+        sub={
+          <>
+            Salesscore는 공개 가이드만 나열하는 도구가 아닙니다. 공식 기준으로 확인 가능한 항목은 공개하고,
+            신호를 결합해 우선순위를 만드는 내부 로직은 비공개로 유지합니다.
+          </>
+        }
+      >
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 max-w-5xl mx-auto">
+          <div className="rounded-3xl border border-[#7bd6ff]/30 bg-[#0064ff]/[0.05] p-6 sm:p-8 text-left">
+            <p className="text-[#7bd6ff] text-[12px] font-black tracking-[0.18em] mb-5">공개하는 기준</p>
+            <ul className="grid gap-3">
+              {PUBLIC_CHECKS.map((item) => (
+                <li key={item} className="flex items-start gap-3 text-white/78 text-[14px] sm:text-[15px] font-semibold leading-relaxed">
+                  <Icon name="check" size={15} className="text-[#7bd6ff] mt-1 shrink-0" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="rounded-3xl border border-white/10 bg-white/[0.035] p-6 sm:p-8 text-left">
+            <p className="text-white/55 text-[12px] font-black tracking-[0.18em] mb-5">비공개 내부 기술</p>
+            <ul className="grid gap-3">
+              {PRIVATE_SIGNALS.map((item) => (
+                <li key={item} className="flex items-start gap-3 text-white/64 text-[14px] sm:text-[15px] font-semibold leading-relaxed">
+                  <span className="mt-2 block h-1.5 w-1.5 rounded-full bg-white/35 shrink-0" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </Section>
+
+      <Section
+        tossMotion
+        eyebrow="공식 기준"
+        heading={
+          <>
+            검색 최적화는 <span className="gradient-text-static">감이 아니라 기준</span>입니다
+          </>
+        }
+        sub={
+          <>
+            Google, 네이버, Bing이 공개한 검색 문서의 큰 원칙을 참고합니다. 단, 세부 배점과 결합 방식은
+            Salesscore Dual Engine™의 내부 모델로 계산합니다.
+          </>
+        }
+      >
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-5xl mx-auto">
+          {STANDARDS.map((standard, i) => (
+            <motion.a
+              key={standard.name}
+              href={standard.url}
+              target="_blank"
+              rel="noreferrer"
+              className="rounded-3xl border border-white/[0.14] bg-white/[0.03] p-6 text-left no-underline hover:border-white/25 transition-colors"
+              initial={{ opacity: 0, y: 34 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <p className="text-white font-bold text-[18px] mb-2 tracking-tight">{standard.name}</p>
+              <p className="text-[#86868b] text-[14px] leading-relaxed font-medium">{standard.desc}</p>
+            </motion.a>
+          ))}
+        </div>
+      </Section>
+
+      <Section
+        tossMotion
+        eyebrow="진단 흐름"
+        heading={
+          <>
+            검색 점수는 <span className="gradient-text-static">4단계</span>로 해석합니다
+          </>
+        }
+      >
+        <div className="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {PROCESS.map(([num, title, desc], i) => (
+            <motion.div
+              key={title}
+              className="rounded-3xl border border-white/10 bg-white/[0.035] p-6 text-left"
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.75, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <p className="text-[#7bd6ff] text-[13px] font-black mb-5">STEP {num}</p>
+              <p className="text-white text-[20px] font-bold mb-3">{title}</p>
+              <p className="text-white/55 text-[14px] leading-relaxed font-medium">{desc}</p>
+            </motion.div>
+          ))}
+        </div>
+      </Section>
+
+      <section className="relative px-6 py-28 sm:py-36 text-center overflow-hidden">
+        <motion.div
+          className="max-w-3xl mx-auto"
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <h2
+            className="text-white font-bold tracking-tight leading-[1.12] mb-6"
+            style={{ fontSize: 'clamp(26px, 5vw, 44px)' }}
+          >
+            검색에 발견되고,
+            <span className="block gradient-text-static">고객에게 설득되는지 확인하세요</span>
+          </h2>
+          <p className="text-[#86868b] text-[17px] sm:text-[19px] leading-[1.55] max-w-lg mx-auto mb-9 font-medium">
+            SEO/AEO/GEO 구조와 세일즈 전환 구조를 따로 보지 않고 함께 진단합니다.
+          </p>
+          <div className="flex flex-col sm:flex-row justify-center gap-3">
+            <Link to="/diagnose" className="inline-flex h-14 px-9 rounded-full bg-[#0064ff] text-white font-bold items-center justify-center no-underline">
+              무료로 검색 점수 확인하기 →
+            </Link>
+            <Link to="/methodology" className="inline-flex h-14 px-9 rounded-full border border-white/15 text-white/80 font-bold items-center justify-center no-underline">
+              설득 채점 원리 보기
+            </Link>
+          </div>
+        </motion.div>
+      </section>
+    </main>
+  );
+}
