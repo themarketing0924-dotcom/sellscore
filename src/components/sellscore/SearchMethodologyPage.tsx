@@ -63,6 +63,48 @@ const PROCESS = [
   ['4', '전환 구조 결합', '검색 유입 이후 고객이 행동으로 이어질 수 있는 세일즈 구조와 함께 해석합니다.'],
 ];
 
+
+const PLATFORM_SIGNALS = [
+  {
+    platform: 'Google 검색 최적화',
+    desc: 'Google Search Central의 기본 원칙을 바탕으로 검색 봇이 페이지를 발견, 크롤링, 색인, 이해할 수 있는지 봅니다.',
+    checks: ['크롤링 가능성', '색인 가능성', 'title/meta', '모바일 사용성', 'Core Web Vitals', '이미지·동영상 검색 신호'],
+  },
+  {
+    platform: 'Naver 사이트 최적화',
+    desc: '네이버 서치어드바이저의 사이트 진단 관점처럼 사이트 제목, 설명문, robots.txt, HTML 마크업, 검색 반영 상태를 확인합니다.',
+    checks: ['사이트 제목', '설명문', 'robots.txt', 'HTML 마크업', '검색 수집 상태', '네이버 소유확인'],
+  },
+  {
+    platform: 'Bing·AI 검색 최적화',
+    desc: 'Bing Webmaster Guidelines와 AI 검색 환경을 고려해 접근성, 명확한 정보 구조, 신뢰 가능한 출처 신호를 함께 봅니다.',
+    checks: ['접근성', '명확한 본문', '내부 링크', '구조화 데이터', '브랜드 신뢰', 'AI 답변 적합성'],
+  },
+];
+
+const CONTENT_ASSETS = [
+  {
+    label: '사이트 구조',
+    public: ['sitemap.xml', 'robots.txt', 'canonical', '내부링크', '모바일 구조'],
+    private: '페이지 중요도와 전환 흐름을 함께 보는 내부 우선순위 보정',
+  },
+  {
+    label: '텍스트 콘텐츠',
+    public: ['title', 'meta description', 'H1/H2', '본문 분량', 'FAQ 답변 구조'],
+    private: '검색 의도와 구매전환 문맥을 동시에 해석하는 문장 평가 로직',
+  },
+  {
+    label: '이미지 최적화',
+    public: ['alt 텍스트', '파일명', '주변 문맥', '이미지 크기', 'OG 이미지'],
+    private: '이미지가 검색 신호와 설득 신뢰 신호에 기여하는 정도의 가중치',
+  },
+  {
+    label: '동영상 최적화',
+    public: ['영상 주변 설명', '썸네일', '안정적인 URL', 'VideoObject', '전용 시청 페이지'],
+    private: '영상이 단순 장식인지 전환 설득 자산인지 구분하는 내부 판단 기준',
+  },
+];
+
 export function SearchMethodologyPage() {
   useSeo({
     title: 'SEO AEO GEO 검색 최적화 원리 — 검색 봇과 AI가 읽는 구조 | 세일즈스코어',
@@ -154,6 +196,87 @@ export function SearchMethodologyPage() {
                   </span>
                 ))}
               </div>
+            </motion.div>
+          ))}
+        </div>
+      </Section>
+
+      <Section
+        tossMotion
+        eyebrow="공식 플랫폼 기준"
+        heading={
+          <>
+            구글·네이버·빙은 <span className="gradient-text-static">보는 지점이 다릅니다</span>
+          </>
+        }
+        sub={
+          <>
+            Salesscore는 하나의 SEO 체크리스트만 보지 않습니다. Google, Naver, Bing의 공개 기준을 나눠 보고,
+            한국 사이트 운영자가 실제로 놓치기 쉬운 검색 신호를 함께 정리합니다.
+          </>
+        }
+      >
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-5xl mx-auto">
+          {PLATFORM_SIGNALS.map((signal, i) => (
+            <motion.div
+              key={signal.platform}
+              className="rounded-3xl border border-white/[0.14] bg-white/[0.035] p-6 text-left"
+              initial={{ opacity: 0, y: 40, scale: 0.985 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <p className="text-white font-bold text-[20px] mb-3 tracking-tight">{signal.platform}</p>
+              <p className="text-[#86868b] text-[14px] sm:text-[15px] leading-relaxed font-medium mb-5">{signal.desc}</p>
+              <div className="flex flex-wrap gap-2">
+                {signal.checks.map((item) => (
+                  <span key={item} className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-white/65 text-[12px] font-semibold">
+                    {item}
+                  </span>
+                ))}
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </Section>
+
+      <Section
+        tossMotion
+        eyebrow="콘텐츠 자산 최적화"
+        heading={
+          <>
+            텍스트·이미지·동영상까지
+            <span className="block gradient-text-static">검색 자산으로 평가합니다</span>
+          </>
+        }
+        sub={
+          <>
+            검색 최적화는 코드만 보는 일이 아닙니다. 사이트 구조, 텍스트, 이미지, 동영상이 검색 봇과 AI 답변 엔진에게
+            어떤 의미로 읽히는지 함께 봐야 합니다.
+          </>
+        }
+      >
+        <div className="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {CONTENT_ASSETS.map((asset, i) => (
+            <motion.div
+              key={asset.label}
+              className="rounded-3xl border border-white/[0.14] bg-white/[0.035] p-6 text-left"
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.75, delay: i * 0.07, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <p className="text-white text-[20px] font-bold mb-4">{asset.label}</p>
+              <p className="text-[#7bd6ff] text-[12px] font-black tracking-[0.14em] mb-3">공개 점검 항목</p>
+              <div className="flex flex-wrap gap-2 mb-5">
+                {asset.public.map((item) => (
+                  <span key={item} className="rounded-full border border-[#7bd6ff]/20 bg-[#0064ff]/[0.06] px-3 py-1.5 text-white/70 text-[12px] font-semibold">
+                    {item}
+                  </span>
+                ))}
+              </div>
+              <p className="text-white/45 text-[12px] font-black tracking-[0.14em] mb-2">내부 기술</p>
+              <p className="text-white/62 text-[14px] leading-relaxed font-medium">{asset.private}</p>
             </motion.div>
           ))}
         </div>
