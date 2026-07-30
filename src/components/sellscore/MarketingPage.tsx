@@ -524,7 +524,7 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
         heading={
           <>
             검색 봇에게는 <span className="gradient-text-static">발견되고</span>,
-            <span className="block">고객에게는 설득되어야 합니다</span>
+            <span className="block">고객에게는 <span className="gradient-text-static">설득</span>되어야 합니다</span>
           </>
         }
         sub={
