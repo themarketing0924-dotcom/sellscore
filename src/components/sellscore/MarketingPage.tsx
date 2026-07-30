@@ -86,25 +86,31 @@ const SCORE_AXES: {
 
 const PRICE_COMPARISON_ROWS = [
   {
-    label: 'SEO/AEO 전문 에이전시',
+    label: 'A사',
+    service: 'SEO/AEO 전문 에이전시',
     type: '컨설팅 견적형',
     price: '100만~200만원',
-    note: '공개 가격 기준: 기본 SEO/AEO 컨설팅 100만원, 심층 컨설팅 200만원',
-    features: ['SEO·AEO 전략 진단', '전문가 분석 중심', '사이트 수정·실행은 별도 범위 가능'],
+    scope: 'SEO·AEO 전략 진단 중심',
+    note: '공개가 기준: 기본 100만원, 심층 200만원',
+    features: ['전문가 분석 중심', '사이트 수정은 별도 범위 가능', '초기 상담부터 고비용'],
   },
   {
-    label: 'XEO·GEO 관리 서비스',
+    label: 'B사',
+    service: 'XEO·GEO 관리 서비스',
     type: '월 구독·대행형',
     price: '월 30만~200만원+',
-    note: '공개 가격 기준: XEO 분석 월 30만원부터, XEO 컨설팅 월 50만원부터, GEO 최적화 월 200만원부터',
+    scope: '검색 노출 운영·관리 중심',
+    note: '공개가 기준: 월 30만원부터, GEO 최적화 월 200만원부터',
     features: ['매월 비용 누적', '장기 운영 전제', '초기 테스트 비용 부담'],
   },
   {
-    label: '세일즈스코어',
+    label: 'Salesscore',
+    service: '세일즈스코어',
     type: '자동화 진단형',
     price: '12,900원부터',
-    note: '비싼 컨설팅 전에 SEO·AEO·GEO와 세일즈 구조 문제를 먼저 확인하는 방식',
-    features: ['44개 항목 자동 진단', '검색 최적화+세일즈 전환 동시 분석', 'AI 수정 지시문 제공'],
+    scope: '44개 항목 + AI 수정 지시문',
+    note: '검색 최적화와 세일즈 전환 문제를 동시에 먼저 확인',
+    features: ['44개 항목 자동 진단', 'SEO·AEO·GEO+세일즈 구조 동시 분석', '낮은 비용으로 우선순위 확인'],
     highlight: true,
   },
 ];
@@ -593,11 +599,13 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
                   가장 저렴
                 </span>
               )}
-              <p className="text-white/55 text-[12px] font-bold mb-3">{row.label}</p>
-              <h3 className="text-white font-bold text-[20px] sm:text-[22px] tracking-tight mb-2">{row.type}</h3>
-              <p className={`font-black tracking-tight mb-3 ${row.highlight ? 'text-[#d7ff00] text-[30px] sm:text-[34px]' : 'text-white text-[26px] sm:text-[28px]'}`}>{row.price}</p>
-              <p className="text-white/45 text-[12px] leading-[1.45] mb-5">{row.note}</p>
-              <div className="h-px bg-white/10 mb-5" />
+              <p className="text-white/75 text-[13px] font-black mb-1">{row.label}</p>
+              <p className="text-white/45 text-[11px] font-bold mb-4">{row.service}</p>
+              <h3 className="text-white font-bold text-[19px] sm:text-[21px] tracking-tight mb-2">{row.type}</h3>
+              <p className={`font-black tracking-tight mb-3 ${row.highlight ? 'text-[#d7ff00] text-[32px] sm:text-[38px]' : 'text-white text-[25px] sm:text-[28px]'}`}>{row.price}</p>
+              <p className={`rounded-full border px-3 py-2 text-[12px] font-bold mb-3 ${row.highlight ? 'border-[#d7ff00]/35 bg-[#d7ff00]/10 text-[#d7ff00]' : 'border-white/10 bg-white/[0.03] text-white/60'}`}>{row.scope}</p>
+              <p className="text-white/45 text-[12px] leading-[1.35] mb-4">{row.note}</p>
+              <div className="h-px bg-white/10 mb-4" />
               <ul className="flex flex-col gap-2.5">
                 {row.features.map((feature) => (
                   <li key={feature} className="flex items-start gap-2 text-white/70 text-[12px] leading-snug">
@@ -610,7 +618,7 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
           ))}
         </div>
         <p className="text-white/35 text-[12px] leading-relaxed max-w-4xl mx-auto mt-5">
-          SEO/AEO 컨설팅과 세일즈 구조 진단을 따로 맡기면 보통 수십만~수백만원이 듭니다. Salesscore는 공개 가이드와 검증된 프레임워크를 자동화해, 훨씬 낮은 비용으로 먼저 문제를 확인하게 해줍니다.
+          A사·B사처럼 SEO/AEO/GEO를 따로 맡기면 보통 수십만~수백만원이 듭니다. Salesscore는 44개 항목을 자동 진단해 더 낮은 비용으로 먼저 문제와 우선순위를 확인하게 해줍니다.
         </p>
       </Section>
 
