@@ -88,20 +88,20 @@ const PRICE_COMPARISON_ROWS = [
   {
     label: 'A사',
     service: 'SEO/AEO 전문 에이전시',
-    type: '컨설팅 견적형',
-    price: '100만~200만원',
-    scope: 'SEO·AEO 전략 진단 중심',
-    note: '공개가 기준: 기본 100만원, 심층 200만원',
-    features: ['전문가 분석 중심', '사이트 수정은 별도 범위 가능', '초기 상담부터 고비용'],
+    type: '프로젝트 견적형',
+    price: '약 210만~3,400만원+',
+    scope: 'SEO·AEO 진단 + 구축 프로젝트',
+    note: '공개 사례 190만~2,850만원 기준, 실제 견적 변동분 반영',
+    features: ['전문가 분석·구축 중심', '수정 범위가 커질수록 비용 증가', '초기 상담부터 고비용'],
   },
   {
     label: 'B사',
     service: 'XEO·GEO 관리 서비스',
     type: '월 구독·대행형',
-    price: '월 30만~200만원+',
-    scope: '검색 노출 운영·관리 중심',
-    note: '공개가 기준: 월 30만원부터, GEO 최적화 월 200만원부터',
-    features: ['매월 비용 누적', '장기 운영 전제', '초기 테스트 비용 부담'],
+    price: '월 36만~240만원+',
+    scope: 'XEO·GEO 운영·관리 중심',
+    note: '공개가 월 30만·50만·200만원 기준, 운영 범위 확대분 반영',
+    features: ['매월 비용 누적', '최소 3개월 이상 운영 전제', '분석보다 실행 대행 중심'],
   },
   {
     label: 'Salesscore',
@@ -620,7 +620,7 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
           ))}
         </div>
         <p className="text-white/35 text-[12px] leading-relaxed max-w-4xl mx-auto mt-5">
-          A사·B사처럼 SEO/AEO/GEO를 따로 맡기면 보통 수십만~수백만원이 듭니다. Salesscore는 44개 항목을 자동 진단해 더 낮은 비용으로 먼저 문제와 우선순위를 확인하게 해줍니다.
+          A사·B사처럼 SEO/AEO/GEO를 따로 맡기면 월 수십만원에서 프로젝트 수천만원까지 올라갈 수 있습니다. Salesscore는 44개 항목을 자동 진단해 더 낮은 비용으로 먼저 문제와 우선순위를 확인하게 해줍니다.
         </p>
       </Section>
 
