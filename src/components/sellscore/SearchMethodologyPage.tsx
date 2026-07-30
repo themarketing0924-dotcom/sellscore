@@ -141,7 +141,7 @@ export function SearchMethodologyPage() {
             검색 봇에게는 발견되고,
             <span className="block gradient-text-static">AI에게는 인용되는 구조</span>
           </h1>
-          <p className="text-[#86868b] text-[16px] sm:text-[21px] leading-[1.32] sm:leading-[1.5] max-w-2xl mx-auto font-medium mb-9 text-balance">
+          <p className="text-[#86868b] text-[14px] sm:text-[19px] leading-[1.32] sm:leading-[1.5] max-w-2xl mx-auto font-medium mb-9 text-balance">
             사람은 사이트를 보고 판단하지만, 검색 포털과 AI 답변 엔진은 먼저 구조를 읽습니다.
             Salesscore는 <Em>SEO·AEO·GEO 검색 최적화</Em> 관점으로 사이트가 발견되고 이해될 수 있는지 점수화합니다.
           </p>
