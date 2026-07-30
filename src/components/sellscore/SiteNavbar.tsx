@@ -17,6 +17,7 @@ const NAV_LINKS = [
   { to: '/blog', label: '블로그' },
   { to: '/methodology', label: '채점 원리' },
   { to: '/pricing', label: '요금제' },
+  { to: '/consulting', label: 'VIP 의뢰' },
 ];
 
 export function SiteNavbar() {
