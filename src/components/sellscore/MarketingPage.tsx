@@ -341,7 +341,7 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
   useSeo({
     title: '세일즈스코어 — 세일즈 최적화와 검색 최적화를 동시에 점수화',
     description:
-      'AI 배워 사이트는 만들었는데 트래픽 유입도 구매전환도 없다면? 세일즈 구조와 검색 최적화를 함께 점수화하고 수정 프롬프트까지 받아보세요.',
+      'AI로 사이트는 만들었는데 트래픽 유입도 구매전환도 없다면? 세일즈 구조와 검색 최적화를 함께 점수화하고 수정 프롬프트까지 받아보세요.',
     path: '/',
   });
 
@@ -384,7 +384,7 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
             animate={{ y: [0, -10, 0] }}
             transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
           >
-            AI 배워 사이트는 만들었는데,
+            AI로 사이트는 만들었는데,
             <br />
             <span className="gradient-text-animated">트래픽 유입도 구매전환도 없다면?</span>
           </motion.h1>
