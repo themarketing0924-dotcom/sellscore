@@ -93,7 +93,7 @@ interface ComparisonGroup {
 }
 
 const allOpen = (labels: string[]): ComparisonRow[] =>
-  labels.map((label) => ({ label, free: 'O', report: 'O', standard: 'O', pro: 'O' }));
+  labels.map((label) => ({ label, free: '점수', report: 'O', standard: 'O', pro: 'O' }));
 
 const COMPARISON_GROUPS: ComparisonGroup[] = [
   {
@@ -102,8 +102,8 @@ const COMPARISON_GROUPS: ComparisonGroup[] = [
       { label: 'Before/After 수정 지시문 개수', free: '3개', report: '12개 전체', standard: '12개 전체', pro: '12개 전체' },
       { label: '이 사이트 무제한 재진단', free: '×', report: '×', standard: `${REDIAGNOSIS_WINDOW_DAYS['sellscore-standard']}일간`, pro: `${REDIAGNOSIS_WINDOW_DAYS['sellscore-pro']}일간` },
       { label: '1:1 문의 우선 응답', free: '×', report: '×', standard: '×', pro: 'O' },
-      { label: '리포트 CSV 다운로드 (회원가입 시)', free: 'O', report: 'O', standard: 'O', pro: 'O' },
-      { label: '리포트 링크 공유', free: 'O', report: 'O', standard: 'O', pro: 'O' },
+      { label: '리포트 CSV 다운로드 (회원가입 시)', free: '×', report: 'O', standard: 'O', pro: 'O' },
+      { label: '리포트 링크 공유', free: '×', report: 'O', standard: 'O', pro: 'O' },
     ],
   },
   {
@@ -477,6 +477,15 @@ function ComparisonCell({ value, col }: { value: string; col: Col }) {
   }
   if (value === '×') {
     return <td className="text-center text-white/20 py-3 px-2">—</td>;
+  }
+  if (value === '점수') {
+    return (
+      <td className="text-center py-3 px-2">
+        <span className="inline-flex items-center justify-center rounded-full border border-white/10 bg-white/[0.04] px-2 py-1 text-[10px] font-bold text-white/45">
+          점수
+        </span>
+      </td>
+    );
   }
   return (
     <td className={`text-center py-3 px-2 font-semibold ${highlight ? 'text-[#7bd6ff]' : 'text-white/70'}`}>
