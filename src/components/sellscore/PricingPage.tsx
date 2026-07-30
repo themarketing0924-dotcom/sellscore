@@ -97,6 +97,15 @@ const TOTAL_DIAGNOSTIC_ITEMS =
 
 const COMPARISON_GROUPS: ComparisonGroup[] = [
   {
+    category: '요금제 기본 정보',
+    rows: [
+      { label: '가격', free: '무료', report: `${PRICING.report.price.toLocaleString()}원`, standard: `${PRICING.standard.price.toLocaleString()}원`, pro: `${PRICING.pro.price.toLocaleString()}원` },
+      { label: '결제 방식', free: '무료', report: '1회 결제', standard: '1회 결제', pro: '1회 결제' },
+      { label: '추천 사용자', free: '먼저 확인', report: '1회 정밀 진단', standard: '수정+재진단', pro: '집중 개선' },
+      { label: '전체 리포트 오픈', free: '×', report: 'O', standard: 'O', pro: 'O' },
+    ],
+  },
+  {
     category: '진단 결과에서 바로 열리는 것',
     rows: [
       { label: '종합 설득 전환 점수', free: 'O', report: 'O', standard: 'O', pro: 'O' },
@@ -305,8 +314,8 @@ export function PricingPage() {
         }
         sub={
           <>
-            무료는 핵심 점수와 일부 수정 지시문을 먼저 보여줍니다. 유료 플랜은 <Em>전체 수정 지시문,
-            재진단 기간, 우선 응답</Em>처럼 실제로 열리는 범위가 달라집니다.
+            플랜별로 실제 열리는 범위를 구체적으로 구분했습니다. 무료는 핵심 확인, 유료는 <Em>전체 리포트,
+            수정 지시문, 재진단 기간, 우선 응답</Em>처럼 등급별 차이가 명확합니다.
           </>
         }
       >
