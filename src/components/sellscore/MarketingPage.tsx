@@ -518,6 +518,27 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
             </motion.div>
           ))}
         </div>
+        <motion.div
+          className="mt-8 sm:mt-10 max-w-3xl mx-auto rounded-3xl border border-[#0064ff]/25 bg-[#0064ff]/[0.07] p-4 sm:p-5 text-left"
+          initial={{ opacity: 0, y: 34 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.35 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <div className="grid gap-3 sm:grid-cols-3">
+            {[
+              ['01', '문제 위치', '어느 문구와 구조에서 고객이 멈추는지 표시'],
+              ['02', '감점 근거', '공개 기준과 12개 프레임워크 기준으로 설명'],
+              ['03', '수정 지시문', 'Claude Code·Cursor·GPT에 붙여넣는 실행안 제공'],
+            ].map(([num, title, desc]) => (
+              <div key={title} className="rounded-2xl border border-white/10 bg-black/20 p-4">
+                <p className="text-[#7bd6ff] text-[11px] font-black tracking-[0.18em] mb-2">{num}</p>
+                <p className="text-white text-[14px] sm:text-[15px] font-bold mb-1">{title}</p>
+                <p className="text-white/45 text-[12px] sm:text-[13px] leading-relaxed font-medium">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </motion.div>
       </Section>
 
       {/* ══════════ 두 가지 점수 ══════════ */}
@@ -625,6 +646,18 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
         <p className="text-white/35 text-[12px] leading-relaxed max-w-4xl mx-auto mt-5">
           A사·B사처럼 SEO/AEO/GEO를 따로 맡기면 월 수십만원에서 프로젝트 수천만원까지 올라갈 수 있습니다. Salesscore는 44개 항목을 자동 진단해 더 낮은 비용으로 먼저 문제와 우선순위를 확인하게 해줍니다.
         </p>
+        <motion.div
+          className="mt-5 max-w-4xl mx-auto rounded-2xl border border-[#d7ff00]/20 bg-[#d7ff00]/[0.06] px-5 py-4 text-left sm:text-center"
+          initial={{ opacity: 0, y: 22 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.4 }}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <p className="text-white/75 text-[13px] sm:text-[14px] leading-relaxed font-semibold">
+            가격이 낮은 이유는 진단 품질을 낮췄기 때문이 아닙니다. 반복되는 검색·세일즈 구조 점검을 자동화해
+            <Em> 전문가가 먼저 확인하던 핵심 문제와 우선순위</Em>를 더 빠르고 낮은 비용으로 보여주는 방식입니다.
+          </p>
+        </motion.div>
       </Section>
 
 
@@ -652,6 +685,15 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
           viewport={{ once: true }}
           transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
         >
+
+          <div className="rounded-3xl border border-white/[0.14] bg-white/[0.03] p-3 sm:p-4 mb-5">
+            <img
+              src="/home/website-conversion-before-after-analysis.jpg"
+              alt="문제 있는 홈페이지가 진단과 수정 후 전환율이 개선되는 비포 애프터 시각화"
+              className="w-full rounded-2xl aspect-[16/10] object-cover"
+              loading="lazy"
+            />
+          </div>
           <div className="rounded-3xl border border-white/[0.14] bg-white/[0.03] p-3 sm:p-4 mb-8">
             <video
               src="/sales-hero.mp4"
@@ -679,12 +721,12 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
             ))}
           </div>
           <div className="text-center">
-            <button
-              onClick={onStart}
-              className="inline-flex items-center gap-1.5 h-12 px-7 rounded-full font-semibold text-[14px] text-white/90 border border-white/15 bg-white/5 hover:bg-white/10 transition-colors tracking-tight cursor-pointer"
+            <Link
+              to="/sample-report"
+              className="inline-flex items-center gap-1.5 h-12 px-7 rounded-full font-semibold text-[14px] text-white/90 border border-white/15 bg-white/5 hover:bg-white/10 transition-colors tracking-tight no-underline"
             >
               샘플 분석 결과 자세히 보기 →
-            </button>
+            </Link>
             <p className="text-white/30 text-[11.5px] mt-3">
               실제 서비스 화면을 바탕으로 구성된 예시입니다.
             </p>
@@ -708,6 +750,20 @@ export function MarketingPage({ onStart }: MarketingPageProps) {
           </>
         }
       >
+        <motion.div
+          className="max-w-4xl mx-auto rounded-3xl border border-white/[0.14] bg-white/[0.03] p-3 sm:p-4 mb-9"
+          initial={{ opacity: 0, y: 34 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.32 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <img
+            src="/home/site-diagnosis-three-step-process.jpg"
+            alt="사이트 주소 입력부터 AI 분석과 체크리스트 결과까지 이어지는 세일즈스코어 3단계 진단 과정"
+            className="w-full rounded-2xl aspect-[16/7] object-cover"
+            loading="lazy"
+          />
+        </motion.div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto">
           {STEPS.map((s, i) => (
             <motion.div

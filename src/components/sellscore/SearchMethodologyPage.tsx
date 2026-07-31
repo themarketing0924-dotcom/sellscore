@@ -181,6 +181,94 @@ export function SearchMethodologyPage() {
 
       <Section
         tossMotion
+        eyebrow="검색 스토리"
+        heading={
+          <>
+            사이트는 배이고, <span className="gradient-text-static">검색 구조는 레이더</span>입니다
+          </>
+        }
+        sub={
+          <>
+            바다에 배를 띄운다고 물고기가 잡히지는 않습니다. 어디에 물고기가 모이는지 보는
+            레이더가 필요하고, 그 위치에 맞는 그물을 내려야 합니다.
+          </>
+        }
+      >
+        <motion.div
+          className="max-w-5xl mx-auto grid gap-5 lg:grid-cols-[1.05fr_0.95fr] items-stretch"
+          initial={{ opacity: 0, y: 42 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.26 }}
+          transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <div className="rounded-[2rem] border border-white/[0.14] bg-white/[0.035] p-6 sm:p-8 text-left">
+            <p className="text-white text-[22px] sm:text-[30px] font-black leading-tight tracking-tight mb-5">
+              홈페이지를 만들었다고
+              <span className="block gradient-text-static">고객이 저절로 찾아오지는 않습니다</span>
+            </p>
+            <div className="space-y-4 text-[#9a9aa2] text-[14px] sm:text-[16px] leading-relaxed font-medium">
+              <p>
+                <Em>SEO·AEO·GEO</Em>는 고객이 검색하는 위치를 찾는 레이더입니다. 구글·네이버·AI
+                검색이 내 사이트를 발견하고 이해할 수 있어야 고객 앞에 나타날 기회가 생깁니다.
+              </p>
+              <p>
+                하지만 발견만으로 매출이 생기지는 않습니다. 고객이 클릭한 뒤에는 그 사람이 원하는
+                문제, 욕망, 신뢰, 제안에 맞는 <Em>세일즈 구조</Em>가 필요합니다.
+              </p>
+              <p>
+                Salesscore는 검색 봇에게 발견되는 구조와 고객이 행동하게 만드는 설득 구조를 함께 봅니다.
+                둘 중 하나만 부족해도 사이트는 팔리지 않습니다.
+              </p>
+            </div>
+          </div>
+
+          <div className="relative overflow-hidden rounded-[2rem] border border-[#0064ff]/25 bg-[#061226] min-h-[320px] p-6">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,rgba(123,214,255,0.2),transparent_38%),radial-gradient(circle_at_78%_24%,rgba(0,100,255,0.28),transparent_34%)]" />
+            <div className="relative h-full min-h-[280px] flex flex-col justify-between">
+              <div className="flex items-center justify-between text-[11px] font-black tracking-[0.18em] text-[#7bd6ff]/70">
+                <span>SEARCH RADAR</span>
+                <span>SEO · AEO · GEO</span>
+              </div>
+              <div className="relative mx-auto flex h-44 w-44 items-center justify-center rounded-full border border-[#7bd6ff]/25 bg-black/25 shadow-[0_0_80px_rgba(0,100,255,0.28)]">
+                <div className="absolute inset-5 rounded-full border border-[#7bd6ff]/15" />
+                <div className="absolute inset-12 rounded-full border border-[#7bd6ff]/15" />
+                <motion.div
+                  className="absolute left-1/2 top-1/2 h-[1px] w-20 origin-left bg-gradient-to-r from-[#7bd6ff] to-transparent"
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 7, repeat: Infinity, ease: 'linear' }}
+                />
+                {[
+                  ['top-[26%] left-[62%]', '검색 의도'],
+                  ['top-[58%] left-[22%]', 'title/meta'],
+                  ['top-[67%] left-[66%]', '구조화 데이터'],
+                ].map(([pos, label]) => (
+                  <div key={label} className={`absolute ${pos} flex items-center gap-2`}>
+                    <span className="h-2 w-2 rounded-full bg-[#7bd6ff] shadow-[0_0_18px_rgba(123,214,255,0.9)]" />
+                    <span className="hidden sm:inline text-[10px] font-bold text-white/45 whitespace-nowrap">{label}</span>
+                  </div>
+                ))}
+                <Icon name="search" size={34} className="relative z-10 text-[#7bd6ff]" />
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                {[
+                  ['레이더', '검색 봇이 찾는 구조'],
+                  ['미끼', '고객이 반응하는 제안'],
+                  ['그물', '클릭 후 전환 흐름'],
+                  ['점수', '우선순위와 수정 지시문'],
+                ].map(([title, desc]) => (
+                  <div key={title} className="rounded-2xl border border-white/10 bg-black/25 px-3 py-3">
+                    <p className="text-white text-[12px] font-bold">{title}</p>
+                    <p className="text-white/35 text-[10.5px] leading-snug mt-1">{desc}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      </Section>
+
+      <Section
+        tossMotion
         eyebrow="검색 최적화 원리"
         heading={
           <>
